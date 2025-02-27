@@ -1,34 +1,57 @@
-import React from 'react';
-import { View, Text,  StyleSheet,TextInput } from 'react-native';
-import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Link,  } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+// import axios from 'axios';
+import { loginUsuario } from './services/user'; 
+import { jwtDecode } from "jwt-decode";
+
+
 
 
 
 export default function Home () 
 {
+    const navigation = useNavigation();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const handleLogin = async () => {
+        try {
+            const token = await loginUsuario({ email, password });
+            if (token) {
+                await AsyncStorage.setItem('userToken', token);
+                const decodedToken = jwtDecode(token);
+                // await AsyncStorage.setItem('userId', decodedToken.id);
+                // navigation.navigate('Login');
+            }
+        } catch (error) {
+            Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
+        }
+    };
+
     return(
         <View style={styles.container}>
             <Text style={styles.TextHeaderLogin}>Login</Text>
             <View style={styles.CardLogin}>                
-                <Text style={styles.TextInput}>Username</Text>
-                <TextInput style={styles.input} placeholder='Nome do usuario' />
+                <Text style={styles.TextInput}>Email</Text>
+                <TextInput  value={email} onChangeText={setEmail} style={styles.input} placeholder='Email do usuario' />
                 
                 <Text style={styles.TextInput}>Password</Text>
-                <TextInput style={styles.input} secureTextEntry={true} placeholder='******'/>
+                <TextInput value={password} onChangeText={setPassword} style={styles.input} secureTextEntry={true} placeholder='******'/>
 
-                <View style={styles.BotaoLogin}>
+                <TouchableOpacity style={styles.BotaoLogin}>
                     <Text style={styles.TextBotao}>Login</Text>
-                </View>
+                </TouchableOpacity>
 
                 <View style={styles.containerLines}>
                     <View style={styles.line} />
-                    <Text style={styles.text}>Or</Text>
+                        <Text style={styles.text}>Or</Text>
                     <View style={styles.line} />
                 </View>
 
                 <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>
-                        Nao possui uma conta ? 
+                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Nao possui uma conta ? 
                         <Text  style={{color:"#00835f", fontSize:17}}><Link href="/signUp"> Sign-Up</Link></Text>
                     </Text>
                 </View>

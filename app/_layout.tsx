@@ -1,7 +1,9 @@
 import { Stack } from 'expo-router';
 import { View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import "../global.css";
+import jwtDecode from 'jwt-decode';
+
+
 
 export default function RootLayout() 
 {
@@ -25,7 +27,7 @@ export default function RootLayout()
             options={{
                 headerTitle: "Login",
                 headerTitleStyle: {fontWeight: 'bold',},
-                headerStyle: {backgroundColor: '#fff', borderBottomColor: '#00835f', borderBottomWidth: 1,},
+                headerStyle: {backgroundColor: '#fff'},
                 headerTintColor: '#121212',
             }}
             />

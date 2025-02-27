@@ -1,29 +1,59 @@
-import React from 'react';
-import { View, Text,  StyleSheet,TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link } from 'expo-router';
+import axios from 'axios';
+import { cadastrarUsuario } from './services/user'; 
 
 
 
 export default function SignUp () 
 {
+    const  [name, setName] = useState('');
+    const  [user, setUser] = useState('');
+    const  [email, setEmail] = useState(''); 
+    const  [password, setPassword] = useState('');
+    const handleSignUp = async () => {
+        try {
+            const response = await cadastrarUsuario({
+                user,
+                name,
+                email,
+                password
+            });
+
+            console.log(response.data);
+            console.log(response); 
+
+            if (response.status === 201) {
+                Alert.alert('Cadastro realizado com sucesso!');
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                Alert.alert('Erro', error.response?.data?.error || 'Erro ao cadastrar usuário');
+            } else {
+                Alert.alert('Erro', 'Erro inesperado ao se comunicar com o servidor');
+            }
+        }
+    };
     return(
         <View style={styles.container}>
             <Text style={styles.TextHeaderLogin}>Cadastro</Text>
             <View style={styles.CardLogin}>                
                 <Text style={styles.TextInput}>Usuario</Text>
-                <TextInput style={styles.input} placeholder='nome do usuario'/>
+                <TextInput value={user} onChangeText={setUser} style={styles.input} placeholder='nome do usuario'/>
+
                 <Text style={styles.TextInput}>Nome completo</Text>
-                <TextInput style={styles.input} placeholder='seu nome completo'/>
+                <TextInput value={name} onChangeText={setName} style={styles.input} placeholder='seu nome completo'/>
 
                 <Text style={styles.TextInput}>Email</Text>
-                <TextInput style={styles.input} placeholder='email'/>
+                <TextInput value={email} onChangeText={setEmail} style={styles.input} placeholder='email'/>
 
                 <Text style={styles.TextInput}>Password</Text>
-                <TextInput style={styles.input} secureTextEntry={true} placeholder='******'/>
+                <TextInput value={password} onChangeText={setPassword} style={styles.input} secureTextEntry={true} placeholder='******'/>
 
-                <View style={styles.BotaoLogin}>
+                <TouchableOpacity style={styles.BotaoLogin} onPress={handleSignUp}>
                     <Text style={styles.TextBotao}>Login</Text>
-                </View>
+                </TouchableOpacity>
 
                 <View style={styles.containerLines}>
                     <View style={styles.line} />
@@ -31,20 +61,13 @@ export default function SignUp ()
                     <View style={styles.line} />
                 </View>
 
-                {/* <Text style={styles.TextNaoPossuiConta}>Nao possui uma conta <Link href="/Login">Sign-Up</Link></Text> */}
+
                 <View style={styles.TextRecuperarSenha}>
                     <Text style={{color:"#24h91d", fontWeight:'bold'}}>
                         Ja possui uma conta ? 
                         <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Entre </Link></Text>
                     </Text>
                 </View>
-                {/* <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Esqueceu a senha? <Link href="/Login">Recuperar</Link></Text>
-                </View> */}
-
-
-
-
             </View>
         </View>
     );
@@ -66,21 +89,15 @@ const styles = StyleSheet.create({
     },
     CardLogin:{
         width: 330,
-        // height: 400,
-        // backgroundColor: "#121212",
-        // borderRadius: 30,
-        // padding: 20,
         justifyContent: "center",
         alignItems: "center",
         marginTop:150
     },
     input:{
         marginBottom: 10,
-        // padding: 10,
         borderBottomWidth: 2,
         borderColor: "#ccc",
         width: "100%",
-        // color:"#24991d"cc
     },
     TextInput:{
         marginBottom: 10,
