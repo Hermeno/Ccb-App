@@ -1,6 +1,6 @@
 import api from './api'; // api.js terá a configuração do axios com baseURL
 
-export const cadastrarUsuario = async ({ name, user, email, password }) => {
+export const  cadastrarUsuario = async ({ name, user, email, password }) => {
     try {
         const response = await api.post('/cadastro', {
             name: name,
@@ -22,12 +22,20 @@ export const loginUsuario = async ({ email, password }) => {
             email: email,
             password: password,
         });
+        console.log('Resposta do backend:', response);
         if (response.status === 200) {
-            const token = response.data;
-            return token;
+            console.log("Token recebido:", response.data); // Confirme se o token está aqui
+            return response.data;
+        } else {
+            throw new Error('Falha no login');
         }
     } catch (error) {
-        console.error('Erro no login', error);
+        console.error('Erro no login:', error.message);
         throw error;
     }
 };
+
+
+export default function DummyComponent() {
+    return null;  // Isso faz o arquivo ter um `export default`, mas é gambiarra
+}

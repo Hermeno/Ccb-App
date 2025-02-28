@@ -1,170 +1,87 @@
-import React, { useState } from 'react';
-import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Link,  } from 'expo-router';
+import React,  { } from 'react';
+import { View, Text,StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Link, Router  } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-// import axios from 'axios';
-import { loginUsuario } from './services/user'; 
-import { jwtDecode } from "jwt-decode";
 
 
 
 
-
-export default function Home () 
+export default function App ()
 {
-    const navigation = useNavigation();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const handleLogin = async () => {
-        try {
-            const token = await loginUsuario({ email, password });
-            if (token) {
-                await AsyncStorage.setItem('userToken', token);
-                const decodedToken = jwtDecode(token);
-                // await AsyncStorage.setItem('userId', decodedToken.id);
-                // navigation.navigate('Login');
-            }
-        } catch (error) {
-            Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
-        }
-    };
-
-    return(
-        <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Login</Text>
-            <View style={styles.CardLogin}>                
-                <Text style={styles.TextInput}>Email</Text>
-                <TextInput  value={email} onChangeText={setEmail} style={styles.input} placeholder='Email do usuario' />
-                
-                <Text style={styles.TextInput}>Password</Text>
-                <TextInput value={password} onChangeText={setPassword} style={styles.input} secureTextEntry={true} placeholder='******'/>
-
-                <TouchableOpacity style={styles.BotaoLogin}>
-                    <Text style={styles.TextBotao}>Login</Text>
-                </TouchableOpacity>
-
-                <View style={styles.containerLines}>
-                    <View style={styles.line} />
-                        <Text style={styles.text}>Or</Text>
-                    <View style={styles.line} />
-                </View>
-
-                <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Nao possui uma conta ? 
-                        <Text  style={{color:"#00835f", fontSize:17}}><Link href="/signUp"> Sign-Up</Link></Text>
-                    </Text>
-                </View>
-                <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Esqueceu a senha? 
-                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/Login"> Recuperar </Link></Text>
-                    </Text>
-                </View>
-
-
-
-            </View>
+    return (
+        // <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ flex: 1 }}>
+            {/* <View style={styles.header}>
+                <Link >
+                    <Image 
+                        source={require('../assets/back-arrow.png')} // Coloque sua seta aqui (imagem PNG)
+                        style={styles.backIcon}
+                    />
+                </Link>
+            </View> */}
+            <ScrollView>
+                <View style={styles.container}>
+                    <View style={styles.content}>
+                        <TouchableOpacity style={styles.cardInfo}>
+                            <Text style={styles.Textshow}>Outras Moedas</Text>
+                            <Link href="/">About</Link>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.cardInfo}>
+                            <Text style={styles.Textshow}>Credito</Text>
+                            <Link href="/">About</Link>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.cardInfo}>
+                            <Text style={styles.Textshow}>Cambio</Text>
+                            <Link href="/">About</Link>
+                        </TouchableOpacity>                
+                        <TouchableOpacity style={styles.cardInfo}>
+                            <Text style={styles.Textshow}>Missao</Text>
+                            <Link href="/">About</Link>
+                        </TouchableOpacity>                
+                        <TouchableOpacity style={styles.cardInfo}>
+                            <Text style={styles.Textshow}>Despesas</Text>
+                            <Link href="/">About</Link>
+                        </TouchableOpacity> 
+                        <TouchableOpacity style={styles.cardInfo}>
+                            <Text style={styles.Textshow}>Sair</Text>
+                            <Link href="/">About</Link>
+                        </TouchableOpacity>                 
+                    </View>
+                </View>  
+            </ScrollView>  
         </View>
     );
 }
 
-
 const styles = StyleSheet.create({
     container:{
-        flex:1,
-        backgroundColor: "#fff",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    TextHeaderLogin:{
-        fontSize: 30,
-        fontWeight: "bold",
-        color: "#ffffff",
-        marginBottom: 30,
-    },
-    CardLogin:{
-        width: 330,
-        // height: 400,
-        // backgroundColor: "#ffffff",
-        borderRadius: 30,
-        // padding: 20,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    input:{
-        marginBottom: 10,
-        // padding: 10,
-        borderBottomWidth: 2,
-        borderColor: "#ccc",
-        width: "100%",
-        color:"#121212"
-    },
-    TextInput:{
-        marginBottom: 10,
-        borderColor: "#121212",
-        width: "100%",
-        fontSize: 16,
-                color:"#121212",
-                fontWeight: "bold",
-    },
-
-
-    BotaoLogin:{
-        width: "100%",
-        height: 40,
-        backgroundColor: "#00835f",
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 5,
-        marginTop: 10,
-        marginBottom: 20,
-    },
-    TextNaoPossuiConta:{
-        marginTop: 20,
-        color: "#ffffff",
-        fontSize: 18,
-        fontWeight: "500",
-
-    },
-    TextRecuperarSenha:{
-        color: "#ffffff",
-        fontSize: 16,
-        fontWeight: "500",
-        borderWidth: 1,
-        borderColor: "#ccc",
-        padding: 5,
-        width: "100%",
-        height: "15%",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 0,
-        marginBottom: 20,
-    },
-    LinkRecuperarSenha:{
-        justifyContent: "center",
-        alignItems: "center", 
-        color: "#ffffff"      
-    },
-    TextBotao:{
-        color: "#ffffff",
-        fontSize: 17,
-        fontWeight: "bold",
-    },
-    containerLines: {
-        flexDirection: 'row',
+        flex: 1,
+        // justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#fabc48'
+    },
+    content:{
+        flex: 1,
+        padding: 10,
+        width: '100%',
+        backgroundColor: '#fff',
+    },
+    cardInfo:{
+        margin: 10,
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 2,
+        elevation: 1,
         justifyContent: 'center',
-        marginVertical: 20,
+        alignItems: 'center'
     },
-    line: {
-        height: 1,
-        backgroundColor: '#00835f',  // Cor da linha
-        flex: 1,  // Isso faz a linha ocupar o espaço restante
-    },
-    text: {
-        marginHorizontal: 10,  // Espaçamento entre o texto e as linhas
-        fontSize: 16,
+    Textshow:{
+        fontSize: 20,
         fontWeight: 'bold',
-        color: '#000',  // Cor do texto
-    },
+        color: '#333'
+    }
 })

@@ -1,73 +1,76 @@
 import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Link } from 'expo-router';
-import axios from 'axios';
-import { cadastrarUsuario } from '../services/user'; 
+import { Link, Router  } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loginUsuario } from '../services/user'; 
+import { jwtDecode } from "jwt-decode";
 
 
 
-export default function SignUp () 
+
+
+export default function Home (router: Router) 
 {
-    const  [name, setName] = useState('');
-    const  [user, setUser] = useState('');
-    const  [email, setEmail] = useState(''); 
-    const  [password, setPassword] = useState('');
-    const handleSignUp = async () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    type MyTokenPayload = {
+        id: string,
+        iat: number,
+        exp: number,
+    }
+    const handleLogin = async () => {
         try {
-            const response = await cadastrarUsuario({
-                user,
-                name,
-                email,
-                password
-            });
-
-            console.log(response.data);
-            console.log(response); 
-
-            if (response.status === 201) {
-                Alert.alert('Cadastro realizado com sucesso!');
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                Alert.alert('Erro', error.response?.data?.error || 'Erro ao cadastrar usuário');
+            const token = await loginUsuario({ email, password });
+            if (token) {
+                await AsyncStorage.setItem('userToken', token);
+                const decodedToken = jwtDecode<MyTokenPayload>(token);
+                const id = await AsyncStorage.setItem('userId', decodedToken.id);  
+                router.replace('/home'); 
             } else {
-                Alert.alert('Erro', 'Erro inesperado ao se comunicar com o servidor');
+                router.replace('/');
             }
+
+
+
+        } catch (error) {
+            Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
         }
     };
+
+
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Cadastro</Text>
+            <Text style={styles.TextHeaderLogin}>Login</Text>
             <View style={styles.CardLogin}>                
-                <Text style={styles.TextInput}>Usuario</Text>
-                <TextInput value={user} onChangeText={setUser} style={styles.input} placeholder='nome do usuario'/>
-
-                <Text style={styles.TextInput}>Nome completo</Text>
-                <TextInput value={name} onChangeText={setName} style={styles.input} placeholder='seu nome completo'/>
-
                 <Text style={styles.TextInput}>Email</Text>
-                <TextInput value={email} onChangeText={setEmail} style={styles.input} placeholder='email'/>
-
+                <TextInput  value={email} onChangeText={setEmail} style={styles.input} placeholder='Email do usuario' />
+                
                 <Text style={styles.TextInput}>Password</Text>
                 <TextInput value={password} onChangeText={setPassword} style={styles.input} secureTextEntry={true} placeholder='******'/>
 
-                <TouchableOpacity style={styles.BotaoLogin} onPress={handleSignUp}>
+                <TouchableOpacity style={styles.BotaoLogin} onPress={handleLogin}>
                     <Text style={styles.TextBotao}>Login</Text>
                 </TouchableOpacity>
 
                 <View style={styles.containerLines}>
                     <View style={styles.line} />
-                    <Text style={styles.text}>Or</Text>
+                        <Text style={styles.text}>Or</Text>
                     <View style={styles.line} />
                 </View>
 
-
                 <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>
-                        Ja possui uma conta ? 
-                        <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Entre </Link></Text>
+                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Nao possui uma conta ? 
+                        <Text  style={{color:"#00835f", fontSize:17}}><Link href="/signUp"> Sign-Up</Link></Text>
                     </Text>
                 </View>
+                <View style={styles.TextRecuperarSenha}>
+                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Esqueceu a senha? 
+                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/home"> Recuperar </Link></Text>
+                    </Text>
+                </View>
+
+
+
             </View>
         </View>
     );
@@ -77,27 +80,32 @@ export default function SignUp ()
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "center",
     },
     TextHeaderLogin:{
         fontSize: 30,
         fontWeight: "bold",
-        color: "#121212",
-        // marginTop: -130,
+        color: "#ffffff",
+        marginBottom: 30,
     },
     CardLogin:{
         width: 330,
+        // height: 400,
+        // backgroundColor: "#ffffff",
+        borderRadius: 30,
+        // padding: 20,
         justifyContent: "center",
         alignItems: "center",
-        marginTop:150
     },
     input:{
         marginBottom: 10,
+        // padding: 10,
         borderBottomWidth: 2,
         borderColor: "#ccc",
         width: "100%",
+        color:"#121212"
     },
     TextInput:{
         marginBottom: 10,
@@ -111,7 +119,7 @@ const styles = StyleSheet.create({
 
     BotaoLogin:{
         width: "100%",
-        height: 50,
+        height: 40,
         backgroundColor: "#00835f",
         justifyContent: "center",
         alignItems: "center",
@@ -121,13 +129,13 @@ const styles = StyleSheet.create({
     },
     TextNaoPossuiConta:{
         marginTop: 20,
-        color: "#121212",
+        color: "#ffffff",
         fontSize: 18,
         fontWeight: "500",
 
     },
     TextRecuperarSenha:{
-        color: "#121212",
+        color: "#ffffff",
         fontSize: 16,
         fontWeight: "500",
         borderWidth: 1,
@@ -143,10 +151,10 @@ const styles = StyleSheet.create({
     LinkRecuperarSenha:{
         justifyContent: "center",
         alignItems: "center", 
-        color: "#24991d"      
+        color: "#ffffff"      
     },
     TextBotao:{
-        color: "#fff",
+        color: "#ffffff",
         fontSize: 17,
         fontWeight: "bold",
     },
@@ -167,7 +175,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',  // Cor do texto
     },
-
-
-
 })
