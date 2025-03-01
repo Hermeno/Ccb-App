@@ -45,19 +45,19 @@ export default function RootLayout()
             <Stack.Screen
                 name="lost_password"
                 options={{
-                    headerTitle: "lost_password",
+                    headerTitle: "Voltar",
                     headerTitleStyle: { fontWeight: 'bold' },
-                    headerStyle: { backgroundColor: '#f4511e' },
+                    headerStyle: { backgroundColor: '#487d76' },
                     headerTintColor: '#fff',
                 }}
             />
 
-            <Stack.Screen
+            {/* <Stack.Screen
                 name="rest_login"
                 options={{
                     headerShown: false,
                 }}
-            />
+            /> */}
         </Stack>
     );
 }               

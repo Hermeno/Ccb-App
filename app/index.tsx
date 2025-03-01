@@ -19,15 +19,6 @@ export default function Home ()
         iat: number,
         exp: number,
     }
-    // const handleLogin = async () => {
-    //         const token = await loginUsuario({ email, password });
-    //         if (token) {  
-    //             Alert.alert("Logado com sucesso");
-    //             router.replace('/home'); 
-    //         } else {
-    //             router.replace('/');
-    //         }
-    // };
     const handleLogin = async () => {
         try {
             const token = await loginUsuario({ email, password });
@@ -47,7 +38,7 @@ export default function Home ()
 
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Login</Text>
+            <Text style={styles.TextHeaderLogin}>Welcome acesse sua conta!</Text>
             <View style={styles.CardLogin}>                
                 <Text style={styles.TextInput}>Email</Text>
                 <TextInput  value={email} onChangeText={setEmail} style={styles.input} placeholder='Email do usuario' />
@@ -72,7 +63,7 @@ export default function Home ()
                 </View>
                 <View style={styles.TextRecuperarSenha}>
                     <Text style={{color:"#24h91d", fontWeight:'bold'}}>Esqueceu a senha? 
-                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/home"> Recuperar </Link></Text>
+                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/lost_password"> Recuperar </Link></Text>
                     </Text>
                 </View>
 
@@ -87,31 +78,36 @@ export default function Home ()
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor: "#fff",
+        backgroundColor: "#487d76",
         justifyContent: "center",
         alignItems: "center",
     },
     TextHeaderLogin:{
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: "bold",
         color: "#ffffff",
         marginBottom: 30,
+        height: 120,
+        paddingTop: 40,
     },
     CardLogin:{
-        width: 330,
+        width: '100%',
         // height: 400,
-        // backgroundColor: "#ffffff",
-        borderRadius: 30,
-        // padding: 20,
+        flex:1,
+        backgroundColor: "#ffffff",
+        // borderRadius: 30,
+        padding: 20,
         justifyContent: "center",
         alignItems: "center",
+        borderTopEndRadius: 40,
+        borderTopStartRadius: 40,
     },
     input:{
         marginBottom: 10,
         // padding: 10,
         borderBottomWidth: 2,
         borderColor: "#ccc",
-        width: "100%",
+        width: "95%",
         color:"#121212"
     },
     TextInput:{
