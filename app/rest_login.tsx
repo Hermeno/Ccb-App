@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Link, Router  } from 'expo-router';
+import { Link, useRouter   } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginUsuario } from '../services/user'; 
 import { jwtDecode } from "jwt-decode";
@@ -9,15 +9,31 @@ import { jwtDecode } from "jwt-decode";
 
 
 
-export default function Home (router: Router) 
+export default function Home () 
 {
+    const router = useRouter();
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(''); 
     type MyTokenPayload = {
         id: string,
         iat: number,
         exp: number,
     }
+    // const handleLogin = async () => {
+    //     const token = await loginUsuario({ email, password }); // sua função de login
+    //     console.log('Token recebido:', token);
+
+    //     if (token) {
+    //         try {
+    //             router.replace('/home');
+    //             console.log('Redirecionando para /home');
+    //         } catch (error) {
+    //             console.error('Erro ao redirecionar:', error);
+    //         }
+    //     } else {
+    //         router.replace('/');
+    //     }
+    // };
     const handleLogin = async () => {
         try {
             const token = await loginUsuario({ email, password });
@@ -36,7 +52,6 @@ export default function Home (router: Router)
             Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
         }
     };
-
 
     return(
         <View style={styles.container}>

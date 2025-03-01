@@ -52,7 +52,12 @@ export default function RootLayout()
                 }}
             />
 
-
+            <Stack.Screen
+                name="rest_login"
+                options={{
+                    headerShown: false,
+                }}
+            />
         </Stack>
     );
 }               
