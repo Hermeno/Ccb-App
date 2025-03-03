@@ -31,32 +31,32 @@ export default function Home ()
 
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
-                <Text style={styles.TextInput}>Moeda de Origem</Text>
+                <Text style={styles.TextInputs}>Moeda de Origem</Text>
                 <TextInput  value={moedaOrigem} onChangeText={setMoedaOrigem} style={styles.input} placeholder='Moeda de Origem' />
                 </View>
                 <View style={styles.ViewInput}>
-                <Text style={styles.TextInput}>Moeda de Destino</Text>
+                <Text style={styles.TextInputs}>Moeda de Destino</Text>
                 <TextInput  value={moedaDestino} onChangeText={setMoedaDestino} style={styles.input} placeholder='Moeda de Destino' />
                 </View>
             </View>
 
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
-                <Text style={styles.TextInput}>Cotacao</Text>
+                <Text style={styles.TextInputs}>Cotacao</Text>
                 <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotacao' />
                 </View>
                 <View style={styles.ViewInput}>
-                <Text style={styles.TextInput}>Total a Cambiar</Text>
+                <Text style={styles.TextInputs}>Total a Cambiar</Text>
                 <TextInput  value={totalAcambiar} onChangeText={setTotalAcambiar} style={styles.input} placeholder='Total a Cambiar' />
                 </View>
             </View>
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
-                <Text style={styles.TextInput}>Total Cambiado</Text>
+                <Text style={styles.TextInputs}>Total Cambiado</Text>
                 <TextInput  value={totalValorCambiado} onChangeText={setTotalValorCambiado} style={styles.input} placeholder='Total Cambiado' />
                 </View>
                 <View style={styles.ViewInput}>
-                <Text style={styles.TextInput}>N do Recibo</Text>
+                <Text style={styles.TextInputs}>N do Recibo</Text>
                 <TextInput  value={numerodoRecibo} onChangeText={setNumerodoRecibo} style={styles.input} placeholder='N do Recibo' />
                 </View>
             </View>
@@ -116,15 +116,15 @@ const styles = StyleSheet.create({
     },
     input:{
         marginBottom: 10,
-        padding: 30,
+        padding: 20,
         borderWidth: 1,
         borderColor: "#ccc",
         // width: "100%",
-        // color:"#121212",
+        color:"#121212",
         backgroundColor: '#f0f0f0',
-        height:40,
+        height:45,
     },
-    TextInput:{
+    TextInputs:{
         marginBottom: 10,
         borderColor: "#121212",
         width: "100%",
