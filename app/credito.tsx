@@ -1,69 +1,73 @@
 import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { loginUsuario } from '../services/user'; 
-import { jwtDecode } from "jwt-decode";
-
-
-
-
+import { Picker } from '@react-native-picker/picker';
 
 export default function Home () 
 {
     const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState(''); 
-    type MyTokenPayload = {
-        id: string,
-        iat: number,
-        exp: number,
-    }
-    const handleLogin = async () => {
-        try {
-            const token = await loginUsuario({ email, password });
-            if (token) {
-                await AsyncStorage.setItem('userToken', token);
-                const decodedToken = jwtDecode<MyTokenPayload>(token);
-                const id = await AsyncStorage.setItem('userId', decodedToken.id);  
-                Alert.alert("Logado com sucesso");
-                router.replace('/home'); 
-            } else {
-                router.replace('/');
-            }
-        } catch (error) {
-            Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
-        }
-    };
+    const [moeda, setMoeda] = useState('');
+    const [valor, setValor] = useState('');
+    const [referencia, setReferencia] = useState('');
 
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Welcome acesse sua conta!</Text>
+            <Text style={styles.TextHeaderLogin}>Ola, Miqueias Adicione seu saldo aqui!</Text>
             <View style={styles.CardLogin}>                
-                <Text style={styles.TextInput}>Email</Text>
-                <TextInput  value={email} onChangeText={setEmail} style={styles.input} placeholder='Email do usuario' />
-                
-                <Text style={styles.TextInput}>Password</Text>
-                <TextInput value={password} onChangeText={setPassword} style={styles.input} secureTextEntry={true} placeholder='******'/>
 
-                <TouchableOpacity style={styles.BotaoLogin} onPress={handleLogin}>
-                    <Text style={styles.TextBotao}>Login</Text>
+            <Text style={styles.TextInput}>Selecione a moeda:</Text>
+            <Picker
+                selectedValue={moeda}
+                onValueChange={(itemValue) => setMoeda(itemValue)}
+                style={styles.picker}
+            >
+                <Picker.Item label="Selecione uma moeda..." value="" />
+                <Picker.Item label="Dólar" value="dolar" />
+                <Picker.Item label="Real" value="real" />
+                <Picker.Item label="Metical" value="metical" />
+                <Picker.Item label="Euro" value="euro" />
+                <Picker.Item label="Libra" value="libra" />
+                <Picker.Item label="Iene" value="iene" />
+            </Picker>
+            <Text style={styles.result}>Moeda selecionada: {moeda}</Text>
+
+            <Text style={styles.TextInput}>Valor creditado</Text>
+            <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor creditado' />
+
+
+            <Text style={styles.TextInput}>Referencia:</Text>
+            <Picker
+                selectedValue={referencia}
+                onValueChange={(itemValue) => setReferencia(itemValue)}
+                style={styles.picker}
+            >
+                <Picker.Item label="Selecione uma referencia..." value="" />
+                <Picker.Item label="Dólar" value="dolar" />
+                <Picker.Item label="Real" value="real" />
+                <Picker.Item label="Metical" value="metical" />
+                <Picker.Item label="Euro" value="euro" />
+                <Picker.Item label="Libra" value="libra" />
+                <Picker.Item label="Iene" value="iene" />
+            </Picker>
+            <Text style={styles.result}>Referencia selecionada: {referencia}</Text>
+
+
+
+
+
+                <TouchableOpacity style={styles.BotaoLogin}>
+                    <Text style={styles.TextBotao}>ADICIONAR</Text>
                 </TouchableOpacity>
 
                 <View style={styles.containerLines}>
                     <View style={styles.line} />
-                        <Text style={styles.text}>Or</Text>
+                    <Text style={styles.text}>Or</Text>
                     <View style={styles.line} />
                 </View>
 
                 <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Nao possui uma conta ? 
-                        <Text  style={{color:"#00835f", fontSize:17}}><Link href="/signUp"> Sign-Up</Link></Text>
-                    </Text>
-                </View>
-                <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Esqueceu a senha? 
-                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/lost_password"> Recuperar </Link></Text>
+                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Logar na sua conta!  
+                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Sign-In</Link></Text>
                     </Text>
                 </View>
             </View>
@@ -101,29 +105,33 @@ const styles = StyleSheet.create({
     },
     input:{
         marginBottom: 10,
-        // padding: 10,
-        borderBottomWidth: 2,
+        padding: 10,
+        borderWidth: 1,
         borderColor: "#ccc",
-        width: "95%",
-        color:"#121212"
+        width: "100%",
+        color:"#121212",
+        backgroundColor: '#f0f0f0',
+        height:50,
     },
     TextInput:{
         marginBottom: 10,
         borderColor: "#121212",
-        width: "95%",
+        width: "100%",
         fontSize: 16,
                 color:"#121212",
                 fontWeight: "bold",
+            textAlign: "left",
+            marginTop: 10,
     },
 
 
     BotaoLogin:{
         width: "100%",
-        height: 40,
+        height: 50,
         backgroundColor: "#00835f",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 5,
+        borderRadius: 0,
         marginTop: 10,
         marginBottom: 20,
     },
@@ -175,4 +183,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',  // Cor do texto
     },
+    label: {
+        fontSize: 16,
+        marginBottom: 8,
+    },
+    picker: {
+        height: 50,
+        width: '100%',
+        backgroundColor: '#f0f0f0',
+    },
+    result: {
+        marginTop: 20,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },   
 })

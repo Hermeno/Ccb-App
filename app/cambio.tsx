@@ -1,52 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { loginUsuario } from '../services/user'; 
-import { jwtDecode } from "jwt-decode";
-
-
-
-
 
 export default function Home () 
 {
     const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState(''); 
-    type MyTokenPayload = {
-        id: string,
-        iat: number,
-        exp: number,
-    }
-    const handleLogin = async () => {
-        try {
-            const token = await loginUsuario({ email, password });
-            if (token) {
-                await AsyncStorage.setItem('userToken', token);
-                const decodedToken = jwtDecode<MyTokenPayload>(token);
-                const id = await AsyncStorage.setItem('userId', decodedToken.id);  
-                Alert.alert("Logado com sucesso");
-                router.replace('/home'); 
-            } else {
-                router.replace('/');
-            }
-        } catch (error) {
-            Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
-        }
-    };
 
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Welcome acesse sua conta!</Text>
+            <Text style={styles.TextHeaderLogin}>Esqueceu a senha ?, escreva seu email</Text>
             <View style={styles.CardLogin}>                
                 <Text style={styles.TextInput}>Email</Text>
-                <TextInput  value={email} onChangeText={setEmail} style={styles.input} placeholder='Email do usuario' />
-                
-                <Text style={styles.TextInput}>Password</Text>
-                <TextInput value={password} onChangeText={setPassword} style={styles.input} secureTextEntry={true} placeholder='******'/>
-
-                <TouchableOpacity style={styles.BotaoLogin} onPress={handleLogin}>
+                {/* <TextInput  value={} onChangeText={} style={styles.input} placeholder='Email do usuario' /> */}
+                <TouchableOpacity style={styles.BotaoLogin}>
                     <Text style={styles.TextBotao}>Login</Text>
                 </TouchableOpacity>
 
@@ -57,13 +23,8 @@ export default function Home ()
                 </View>
 
                 <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Nao possui uma conta ? 
-                        <Text  style={{color:"#00835f", fontSize:17}}><Link href="/signUp"> Sign-Up</Link></Text>
-                    </Text>
-                </View>
-                <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Esqueceu a senha? 
-                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/lost_password"> Recuperar </Link></Text>
+                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Logar na sua conta!  
+                        <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Sign-In</Link></Text>
                     </Text>
                 </View>
             </View>
@@ -96,8 +57,8 @@ const styles = StyleSheet.create({
         padding: 20,
         justifyContent: "center",
         alignItems: "center",
-        // borderTopEndRadius: 40,
-        // borderTopStartRadius: 40,
+        borderTopEndRadius: 40,
+        borderTopStartRadius: 40,
     },
     input:{
         marginBottom: 10,
@@ -110,7 +71,7 @@ const styles = StyleSheet.create({
     TextInput:{
         marginBottom: 10,
         borderColor: "#121212",
-        width: "95%",
+        width: "100%",
         fontSize: 16,
                 color:"#121212",
                 fontWeight: "bold",

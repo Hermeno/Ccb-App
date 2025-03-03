@@ -58,6 +58,34 @@ export default function RootLayout()
                     headerShown: false,
                 }}
             /> */}
+            <Stack.Screen
+                name="outras_moedas"
+                options={{
+                    headerTitle: "Outras Moedas",
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerStyle: { backgroundColor: '#fff' },
+                    headerTintColor: '#121212',
+                }}
+            />
+            <Stack.Screen
+                name="credito"
+                options={{
+                    headerTitle: "Credito",
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerStyle: { backgroundColor: '#fff' },
+                    headerTintColor: '#121212',
+                }}
+            />
+            <Stack.Screen
+                name="cambio"
+                options={{
+                    headerTitle: "Cambio",
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerStyle: { backgroundColor: '#fff' },
+                    headerTintColor: '#121212',
+                }}
+            />            
+
         </Stack>
     );
 }               
