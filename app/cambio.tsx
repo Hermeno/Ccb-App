@@ -77,8 +77,8 @@ export default function Home ()
                 </View>
 
                 <View style={styles.TextRecuperarSenha}>
-                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Logar na sua conta!  
-                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Sign-In</Link></Text>
+                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Visualizar cambios cadastradas!  
+                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Ver agora</Link></Text>
                     </Text>
                 </View>
             </View>

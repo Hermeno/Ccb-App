@@ -18,6 +18,9 @@ export default function App ()
     const CAMBIO = () => {
         router.push('/cambio');
     };
+    const MISSAO = () => {
+        router.push('/missao');
+    };
     return (
         // <ScrollView   >
         <View style={styles.container}>
@@ -35,7 +38,7 @@ export default function App ()
                             <Text style={styles.Textshow}>Cambio</Text>
                             <Link href="/">About</Link>
                         </TouchableOpacity>                
-                        <TouchableOpacity style={styles.cardInfo}>
+                        <TouchableOpacity style={styles.cardInfo} onPress={MISSAO}>
                             <Text style={styles.Textshow}>Missao</Text>
                             <Link href="/">About</Link>
                         </TouchableOpacity>                
