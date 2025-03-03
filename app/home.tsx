@@ -15,7 +15,9 @@ export default function App ()
     const CREDITO = () => {
         router.push('/credito');
     };
-    
+    const CAMBIO = () => {
+        router.push('/cambio');
+    };
     return (
         // <ScrollView   >
         <View style={styles.container}>
@@ -29,7 +31,7 @@ export default function App ()
                             <Text style={styles.Textshow}>Credito</Text>
                             <Link href="/">About</Link>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.cardInfo}>
+                        <TouchableOpacity style={styles.cardInfo} onPress={CAMBIO}>
                             <Text style={styles.Textshow}>Cambio</Text>
                             <Link href="/">About</Link>
                         </TouchableOpacity>                
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     Textshow:{
-        fontSize: 25,
+        fontSize: 32,
         fontWeight: 'bold',
         color: '#fff'
     }
