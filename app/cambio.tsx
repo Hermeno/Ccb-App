@@ -2,19 +2,39 @@ import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
+import { cadastrarCambio } from '../services/cambio';
 
 export default function Home () 
 {
     const router = useRouter();
-    const [moeda, setMoeda] = useState('');
-    const [valor, setValor] = useState('');
     const [cotacao, setCotacao] = useState('');
-    const [moedaOrigem, setMoedaOrigem] = useState('');
-    const [moedaDestino, setMoedaDestino] = useState('');
-    const [totalAcambiar, setTotalAcambiar] = useState('');
-    const [totalValorCambiado, setTotalValorCambiado] = useState('');
-    const [numerodoRecibo, setNumerodoRecibo] = useState('');
+    const [moeda_origem, setMoeda_origem] = useState('');
+    const [moeda_destino, setMoeda_destino] = useState('');
+    const [total_a_cambiar, setTotal_a_cambiar] = useState('');
+    const [total_cambiado, setTotal_cambiado] = useState('');
+    const [numero_recibo, setNumero_recibo] = useState('');
+    const [foto_recibo, setFoto_recibo] = useState('');
 
+    const handleCambio = async () =>{
+        try{
+            const response = await cadastrarCambio ({
+                moeda_origem,
+                moeda_destino,
+                cotacao,
+                total_a_cambiar,
+                total_cambiado,
+                numero_recibo,
+                foto_recibo,
+                user_id: '123',
+                username: 'Miqueias'
+            })
+            if(response.status === 200) {
+                Alert.alert('Cambio realizado com sucesso!');
+            }
+        }catch(error) {
+            console.log(error, 'erro ao cadastrar cambio');
+        }
+    }
 
 
 
@@ -32,11 +52,11 @@ export default function Home ()
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Moeda de Origem</Text>
-                <TextInput  value={moedaOrigem} onChangeText={setMoedaOrigem} style={styles.input} placeholder='Moeda de Origem' />
+                <TextInput  value={moeda_origem} onChangeText={setMoeda_origem} style={styles.input} placeholder='Moeda de Origem' />
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Moeda de Destino</Text>
-                <TextInput  value={moedaDestino} onChangeText={setMoedaDestino} style={styles.input} placeholder='Moeda de Destino' />
+                <TextInput  value={moeda_destino} onChangeText={setMoeda_destino} style={styles.input} placeholder='Moeda de Destino' />
                 </View>
             </View>
 
@@ -47,17 +67,17 @@ export default function Home ()
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Total a Cambiar</Text>
-                <TextInput  value={totalAcambiar} onChangeText={setTotalAcambiar} style={styles.input} placeholder='Total a Cambiar' />
+                <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar' />
                 </View>
             </View>
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Total Cambiado</Text>
-                <TextInput  value={totalValorCambiado} onChangeText={setTotalValorCambiado} style={styles.input} placeholder='Total Cambiado' />
+                <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado' />
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>N do Recibo</Text>
-                <TextInput  value={numerodoRecibo} onChangeText={setNumerodoRecibo} style={styles.input} placeholder='N do Recibo' />
+                <TextInput  value={numero_recibo} onChangeText={setNumero_recibo} style={styles.input} placeholder='N do Recibo' />
                 </View>
             </View>
 
@@ -116,7 +136,7 @@ const styles = StyleSheet.create({
     },
     input:{
         marginBottom: 10,
-        padding: 20,
+        paddingLeft: 20,
         borderWidth: 1,
         borderColor: "#ccc",
         // width: "100%",
