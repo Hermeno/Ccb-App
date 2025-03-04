@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { cadastrarCambio } from '../services/cambio';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
+
+type MyTokenPayload = {
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+};
 
 export default function Home () 
 {
@@ -14,6 +23,27 @@ export default function Home ()
     const [total_cambiado, setTotal_cambiado] = useState('');
     const [numero_recibo, setNumero_recibo] = useState('');
     const [foto_recibo, setFoto_recibo] = useState('');
+    const [user, setUser] = useState<MyTokenPayload | null>(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+
+                if (token) {
+                    const decoded: MyTokenPayload = jwtDecode(token);
+                    setUser(decoded);
+                } else {
+                    Alert.alert('Erro', 'Nenhum token encontrado');
+                }
+            } catch (error) {
+                Alert.alert('Erro', 'Erro ao buscar dados do usuário');
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
 
     const handleCambio = async () =>{
         try{
@@ -25,8 +55,8 @@ export default function Home ()
                 total_cambiado,
                 numero_recibo,
                 foto_recibo,
-                user_id: '123',
-                username: 'Miqueias'
+                user_id: user.id,
+                username: user.username,
             })
             if(response.status === 200) {
                 Alert.alert('Cambio realizado com sucesso!');
