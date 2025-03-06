@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
 import { cadastrarCambio } from '../services/cambio';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
-
-type MyTokenPayload = {
-    id: string;
-    name: string;
-    username: string;
-    email: string;
-};
+import { useJwt } from './jwt'
 
 export default function Home () 
 {
     const router = useRouter();
+    const user = useJwt();
     const [cotacao, setCotacao] = useState('');
     const [moeda_origem, setMoeda_origem] = useState('');
     const [moeda_destino, setMoeda_destino] = useState('');
@@ -23,29 +15,16 @@ export default function Home ()
     const [total_cambiado, setTotal_cambiado] = useState('');
     const [numero_recibo, setNumero_recibo] = useState('');
     const [foto_recibo, setFoto_recibo] = useState('');
-    const [user, setUser] = useState<MyTokenPayload | null>(null);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const token = await AsyncStorage.getItem('userToken');
-
-                if (token) {
-                    const decoded: MyTokenPayload = jwtDecode(token);
-                    setUser(decoded);
-                } else {
-                    Alert.alert('Erro', 'Nenhum token encontrado');
-                }
-            } catch (error) {
-                Alert.alert('Erro', 'Erro ao buscar dados do usuário');
-            }
-        };
-
-        fetchUserData();
-    }, []);
-
 
     const handleCambio = async () =>{
+        if (!user) {
+            Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
+            return;
+        }
+        if (!moeda_origem ||!moeda_destino ||!cotacao ||!total_a_cambiar ||!numero_recibo ||!foto_recibo) {
+            Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
+            return;
+        }
         try{
             const response = await cadastrarCambio ({
                 moeda_origem,
@@ -76,9 +55,13 @@ export default function Home ()
 
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Ola, Miqueias faca cambio aqui!</Text>
+            {user ? (
+                <Text style={styles.TextHeaderLogin}>Ola, {user.name} faca cambio aqui!</Text>
+            ) : (
+                <Text style={styles.TextHeaderLogin}>Esta carregando...</Text>
+            )}
+            
             <View style={styles.CardLogin}>                
-
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Moeda de Origem</Text>
@@ -116,7 +99,7 @@ export default function Home ()
                     <Text style={styles.TextAnexarImagem}>Anexar recibo</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.BotaoLogin}>
+                <TouchableOpacity style={styles.BotaoLogin} onPress={handleCambio}>
                     <Text style={styles.TextBotao}>ADICIONAR VALOR CAMBIADO</Text>
                 </TouchableOpacity>
 

@@ -19,3 +19,10 @@ export const cadastrarCambio = async ({}) => {
     }
 
 }
+
+
+
+
+export default function CambioComponent() {
+    return null;  // Isso faz o arquivo ter um `export default`, mas é gambiarra
+}

@@ -1,28 +1,11 @@
 import React,  { useState, useEffect} from 'react';
 import { View, Text,StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-
-
+import { useJwt } from './jwt'
 export default function App ()
 {
-    const [userId, setUserId] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchUserId = async () => {
-            const id = await AsyncStorage.getItem('userId');
-            setUserId(id);
-        };
-
-        fetchUserId();
-    }, []);
-
-
-
-
     const router = useRouter();
+    const user = useJwt();
     const sendOutraMoedas = () => {
         router.push('/outras_moedas');
     };
@@ -39,10 +22,13 @@ export default function App ()
         // <ScrollView   >
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.header}>
-                    {/* <Image source={require('../assets/logo.png')} style={{width: 100, height: 100}} /> */}
-                    <Text style={styles.Textshow}>Seja bem vindo, {userId}</Text>
-                </View>
+                    {user ? (
+                        <View style={styles.header}>
+                            <Text style={styles.Textshow}>Seja bem vindo, {user.name} -- {user.id}</Text>
+                        </View>
+                    ) : (
+                        <Text>Faca Login...</Text>
+                    )}
                     <View style={styles.content}>
                         <TouchableOpacity style={styles.cardInfo} onPress={sendOutraMoedas}>
                             <Text style={styles.Textshow}>Outras Moedas</Text>

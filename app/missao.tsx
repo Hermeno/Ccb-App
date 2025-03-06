@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform } from 'react-native';
 import { Link, useRouter } from 'expo-router';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const { height } = Dimensions.get('window');
 
@@ -10,6 +11,43 @@ export default function Home() {
     const [dataFinal, setDataFinal] = useState('');
     const [visible, setVisible] = useState(false);
     const router = useRouter();
+    const [showInicioPicker, setShowInicioPicker] = useState(false);
+    const [showFinalPicker, setShowFinalPicker] = useState(false);
+
+
+    const formatarData = (data: Date) => {
+        const dia = data.getDate().toString().padStart(2, '0');
+        const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+        const ano = data.getFullYear();
+        return `${dia}/${mes}/${ano}`;
+    };
+    
+    // const formatarData = (data) => {
+    //     const dia = data.getDate().toString().padStart(2, '0');
+    //     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    //     const ano = data.getFullYear();
+    //     return `${dia}/${mes}/${ano}`;
+    // };
+
+    const handleInicioChange = (event: any, selectedDate?: Date) => {
+        setShowInicioPicker(false);
+        if (selectedDate) {
+            setDataInicio(formatarData(selectedDate));
+        }
+    };
+    
+
+    const handleFinalChange = (event: any, selectedDate?: Date) => {
+        setShowFinalPicker(false);
+        if (selectedDate) {
+            setDataFinal(formatarData(selectedDate));
+        }
+    };
+
+
+
+
+
     const back = () => {
         router.back();
     }
@@ -37,12 +75,12 @@ export default function Home() {
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
 
-
+{/* 
             <View>
                 <TouchableOpacity style={styles.button} onPress={back}>
                     <Text style={styles.buttonText}>VOLTAR</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
 
 
 
@@ -92,7 +130,7 @@ export default function Home() {
                             placeholder='Valor creditado'
                         />
 
-                    <View style={styles.ViewFlex}>
+                    {/* <View style={styles.ViewFlex}>
                         <View style={styles.ViewInput}>
                         <Text style={styles.TextInput}>Data de inicio Prevista</Text>
                         <TextInput  value={dataInicio} onChangeText={setDataInicio} style={styles.input}/>
@@ -101,14 +139,34 @@ export default function Home() {
                         <Text style={styles.TextInput}>Data final Prevista</Text>
                         <TextInput  value={dataFinal} onChangeText={setDataFinal} style={styles.input} />
                         </View>
-                    </View>
-                    <Text style={styles.TextInput}>Pais</Text>
-                        <TextInput
-                            value={valor}
-                            onChangeText={setValor}
-                            style={styles.input}
-                            placeholder='Pais'
-                        />
+                    </View> */}
+                        {/* Data de Início */}
+                        <Text>Data de Início Prevista</Text>
+                        <TouchableOpacity onPress={() => setShowInicioPicker(true)} style={styles.dateInput}>
+                            <Text>{dataInicio || 'Selecionar data'}</Text>
+                        </TouchableOpacity>
+                        {showInicioPicker && (
+                            <DateTimePicker
+                                value={new Date()}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+                                onChange={handleInicioChange}
+                            />
+                        )}
+
+                        {/* Data Final */}
+                        <Text>Data Final Prevista</Text>
+                        <TouchableOpacity onPress={() => setShowFinalPicker(true)} style={styles.dateInput}>
+                            <Text>{dataFinal || 'Selecionar data'}</Text>
+                        </TouchableOpacity>
+                        {showFinalPicker && (
+                            <DateTimePicker
+                                value={new Date()}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+                                onChange={handleFinalChange}
+                            />
+                        )}
 
                     <Text style={styles.TextInput}>Estado / Provincia</Text>
                         <TextInput
@@ -206,7 +264,7 @@ const styles = StyleSheet.create({
         bottom: 70,  // Ajusta para começar acima do footer fixo
         width: '100%',
         height: '100%',
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
@@ -282,5 +340,21 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginTop:50,
     }, 
+    dateInput:{
+        borderWidth: 1,
+        borderColor: '#ccc',
+        width: "100%",
+        backgroundColor: '#f0f0f0',
+        height: 45,
+        color: "#000",
+        marginBottom: 10,
+        padding: 10,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'left',
+    }
 
 });

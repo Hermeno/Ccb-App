@@ -2,13 +2,53 @@ import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { cadastrarCredito } from '../services/credito';
+import { useJwt } from './jwt';
 
 export default function Home () 
 {
     const router = useRouter();
+    const  user = useJwt(); 
     const [moeda, setMoeda] = useState('');
     const [valor, setValor] = useState('');
     const [referencia, setReferencia] = useState('');
+
+
+  
+    const cadastrar = async () => {
+        const token = await AsyncStorage.getItem('userToken'); 
+        if (!moeda || !valor || !referencia) {
+            Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
+            return;
+        }
+        if (!user) {
+            Alert.alert('Erro', 'Usuário não identificado.');
+            return;
+        }
+    
+        try {            
+            if (!token) {
+                Alert.alert('Erro', 'Token não encontrado. Faça login novamente.'+ token);
+                return;
+            }
+            const response = await cadastrarCredito({
+                user_id: user.id,
+                moeda,
+                valor,
+                referencia,
+            }, token);
+            Alert.alert('Sucesso!', 'Cadastrada com sucesso!');
+
+            setMoeda('');
+            setValor('');
+            setReferencia('');
+        } catch (error) {
+            Alert.alert('Erro!', 'Ocorreu um erro ao cadastrar seu crédito. Tente novamente.');
+        }
+    };
+    
+    
 
     return(
         <View style={styles.container}>
@@ -42,12 +82,10 @@ export default function Home ()
                 style={styles.picker}
             >
                 <Picker.Item label="Selecione uma referencia..." value="" />
-                <Picker.Item label="Dólar" value="dolar" />
-                <Picker.Item label="Real" value="real" />
-                <Picker.Item label="Metical" value="metical" />
-                <Picker.Item label="Euro" value="euro" />
-                <Picker.Item label="Libra" value="libra" />
-                <Picker.Item label="Iene" value="iene" />
+                <Picker.Item label="Para alimentacao" value="Para alimentacao" />
+                <Picker.Item label="Pra Gazolina" value="Pra Gazolina" />
+                <Picker.Item label="Pra hospedaria" value="Pra hospedaria" />
+                <Picker.Item label="Pra viajem" value="Pra viajem" />
             </Picker>
             <Text style={styles.result}>Referencia selecionada: {referencia}</Text>
 
@@ -55,7 +93,7 @@ export default function Home ()
 
 
 
-                <TouchableOpacity style={styles.BotaoLogin}>
+                <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
                     <Text style={styles.TextBotao}>ADICIONAR</Text>
                 </TouchableOpacity>
 
