@@ -12,22 +12,13 @@ export default function Home() {
     const [visible, setVisible] = useState(false);
     const router = useRouter();
     const [showInicioPicker, setShowInicioPicker] = useState(false);
-    const [showFinalPicker, setShowFinalPicker] = useState(false);
 
-
-    const formatarData = (data: Date) => {
+    const formatarData = (data: any) => {
         const dia = data.getDate().toString().padStart(2, '0');
         const mes = (data.getMonth() + 1).toString().padStart(2, '0');
         const ano = data.getFullYear();
         return `${dia}/${mes}/${ano}`;
     };
-    
-    // const formatarData = (data) => {
-    //     const dia = data.getDate().toString().padStart(2, '0');
-    //     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
-    //     const ano = data.getFullYear();
-    //     return `${dia}/${mes}/${ano}`;
-    // };
 
     const handleInicioChange = (event: any, selectedDate?: Date) => {
         setShowInicioPicker(false);
@@ -35,16 +26,6 @@ export default function Home() {
             setDataInicio(formatarData(selectedDate));
         }
     };
-    
-
-    const handleFinalChange = (event: any, selectedDate?: Date) => {
-        setShowFinalPicker(false);
-        if (selectedDate) {
-            setDataFinal(formatarData(selectedDate));
-        }
-    };
-
-
 
 
 
@@ -130,41 +111,22 @@ export default function Home() {
                             placeholder='Valor creditado'
                         />
 
-                    {/* <View style={styles.ViewFlex}>
-                        <View style={styles.ViewInput}>
-                        <Text style={styles.TextInput}>Data de inicio Prevista</Text>
-                        <TextInput  value={dataInicio} onChangeText={setDataInicio} style={styles.input}/>
-                        </View>
-                        <View style={styles.ViewInput}>
-                        <Text style={styles.TextInput}>Data final Prevista</Text>
-                        <TextInput  value={dataFinal} onChangeText={setDataFinal} style={styles.input} />
-                        </View>
-                    </View> */}
-                        {/* Data de Início */}
-                        <Text>Data de Início Prevista</Text>
-                        <TouchableOpacity onPress={() => setShowInicioPicker(true)} style={styles.dateInput}>
-                            <Text>{dataInicio || 'Selecionar data'}</Text>
+                        <Text>Data de Início Prevista:</Text>
+                        <TouchableOpacity onPress={() => setShowInicioPicker(true)}>
+                            <TextInput
+                                value={dataInicio}
+                                placeholder="Selecione a data"
+                                editable={false}
+                                style={{ borderWidth: 1, padding: 8, marginBottom: 10 }}
+                            />
                         </TouchableOpacity>
+
                         {showInicioPicker && (
                             <DateTimePicker
                                 value={new Date()}
                                 mode="date"
                                 display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
                                 onChange={handleInicioChange}
-                            />
-                        )}
-
-                        {/* Data Final */}
-                        <Text>Data Final Prevista</Text>
-                        <TouchableOpacity onPress={() => setShowFinalPicker(true)} style={styles.dateInput}>
-                            <Text>{dataFinal || 'Selecionar data'}</Text>
-                        </TouchableOpacity>
-                        {showFinalPicker && (
-                            <DateTimePicker
-                                value={new Date()}
-                                mode="date"
-                                display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
-                                onChange={handleFinalChange}
                             />
                         )}
 

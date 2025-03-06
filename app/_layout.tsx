@@ -15,15 +15,7 @@ export default function RootLayout()
                     headerShown: false,
                 }}
             />
-            <Stack.Screen
-                name="Login"
-                options={{
-                    headerTitle: "Login",
-                    headerTitleStyle: { fontWeight: 'bold' },
-                    headerStyle: { backgroundColor: '#f4511e' },
-                    headerTintColor: '#fff',
-                }}
-            />
+
             <Stack.Screen
                 name="signUp"
                 options={{
@@ -51,13 +43,6 @@ export default function RootLayout()
                     headerTintColor: '#fff',
                 }}
             />
-
-            {/* <Stack.Screen
-                name="rest_login"
-                options={{
-                    headerShown: false,
-                }}
-            /> */}
             <Stack.Screen
                 name="outras_moedas"
                 options={{
@@ -76,6 +61,7 @@ export default function RootLayout()
                     headerTintColor: '#121212',
                 }}
             />
+
             <Stack.Screen
                 name="cambio"
                 options={{
@@ -85,7 +71,15 @@ export default function RootLayout()
                     headerTintColor: '#121212',
                 }}
             />            
-
+            <Stack.Screen
+                name="missao"
+                options={{
+                    headerTitle: "Missao",
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerStyle: { backgroundColor: '#fff' },
+                    headerTintColor: '#121212',
+                }}
+            />
         </Stack>
     );
 }               
