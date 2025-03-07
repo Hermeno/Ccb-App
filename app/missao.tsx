@@ -1,37 +1,88 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform } from 'react-native';
+import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform, Button } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useJwt } from './jwt';
+import  {cadastrarMissao} from '../services/missao'
 
 const { height } = Dimensions.get('window');
 
 export default function Home() {
-    const [valor, setValor] = useState('');
-    const [dataInicio, setDataInicio] = useState('');
-    const [dataFinal, setDataFinal] = useState('');
+    const [missao, setMissao] = useState(''); 
+    const [estado, setEstado] = useState('');
+    const [cidade, setCidade] = useState('');
     const [visible, setVisible] = useState(false);
+    const  user = useJwt();  
     const router = useRouter();
-    const [showInicioPicker, setShowInicioPicker] = useState(false);
+    const [data_inicio_prevista, setData_inicio_prevista] = useState(new Date());
+    const [data_final_prevista, setData_final_prevista] = useState(new Date());
+    const [showInicio, setShowInicio] = useState(false);
+    const [showFinal, setShowFinal] = useState(false);
 
-    const formatarData = (data: any) => {
-        const dia = data.getDate().toString().padStart(2, '0');
-        const mes = (data.getMonth() + 1).toString().padStart(2, '0');
-        const ano = data.getFullYear();
-        return `${dia}/${mes}/${ano}`;
+    const showdata_inicio_prevista = () => setShowInicio(true);
+    const showdata_final_prevista = () => setShowFinal(true);
+
+    const onChangedata_inicio_prevista = (event: any, selectedDate?:Date) => {
+        const currentDate = selectedDate || data_inicio_prevista;
+        setShowInicio(Platform.OS === 'ios' ? true : false);
+        setData_inicio_prevista(currentDate);
     };
 
-    const handleInicioChange = (event: any, selectedDate?: Date) => {
-        setShowInicioPicker(false);
-        if (selectedDate) {
-            setDataInicio(formatarData(selectedDate));
+    const onChangedata_final_prevista = (event: any, selectedDate?:Date) => {
+        const currentDate = selectedDate || data_final_prevista;
+        setShowFinal(Platform.OS === 'ios' ? true : false);
+        setData_final_prevista(currentDate);
+    };
+
+
+    const cadastrar = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!missao ||!estado ||!cidade) {
+            Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
+            return;
         }
-    };
+        // console.log(missao, estado, cidade, data_inicio_prevista, data_final_prevista, user?.id)
+        try{
+            if (!user) {
+                Alert.alert('Erro', 'Usuário não identificado.');
+                return;
+            }            
+            const response = await cadastrarMissao ({
+                user_id: user.id,
+                missao,
+                estado,
+                cidade,
+                data_inicio_prevista,
+                data_final_prevista,
+                username: user.name
+            }, token)
+            Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
+            setCidade('');
+            setEstado('');
+            setMissao('');
+        } catch (error) {
+            console.error('Erro ao cadastrar missão', error);
+            Alert.alert('Erro', 'Erro ao cadastrar missão');
+        }
+    }
+
+
+
+
+
 
 
 
     const back = () => {
         router.back();
     }
+
+
+
+
+
+
     
     const slideAnim = useRef(new Animated.Value(height)).current;  // Inicia fora da tela
 
@@ -103,44 +154,50 @@ export default function Home() {
                 <Animated.View style={[styles.slideUpView, { transform: [{ translateY: slideAnim }] }]}>
                     <View style={styles.CardLogin}>
 
-                        <Text style={styles.TextInput}>Valor creditado</Text>
+                        <Text style={styles.TextInput}>Misao</Text>
                         <TextInput
-                            value={valor}
-                            onChangeText={setValor}
+                            value={missao}
+                            onChangeText={setMissao}
                             style={styles.input}
-                            placeholder='Valor creditado'
+                            placeholder='Missao creditado'
                         />
 
-                        <Text>Data de Início Prevista:</Text>
-                        <TouchableOpacity onPress={() => setShowInicioPicker(true)}>
-                            <TextInput
-                                value={dataInicio}
-                                placeholder="Selecione a data"
-                                editable={false}
-                                style={{ borderWidth: 1, padding: 8, marginBottom: 10 }}
-                            />
-                        </TouchableOpacity>
-
-                        {showInicioPicker && (
+                        <Text style={styles.TextInput}>Selecione a data de início</Text>
+                        <Button  onPress={showdata_inicio_prevista} title="Escolher data de início" />
+                        <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
+                        {showInicio && (
                             <DateTimePicker
-                                value={new Date()}
+                                value={data_inicio_prevista}
                                 mode="date"
-                                display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
-                                onChange={handleInicioChange}
+                                display="default"
+                                onChange={onChangedata_inicio_prevista}
+                                
                             />
                         )}
 
-                    <Text style={styles.TextInput}>Estado / Provincia</Text>
+                        <Text style={styles.TextInput}>Selecione a data final</Text>
+                        <Button  onPress={showdata_final_prevista} title="Escolher data final" />
+                        <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
+                        {showFinal && (
+                            <DateTimePicker
+                                value={data_final_prevista}
+                                mode="date"
+                                display="default"
+                                onChange={onChangedata_final_prevista}
+                            />
+                        )}
+
+                    <Text style={styles.TextInput}>Estado / estado</Text>
                         <TextInput
-                            value={valor}
-                            onChangeText={setValor}
+                            value={estado}
+                            onChangeText={setEstado}
                             style={styles.input}
-                            placeholder='Estado / Provincia'
+                            placeholder='Estado / estado'
                         />
                     <Text style={styles.TextInput}>Cidade</Text>
                         <TextInput
-                            value={valor}
-                            onChangeText={setValor}
+                            value={cidade}
+                            onChangeText={setCidade}
                             style={styles.input}
                             placeholder='Cidade'
                         />
@@ -152,7 +209,7 @@ export default function Home() {
 
 
 
-                        <TouchableOpacity style={styles.BotaoLogin}>
+                        <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
                             <Text style={styles.TextBotao}>ADICIONAR</Text>
                         </TouchableOpacity>
                     </View>
@@ -302,21 +359,15 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginTop:50,
     }, 
-    dateInput:{
-        borderWidth: 1,
-        borderColor: '#ccc',
-        width: "100%",
-        backgroundColor: '#f0f0f0',
-        height: 45,
-        color: "#000",
-        marginBottom: 10,
-        padding: 10,
-        borderRadius: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
+
+    textoEscolhido:{
         fontSize: 16,
         fontWeight: 'bold',
-        textAlign: 'left',
+        color: '#4ac578',
+        marginTop: 10,
+        // borderWidth: 5,
+        borderBottomWidth: 1,
+        borderColor: '#ccc',
     }
 
 });
