@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform, Button } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useJwt } from './jwt';
-import  {cadastrarMissao} from '../services/missao'
+import  {cadastrarMissao, buscarMissoes} from '../services/missao'
 
 const { height } = Dimensions.get('window');
 
@@ -19,9 +19,26 @@ export default function Home() {
     const [data_final_prevista, setData_final_prevista] = useState(new Date());
     const [showInicio, setShowInicio] = useState(false);
     const [showFinal, setShowFinal] = useState(false);
-
     const showdata_inicio_prevista = () => setShowInicio(true);
     const showdata_final_prevista = () => setShowFinal(true);
+    const [missoes, setMissoes] = useState([]);
+    useEffect(() => {
+
+        const carregarMissoes = async () => {
+            const token = await AsyncStorage.getItem('userToken');
+            try {
+                const data = await buscarMissoes(token);
+                setMissoes(data);
+            } catch (error) {
+                console.error('Erro ao buscar missões:', error);
+            }
+        };
+
+        carregarMissoes();
+    }, []);
+
+
+
 
     const onChangedata_inicio_prevista = (event: any, selectedDate?:Date) => {
         const currentDate = selectedDate || data_inicio_prevista;
@@ -42,7 +59,6 @@ export default function Home() {
             Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
             return;
         }
-        // console.log(missao, estado, cidade, data_inicio_prevista, data_final_prevista, user?.id)
         try{
             if (!user) {
                 Alert.alert('Erro', 'Usuário não identificado.');
@@ -67,23 +83,10 @@ export default function Home() {
         }
     }
 
-
-
-
-
-
-
-
     const back = () => {
         router.back();
     }
-
-
-
-
-
-
-    
+ 
     const slideAnim = useRef(new Animated.Value(height)).current;  // Inicia fora da tela
 
     const toggleView = () => {
@@ -94,9 +97,9 @@ export default function Home() {
                 useNativeDriver: true,
             }).start(() => setVisible(false));
         } else {
-            setVisible(true);  // Define que está visível
+            setVisible(true);  
             Animated.timing(slideAnim, {
-                toValue: height / 4,  // Ajuste o valor conforme o tamanho que deseja
+                toValue: height / 4,  
                 duration: 300,
                 useNativeDriver: true,
             }).start();
@@ -105,51 +108,25 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-
-{/* 
-            <View>
-                <TouchableOpacity style={styles.button} onPress={back}>
-                    <Text style={styles.buttonText}>VOLTAR</Text>
-                </TouchableOpacity>
-            </View> */}
-
-
-
-                    <View style={styles.content}>
-                        <TouchableOpacity style={styles.cardInfo}>
-                            <Text style={styles.Textshow}>SALDO EM REAIS</Text>
-                            <Text style={styles.text_saldo}>R$: 981,00</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.cardInfo}>
-                            <Text style={styles.Textshow}>SALDO EM DOLAR</Text>
-                            <Text style={styles.text_saldo}>U$: 125,00</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.cardInfo}>
-                            <Text style={styles.Textshow}>SALDO EM EURO</Text>
-                            <Text style={styles.text_saldo}>E$: 3312,00</Text>
-                        </TouchableOpacity>                
-                        <TouchableOpacity style={styles.cardInfo}>
-                            <Text style={styles.Textshow}>SALDO EM METICAIS</Text>
-                            <Text style={styles.text_saldo}>MZN$: 1300,00</Text>
-                        </TouchableOpacity>                
-                        <TouchableOpacity style={styles.cardInfo}>
-                            <Text style={styles.Textshow}>SALDO EM LIBRAS</Text>
-                            <Text style={styles.text_saldo}>EL$: 97,99</Text>
-                        </TouchableOpacity>                 
+        <ScrollView>
+            {missoes.length > 0 ? (
+                missoes.map((missao) => (
+                    <View key={missao.id} style={styles.card}>
+                        <Text style={styles.title}>Missão: {missao.missao}</Text>
+                        <Text>Estado: {missao.estado}</Text>
+                        <Text>Cidade: {missao.cidade}</Text>
+                        <Text>Início: {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
+                        <Text>Final: {new Date(missao.data_final_prevista).toLocaleDateString()}</Text>
+                        <Text>Criado por: {missao.username}</Text>
                     </View>
-                {/* </View>   */}
-                </ScrollView>  
-
-
-
-
-
+                ))
+            ) : (
+                <Text style={styles.emptyText}>Nenhuma missão encontrada</Text>
+            )}
+        </ScrollView> 
             <TouchableOpacity style={styles.footer} onPress={toggleView}>
                 <Text style={styles.buttonText}>{visible ? 'FECHAR' : '+ ADICIONAR MISSÃO'}</Text>
             </TouchableOpacity>
-
-            {/* Animated View que sobe */}
             {visible && (
                 <Animated.View style={[styles.slideUpView, { transform: [{ translateY: slideAnim }] }]}>
                     <View style={styles.CardLogin}>
@@ -201,14 +178,6 @@ export default function Home() {
                             style={styles.input}
                             placeholder='Cidade'
                         />
-
-
-
-
-
-
-
-
                         <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
                             <Text style={styles.TextBotao}>ADICIONAR</Text>
                         </TouchableOpacity>
@@ -368,6 +337,28 @@ const styles = StyleSheet.create({
         // borderWidth: 5,
         borderBottomWidth: 1,
         borderColor: '#ccc',
-    }
+    },
+    card: {
+        backgroundColor: '#ffffff',
+        padding: 16,
+        marginBottom: 12,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    title: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    emptyText: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#777',
+        marginTop: 20,
+    },
 
 });

@@ -1,10 +1,16 @@
 import api from './api'
 
-
+// export type Missao = {
+//     id: number;
+//     missao: string;
+//     estado: string;
+//     cidade: string;
+//     data_inicio_prevista: string;
+//     data_final_prevista: string;
+//     username: string;
+// };
 export const cadastrarMissao =  async ({  user_id, missao, estado, cidade, data_inicio_prevista, data_final_prevista, username}, token) =>
 {
-
-    // console.log(missao, estado, cidade, data_inicio_prevista, data_final_prevista, user_id,  token)
         try {
         const response = await api.post('/cadastrar-missao', {
             user_id, missao, estado, cidade, data_inicio_prevista, data_final_prevista, username
@@ -16,7 +22,21 @@ export const cadastrarMissao =  async ({  user_id, missao, estado, cidade, data_
      })
         return response
     } catch (error) {
-        console.error(error,'Missao falhou')
         throw error;
     }
 }
+
+
+
+export const buscarMissoes = async (token) => {
+    try {
+        const response = await api.get('/buscar-missao', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data.missaos; // Retorna apenas o array de missões
+    } catch (error) {
+        throw error;
+    }
+};

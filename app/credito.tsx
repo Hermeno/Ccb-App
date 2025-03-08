@@ -21,12 +21,11 @@ export default function Home ()
         if (!moeda || !valor || !referencia) {
             Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
             return;
-        }
+        } 
         if (!user) {
             Alert.alert('Erro', 'Usuário não identificado.');
             return;
         }
-    
         try {            
             if (!token) {
                 Alert.alert('Erro', 'Token não encontrado. Faça login novamente.'+ token);
@@ -39,7 +38,6 @@ export default function Home ()
                 referencia,
             }, token);
             Alert.alert('Sucesso!', 'Cadastrada com sucesso!');
-
             setMoeda('');
             setValor('');
             setReferencia('');
