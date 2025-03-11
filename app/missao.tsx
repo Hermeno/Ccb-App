@@ -11,6 +11,7 @@ const { height } = Dimensions.get('window');
 export default function Home() {
     const [missao, setMissao] = useState(''); 
     const [estado, setEstado] = useState('');
+    const [pais, setPais] = useState('');
     const [cidade, setCidade] = useState('');
     const [visible, setVisible] = useState(false);
     const  user = useJwt();  
@@ -23,20 +24,21 @@ export default function Home() {
     const showdata_final_prevista = () => setShowFinal(true);
     const [missoes, setMissoes] = useState([]);
     useEffect(() => {
-
         const carregarMissoes = async () => {
+          try {
             const token = await AsyncStorage.getItem('userToken');
-            try {
-                const data = await buscarMissoes(token);
-                setMissoes(data);
-            } catch (error) {
-                console.error('Erro ao buscar missões:', error);
-            }
+            const data = await buscarMissoes(token);
+      
+            console.log('Missões recebidas:', data); // Mostra o valor de data no console
+            
+            setMissoes(data || []); // Garante que missoes será um array vazio caso data seja undefined
+          } catch (error) {
+            console.error('Erro ao buscar missões:', error);
+          }
         };
-
+      
         carregarMissoes();
-    }, []);
-
+      }, []);
 
 
 
@@ -71,6 +73,7 @@ export default function Home() {
                 cidade,
                 data_inicio_prevista,
                 data_final_prevista,
+                pais,
                 username: user.name
             }, token)
             Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
@@ -85,6 +88,9 @@ export default function Home() {
 
     const back = () => {
         router.back();
+    }
+    const DESPESAS = () => {
+        router.push('./despesas');
     }
  
     const slideAnim = useRef(new Animated.Value(height)).current;  // Inicia fora da tela
@@ -109,20 +115,23 @@ export default function Home() {
     return (
         <View style={styles.container}>
         <ScrollView>
-            {missoes.length > 0 ? (
-                missoes.map((missao) => (
-                    <View key={missao.id} style={styles.card}>
-                        <Text style={styles.title}>Missão: {missao.missao}</Text>
-                        <Text>Estado: {missao.estado}</Text>
-                        <Text>Cidade: {missao.cidade}</Text>
+        {(missoes || []).length > 0 ? (
+            missoes.map((missao) => (
+                <View key={missao.id} style={styles.card}>
+                    <View style={styles.cardInfoFirstLeft}>
+                        <Text style={styles.title}>{missao.missao}</Text>
                         <Text>Início: {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
-                        <Text>Final: {new Date(missao.data_final_prevista).toLocaleDateString()}</Text>
-                        <Text>Criado por: {missao.username}</Text>
+                        <Text>País: {missao.pais}</Text>
                     </View>
-                ))
-            ) : (
-                <Text style={styles.emptyText}>Nenhuma missão encontrada</Text>
-            )}
+                    <View style={styles.cardInfoFirstRight}>
+                        <TouchableOpacity style={styles.butonsMissaosVisualizar}><Text>ver e editar</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={DESPESAS}><Text>Cadastrar despesas</Text></TouchableOpacity>
+                    </View>
+                </View>
+            ))
+        ) : (
+            <Text style={styles.emptyText}>Nenhuma missão encontrada</Text>
+        )}
         </ScrollView> 
             <TouchableOpacity style={styles.footer} onPress={toggleView}>
                 <Text style={styles.buttonText}>{visible ? 'FECHAR' : '+ ADICIONAR MISSÃO'}</Text>
@@ -163,7 +172,13 @@ export default function Home() {
                                 onChange={onChangedata_final_prevista}
                             />
                         )}
-
+                    <Text style={styles.TextInput}>Pais</Text>
+                        <TextInput
+                            value={pais}
+                            onChangeText={setPais}
+                            style={styles.input}
+                            placeholder='Estado / estado'
+                        />
                     <Text style={styles.TextInput}>Estado / estado</Text>
                         <TextInput
                             value={estado}
@@ -249,21 +264,23 @@ const styles = StyleSheet.create({
     },
     slideUpView: {
         position: 'absolute',
-        bottom: 70,  // Ajusta para começar acima do footer fixo
+        bottom: 160,  // Ajusta para começar acima do footer fixo
         width: '100%',
         height: '100%',
         backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
-        // borderWidth: 1,
-        borderTopColor: '',
+        borderWidth: 1,
+        borderTopColor: '#fafafa',
 
     },
     CardLogin: {
         marginTop: 10,
         padding: 16,
         borderRadius: 10,
+        // borderWidth:1,
+        // borderColor:'#ccc'
     },
     TextBotao: {
         fontSize: 16,
@@ -339,16 +356,17 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
     card: {
-        backgroundColor: '#ffffff',
-        padding: 16,
-        marginBottom: 12,
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        marginBottom: 10,
+        backgroundColor: '#fafafa',
+        borderRadius: 10,
+        // padding: 16,
+        flexDirection: 'row',
+        justifyContent:'space-between',
+        margin:10,
+        // borderWidth: 1,
+        borderColor: '#ccc',
     },
+
     title: {
         fontSize: 16,
         fontWeight: 'bold',
@@ -360,5 +378,50 @@ const styles = StyleSheet.create({
         color: '#777',
         marginTop: 20,
     },
+    cardInfoFirstLeft:{
+        width: '60%',
+        // height: 80,
+        backgroundColor: '#a2564a',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 5,
+        elevation: 2,
+        justifyContent: 'center',
+        // alignItems: 'left',
+        paddingLeft: 20,
+    },
+    cardInfoFirstRight:{
+        width: '40%',
+        // height: 80,
+        backgroundColor: 'transparent',
+        // borderRadius: 0,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 2, height: 4 },
+        // shadowOpacity: 0.12,
+        // shadowRadius: 5,
+        // elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    butonsMissaosVisualizar:{
+        // width: '45%',
+        // height: 80,
+        padding:10,
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 5,
+        elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 3,
+        borderWidth:1,
+        borderColor: '#ccc',
+    }
+
 
 });

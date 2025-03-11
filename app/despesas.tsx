@@ -1,11 +1,276 @@
-import React from 'react';
-import  { View, Text, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Link, useRouter  } from 'expo-router';
+import { cadastrarCambio } from '../services/cambio';
+import { useJwt } from './jwt'
+
+export default function Home () 
+{
+    const router = useRouter();
+    const user = useJwt();
+    const [cotacao, setCotacao] = useState('');
+    const [moeda_origem, setMoeda_origem] = useState('');
+    const [moeda_destino, setMoeda_destino] = useState('');
+    const [total_a_cambiar, setTotal_a_cambiar] = useState('');
+    const [total_cambiado, setTotal_cambiado] = useState('');
+    const [numero_recibo, setNumero_recibo] = useState('');
+    const [foto_recibo, setFoto_recibo] = useState('');
+
+    const handleCambio = async () =>{
+        if (!user) {
+            Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
+            return;
+        }
+        if (!moeda_origem ||!moeda_destino ||!cotacao ||!total_a_cambiar ||!numero_recibo ||!foto_recibo) {
+            Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
+            return;
+        }
+        try{
+            const response = await cadastrarCambio ({
+                moeda_origem,
+                moeda_destino,
+                cotacao,
+                total_a_cambiar,
+                total_cambiado,
+                numero_recibo,
+                foto_recibo,
+                user_id: user.id,
+                username: user.username,
+            })
+            if(response.status === 200) {
+                Alert.alert('Cambio realizado com sucesso!');
+            }
+        }catch(error) {
+            console.log(error, 'erro ao cadastrar cambio');
+        }
+    }
 
 
-export default function Despesas(){
+
+
+
+
+
+    const [referencia, setReferencia] = useState('');
+
     return(
-      <View>
-        <Text></Text>
-      </View>   
-    )
+        <View style={styles.container}>
+            {user ? (
+                <Text style={styles.TextHeaderLogin}>Ola, {user.name} faca cadastro de despesas!</Text>
+            ) : (
+                <Text style={styles.TextHeaderLogin}>Esta carregando...</Text>
+            )}
+            
+            <View style={styles.CardLogin}>                
+            <View style={styles.ViewFlex}>
+                <View style={styles.ViewInput}>
+                <Text style={styles.TextInputs}>Moeda de Origem</Text>
+                <TextInput  value={moeda_origem} onChangeText={setMoeda_origem} style={styles.input} placeholder='Moeda de Origem' />
+                </View>
+                <View style={styles.ViewInput}>
+                <Text style={styles.TextInputs}>Moeda de Destino</Text>
+                <TextInput  value={moeda_destino} onChangeText={setMoeda_destino} style={styles.input} placeholder='Moeda de Destino' />
+                </View>
+            </View>
+
+            <View style={styles.ViewFlex}>
+                <View style={styles.ViewInput}>
+                <Text style={styles.TextInputs}>Cotacao</Text>
+                <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotacao' />
+                </View>
+                <View style={styles.ViewInput}>
+                <Text style={styles.TextInputs}>Total a Cambiar</Text>
+                <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar' />
+                </View>
+            </View>
+            <View style={styles.ViewFlex}>
+                <View style={styles.ViewInput}>
+                <Text style={styles.TextInputs}>Total Cambiado</Text>
+                <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado' />
+                </View>
+                <View style={styles.ViewInput}>
+                <Text style={styles.TextInputs}>N do Recibo</Text>
+                <TextInput  value={numero_recibo} onChangeText={setNumero_recibo} style={styles.input} placeholder='N do Recibo' />
+                </View>
+            </View>
+
+
+                <TouchableOpacity style={styles.botaoAdicionaImageRecibo}>
+                    <Text style={styles.TextAnexarImagem}>Anexar recibo</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.BotaoLogin} onPress={handleCambio}>
+                    <Text style={styles.TextBotao}>ADICIONAR VALOR CAMBIADO</Text>
+                </TouchableOpacity>
+
+                <View style={styles.containerLines}>
+                    <View style={styles.line} />
+                    <Text style={styles.text}>Or</Text>
+                    <View style={styles.line} />
+                </View>
+
+                <View style={styles.TextRecuperarSenha}>
+                    <Text style={{color:"#24h91d", fontWeight:'bold'}}>Visualizar cambios cadastradas!  
+                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Ver agora</Link></Text>
+                    </Text>
+                </View>
+            </View>
+        </View>
+    );
 }
+
+
+const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        backgroundColor: "#fff",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    TextHeaderLogin:{
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#487d76",
+        marginBottom: 30,
+        height: 50,
+        paddingTop: 30,
+    },
+    CardLogin:{
+        width: '100%',
+        // height: 400,
+        flex:1,
+        backgroundColor: "#ffffff",
+        // borderRadius: 30,
+        padding: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        // borderTopEndRadius: 40,
+        // borderTopStartRadius: 40,
+    },
+    input:{
+        marginBottom: 10,
+        paddingLeft: 20,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        // width: "100%",
+        color:"#121212",
+        backgroundColor: '#f0f0f0',
+        height:45,
+    },
+    TextInputs:{
+        marginBottom: 10,
+        borderColor: "#121212",
+        width: "100%",
+        fontSize: 16,
+                color:"#121212",
+                fontWeight: "bold",
+            textAlign: "left",
+            marginTop: 10,
+    },
+
+    TextAnexarImagem:{
+        marginBottom: 10,
+        borderColor: "#121212",
+        fontSize: 16,
+                color:"#121212",
+                fontWeight: "bold",
+            marginTop: 10,
+    },
+
+    BotaoLogin:{
+        width: "100%",
+        height: 50,
+        backgroundColor: "#00835f",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 0,
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    TextNaoPossuiConta:{
+        marginTop: 20,
+        color: "#ffffff",
+        fontSize: 18,
+        fontWeight: "500",
+
+    },
+    TextRecuperarSenha:{
+        color: "#ffffff",
+        fontSize: 16,
+        fontWeight: "500",
+        borderWidth: 1,
+        borderColor: "#ccc",
+        padding: 5,
+        width: "100%",
+        height: "15%",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 0,
+        marginBottom: 20,
+    },
+    LinkRecuperarSenha:{
+        justifyContent: "center",
+        alignItems: "center", 
+        color: "#ffffff"      
+    },
+    TextBotao:{
+        color: "#ffffff",
+        fontSize: 17,
+        fontWeight: "bold",
+    },
+    containerLines: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 20,
+    },
+    line: {
+        height: 1,
+        backgroundColor: '#00835f',  // Cor da linha
+        flex: 1,  // Isso faz a linha ocupar o espaço restante
+    },
+    text: {
+        marginHorizontal: 10,  // Espaçamento entre o texto e as linhas
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#000',  // Cor do texto
+    },
+    label: {
+        fontSize: 16,
+        marginBottom: 8,
+    },
+    picker: {
+        height: 50,
+        width: '100%',
+        backgroundColor: '#f0f0f0',
+    },
+    result: {
+        marginTop: 20,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },  
+    ViewFlex:{
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        // marginBottom: 20,
+        width: '100%',
+        columnGap: '10',
+    },
+    ViewInput:{
+        width: '48%',
+        marginBottom: 10,
+    },
+    botaoAdicionaImageRecibo:{
+        width: '100%',
+        height: 40,
+        backgroundColor: "#f0f0f0",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 3,
+        marginTop: 10,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: "#ccc",
+    } 
+})

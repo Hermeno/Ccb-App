@@ -24,7 +24,7 @@ export default function App ()
             <ScrollView showsVerticalScrollIndicator={false}>
                     {user ? (
                         <View style={styles.header}>
-                            <Text style={styles.Textshow}>Seja bem vindo, {user.name} -- {user.id}</Text>
+                            <Text style={styles.Textshow}>Ola, {user.name}</Text>
                         </View>
                     ) : (
                         <Text>Faca Login...</Text>

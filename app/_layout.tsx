@@ -74,7 +74,16 @@ export default function RootLayout()
             <Stack.Screen
                 name="missao"
                 options={{
-                    headerTitle: "Missao",
+                    headerTitle: "Missoes",
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerStyle: { backgroundColor: '#fff' },
+                    headerTintColor: '#121212',
+                }}
+            />
+                        <Stack.Screen
+                name="despesas"
+                options={{
+                    headerTitle: "Despesas",
                     headerTitleStyle: { fontWeight: 'bold' },
                     headerStyle: { backgroundColor: '#fff' },
                     headerTintColor: '#121212',
