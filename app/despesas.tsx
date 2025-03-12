@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert, Platform, Button, Modal, FlatList  } from 'react-native';
 import { Link, useRouter, useLocalSearchParams   } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
-import { cadastrarCambio } from '../services/cambio';
+import { cadastrarDespesa } from '../services/despesas';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useJwt } from './jwt'
 
@@ -11,15 +12,13 @@ export default function Home ()
     const router = useRouter();
     const user = useJwt();
     const { id, username } = useLocalSearchParams();
-    const [cotacao, setCotacao] = useState('');
-    const [moeda_origem, setMoeda_origem] = useState('');
+    const [valor, setValor] = useState('');
     const [cidade, setCidade] = useState('');
-    const [data_inicio_prevista, setData_inicio_prevista] = useState(new Date());
+    const [outro, setOutro] = useState('');
+    const [showOutro, setShowOutro] = useState(false);
+    const [data_padrao, setData_padrao] = useState(new Date());
     const [showInicio, setShowInicio] = useState(false);
-    const showdata_inicio_prevista = () => setShowInicio(true);
-    const [moeda_destino, setMoeda_destino] = useState('');
-    const [total_a_cambiar, setTotal_a_cambiar] = useState('');
-    const [total_cambiado, setTotal_cambiado] = useState('');
+    const showdata_padrao = () => setShowInicio(true);
     const [numero_recibo, setNumero_recibo] = useState('');
     const [foto_recibo, setFoto_recibo] = useState('');
     const [moeda, setMoeda] = useState('');
@@ -29,7 +28,13 @@ export default function Home ()
         { id: '1', label: 'Taxi' },
         { id: '2', label: 'Almoço' },
         { id: '3', label: 'Hospedagem' },
-        { id: '4', label: 'Atendimento da Piedade' },
+        { id: '4', label: 'Atendimento' },
+        { id: '5', label: 'Bilhete Aerea' },
+        { id: '6', label: 'Cafe de Manha' },
+        { id: '7', label: 'Janta' },
+        { id: '8', label: 'Lanche' },
+        { id: '9', label: 'Medicamentos' },
+        { id: '10', label: 'Taxi / Uber' },
     ];
     const handleSelectItem = (item: string) => {
         if (descricao.includes(item)) {
@@ -43,39 +48,55 @@ export default function Home ()
 
 
 
-    const handleCambio = async () =>{
+    const handleDespesa = async () => {
+        const token = await AsyncStorage.getItem('userToken');
         if (!user) {
             Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
             return;
         }
-        if (!moeda_origem ||!moeda_destino ||!cotacao ||!total_a_cambiar ||!numero_recibo ||!foto_recibo) {
+        if (!valor || !cidade || !data_padrao || !numero_recibo) {
             Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
             return;
         }
-        try{
-            const response = await cadastrarCambio ({
-                moeda_origem,
-                moeda_destino,
-                cotacao,
-                total_a_cambiar,
-                total_cambiado,
-                numero_recibo,
-                foto_recibo,
-                user_id: user.id,
-                username: user.username,
-            })
-            if(response.status === 200) {
-                Alert.alert('Cambio realizado com sucesso!');
-            }
-        }catch(error) {
-            console.log(error, 'erro ao cadastrar cambio');
+    
+        if ((Array.isArray(descricao) && descricao.length === 0) && !outro) {
+            Alert.alert('Erro', 'Pelo menos uma categoria ou outro campo precisa ser preenchido.');
+            return;
         }
-    }
+    
+        try {
 
-    const onChangedata_inicio_prevista = (event: any, selectedDate?:Date) => {
-        const currentDate = selectedDate || data_inicio_prevista;
+            const response = await cadastrarDespesa({
+                user_id: user.id,
+                valor,
+                cidade,
+                descricao: JSON.stringify(descricao),
+                outro,
+                data_padrao,
+                numero_recibo,
+            }, token)
+    
+            Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
+    
+            setValor('');
+            setCidade('');
+            setDescricao([]);
+            setData_padrao(new Date());
+            setNumero_recibo('');
+            setOutro('');
+            setModalVisible(false);
+    
+        } catch (error) {
+            console.log(error, 'Erro ao cadastrar despesa');
+            Alert.alert('Erro', 'Não foi possível cadastrar a despesa. Tente novamente.');
+        }
+    };
+    
+
+    const onChangedata_padrao = (event: any, selectedDate?:Date) => {
+        const currentDate = selectedDate || data_padrao;
         setShowInicio(Platform.OS === 'ios' ? true : false);
-        setData_inicio_prevista(currentDate);
+        setData_padrao(currentDate);
     };
 
 
@@ -109,10 +130,10 @@ export default function Home ()
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInputOne}>
                 <Text style={styles.TextInput}>Selecione a data Padrao</Text>
-                    <Button  onPress={showdata_inicio_prevista} title="Escolher data padrao" />
-                        <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
+                    <Button  onPress={showdata_padrao} title="Escolher data padrao" />
+                        <Text  style={styles.textoEscolhido}>{data_padrao.toLocaleDateString()}</Text>
                         {showInicio && (
-                            <DateTimePicker value={data_inicio_prevista} mode="date" display="default" onChange={onChangedata_inicio_prevista} />
+                            <DateTimePicker value={data_padrao} mode="date" display="default" onChange={onChangedata_padrao} />
                         )}
                 </View>
             </View>
@@ -153,9 +174,17 @@ export default function Home ()
                                 </TouchableOpacity>
                             )}
                         />
-                            <TouchableOpacity style={styles.Outro} onPress={() => setModalVisible(false)}>
-                                <Text >Outro</Text>
-                            </TouchableOpacity>
+                            <View>
+                                {showOutro && (
+                                    <View style={styles.ViewInputOne}>
+                                        <Text style={styles.TextInputs}>Outro</Text>
+                                        <TextInput  value={outro} onChangeText={setOutro} style={styles.inputOne} placeholder="Valor creditado" />
+                                    </View>
+                                )}
+                                <TouchableOpacity style={styles.Outro} onPress={() => setShowOutro(!showOutro)}>
+                                    <Text>{showOutro ? 'Fechar Outro' : 'Outro'}</Text>
+                                </TouchableOpacity>
+                            </View>
                         <View>
                             <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
                                 <Text style={styles.closeButtonText}>Fechar</Text>
@@ -168,20 +197,11 @@ export default function Home ()
             </View>
 
 
-            <View  style={styles.ViewFlex}>
-                <View style={styles.ViewInputOne}>
-                <Text style={styles.TextInputs}>Cidade</Text>
-                <TextInput  value={cidade} onChangeText={setCidade} style={styles.inputOne} placeholder='Valor creditado' />
-                </View>
-            </View>
-
-
-
 
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Valor</Text>
-                <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Valor' />
+                <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor' />
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>N do Recibo</Text>
@@ -194,7 +214,7 @@ export default function Home ()
                     <Text style={styles.TextAnexarImagem}>Anexar recibo</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.BotaoLogin} onPress={handleCambio}>
+                <TouchableOpacity style={styles.BotaoLogin} onPress={handleDespesa}>
                     <Text style={styles.TextBotao}>CADASTRAR DESPESA</Text>
                 </TouchableOpacity>
 
@@ -210,14 +230,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "center",
-    },
-    TextHeaderLogin:{
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#487d76",
-        marginBottom: 30,
-        height: 50,
-        paddingTop: 30,
     },
     CardLogin:{
         width: '100%',
@@ -272,40 +284,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 20,
     },
-    TextNaoPossuiConta:{
-        marginTop: 20,
-        color: "#ffffff",
-        fontSize: 18,
-        fontWeight: "500",
-
-    },
-
 
     TextBotao:{
         color: "#ffffff",
         fontSize: 17,
         fontWeight: "bold",
-    },
-    containerLines: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 20,
-    },
-    line: {
-        height: 1,
-        backgroundColor: '#00835f',  // Cor da linha
-        flex: 1,  // Isso faz a linha ocupar o espaço restante
-    },
-    text: {
-        marginHorizontal: 10,  // Espaçamento entre o texto e as linhas
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#000',  // Cor do texto
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 8,
     },
     picker: {
         height: 50,
@@ -333,15 +316,6 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 1,
     },
-    ViewInputOneOption:{
-        width: '80%',
-        marginBottom: 1,
-    }, 
-    ViewInputOneOutro:{
-        width: '17%',
-        marginBottom: 1,
-    },
- 
     botaoAdicionaImageRecibo:{
         width: '100%',
         height: 40,
