@@ -11,7 +11,7 @@ export default function Home ()
 {
     const router = useRouter();
     const user = useJwt();
-    const { id, username } = useLocalSearchParams();
+    const { missao_id, missao_name } = useLocalSearchParams();
     const [valor, setValor] = useState('');
     const [cidade, setCidade] = useState('');
     const [outro, setOutro] = useState('');
@@ -50,10 +50,12 @@ export default function Home ()
 
     const handleDespesa = async () => {
         const token = await AsyncStorage.getItem('userToken');
+    
         if (!user) {
             Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
             return;
         }
+    
         if (!valor || !cidade || !data_padrao || !numero_recibo) {
             Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
             return;
@@ -65,19 +67,22 @@ export default function Home ()
         }
     
         try {
-
             const response = await cadastrarDespesa({
                 user_id: user.id,
+                moeda,
                 valor,
                 cidade,
-                descricao: JSON.stringify(descricao),
+                descricao: JSON.stringify(descricao), // ✅ Convertendo array para string JSON
                 outro,
-                data_padrao,
+                data_padrao: data_padrao instanceof Date ? data_padrao.toISOString() : data_padrao, // ✅ Formatando para ISO
                 numero_recibo,
-            }, token)
+                missao_id: missao_id ?? null, // ✅ Tratando caso missao_id esteja indefinido
+                missao_name: missao_name ?? null, // ✅ Tratando caso missao_name esteja indefinido
+            }, token);
     
             Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
     
+            // ✅ Resetando os campos
             setValor('');
             setCidade('');
             setDescricao([]);

@@ -87,10 +87,10 @@ export default function Home() {
     const back = () => {
         router.back();
     }
-    const DESPESAS = (id: number, username: string) => {
+    const DESPESAS = (missao_id: number, missao_name: string) => {
         router.push({
             pathname: './despesas',
-            params: { id, username }
+            params: { missao_id, missao_name }
         });
     };
     
@@ -126,7 +126,7 @@ export default function Home() {
                     </View>
                     <View style={styles.cardInfoFirstRight}>
                         <TouchableOpacity style={styles.butonsMissaosVisualizar}><Text>ver e editar</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.username)}><Text>Cadastrar despesas</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}><Text>Cadastrar despesas</Text></TouchableOpacity>
                     </View>
                 </View>
             ))
