@@ -27,10 +27,7 @@ export default function Home() {
         const carregarMissoes = async () => {
           try {
             const token = await AsyncStorage.getItem('userToken');
-            const data = await buscarMissoes(token);
-      
-            console.log('Missões recebidas:', data); // Mostra o valor de data no console
-            
+            const data = await buscarMissoes(token);            
             setMissoes(data || []); // Garante que missoes será um array vazio caso data seja undefined
           } catch (error) {
             console.error('Erro ao buscar missões:', error);
@@ -78,6 +75,7 @@ export default function Home() {
             }, token)
             Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
             setCidade('');
+            setPais('');
             setEstado('');
             setMissao('');
         } catch (error) {
@@ -89,10 +87,13 @@ export default function Home() {
     const back = () => {
         router.back();
     }
-    const DESPESAS = () => {
-        router.push('./despesas');
-    }
- 
+    const DESPESAS = (id: number, username: string) => {
+        router.push({
+            pathname: './despesas',
+            params: { id, username }
+        });
+    };
+    
     const slideAnim = useRef(new Animated.Value(height)).current;  // Inicia fora da tela
 
     const toggleView = () => {
@@ -125,7 +126,7 @@ export default function Home() {
                     </View>
                     <View style={styles.cardInfoFirstRight}>
                         <TouchableOpacity style={styles.butonsMissaosVisualizar}><Text>ver e editar</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={DESPESAS}><Text>Cadastrar despesas</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.username)}><Text>Cadastrar despesas</Text></TouchableOpacity>
                     </View>
                 </View>
             ))
