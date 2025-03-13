@@ -1,7 +1,5 @@
 import { Stack } from 'expo-router';
 import { View, Text, StatusBar } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import jwtDecode from 'jwt-decode';
 
 
 
@@ -46,7 +44,7 @@ export default function RootLayout()
             <Stack.Screen
                 name="outras_moedas"
                 options={{
-                    headerTitle: "Outras Moedas",
+                    headerTitle: "MOEDAS",
                     headerTitleStyle: { fontWeight: 'bold' },
                     headerStyle: { backgroundColor: '#fff' },
                     headerTintColor: '#121212',
@@ -81,7 +79,7 @@ export default function RootLayout()
                 }}
             />
                         <Stack.Screen
-                name="despesas"
+                name="despesa"
                 options={{
                     headerTitle: "Despesas",
                     headerTitleStyle: { fontWeight: 'bold' },
@@ -92,3 +90,5 @@ export default function RootLayout()
         </Stack>
     );
 }               
+
+

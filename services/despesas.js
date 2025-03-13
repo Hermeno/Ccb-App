@@ -24,8 +24,7 @@ export const buscarDespesas= async (token) => {
                 Authorization: `Bearer ${token}`,
             },
         });
-        // console.log(response.data.missaos)
-        return response.data.Despesas; // Retorna apenas o array de missões
+        return response.data.dispesas; // Retorna apenas o array de missões
     } catch (error) {
         throw error;
     }

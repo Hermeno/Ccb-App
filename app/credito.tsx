@@ -4,6 +4,7 @@ import { Link, useRouter  } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { cadastrarCredito } from '../services/credito';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useJwt } from './jwt';
 
 export default function Home () 
@@ -14,7 +15,9 @@ export default function Home ()
     const [valor, setValor] = useState('');
     const [referencia, setReferencia] = useState('');
 
-
+    const back = () => {
+        router.back();
+    }
   
     const cadastrar = async () => {
         const token = await AsyncStorage.getItem('userToken'); 
@@ -50,7 +53,7 @@ export default function Home ()
 
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Ola, Miqueias Adicione seu saldo aqui!</Text>
+            <Text style={styles.TextHeaderLogin}>Ola, {user?.name} Adicione seu saldo aqui!</Text>
             <View style={styles.CardLogin}>                
 
             <Text style={styles.TextInput}>Selecione a moeda:</Text>
@@ -95,7 +98,7 @@ export default function Home ()
                     <Text style={styles.TextBotao}>ADICIONAR</Text>
                 </TouchableOpacity>
 
-                <View style={styles.containerLines}>
+                {/* <View style={styles.containerLines}>
                     <View style={styles.line} />
                     <Text style={styles.text}>Or</Text>
                     <View style={styles.line} />
@@ -105,8 +108,19 @@ export default function Home ()
                     <Text style={{color:"#24h91d", fontWeight:'bold'}}>Logar na sua conta!  
                     <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Sign-In</Link></Text>
                     </Text>
-                </View>
+                </View> */}
             </View>
+            <View style={styles.footer}>
+            
+            <TouchableOpacity onPress={back} style={{marginLeft:10}}>
+            <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
+            </TouchableOpacity>
+
+
+            <TouchableOpacity style={styles.profile}>
+            <FontAwesome name="user-o" size={20} color="blue" />
+            </TouchableOpacity>
+        </View>
         </View>
     );
 }
@@ -123,8 +137,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: "#ffffff",
-        marginBottom: 30,
-        height: 120,
+        marginBottom: 0,
+        height: 100,
         paddingTop: 40,
     },
     CardLogin:{
@@ -232,5 +246,40 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
         fontWeight: 'bold',
-    },   
+    }, 
+    footer: {
+        position: 'absolute', // Fixa o footer
+        bottom: 0,            // Cola no rodapé
+        width: '100%',        // Ocupa a largura toda
+        height: 70,           // Altura mínima de 70
+        backgroundColor: '#fafafa',
+        // borderTopWidth: 1,
+        // borderTopColor: '#ccc',
+        alignItems: 'center',
+        zIndex: 1,  // Garantir que o footer esteja acima da Animated View
+        display: 'flex',
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+        justifyContent: 'space-between',
+        padding:10,
+    },
+    profile:{
+        width: 100,
+        height: 50,
+        backgroundColor: '#a2564a',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginLeft: 10,
+        padding: 10,
+        marginBottom: 5,
+    },
 })

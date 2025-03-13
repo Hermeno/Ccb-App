@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
 import { cadastrarCambio } from '../services/cambio';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useJwt } from './jwt'
 
 export default function Home () 
@@ -15,7 +16,9 @@ export default function Home ()
     const [total_cambiado, setTotal_cambiado] = useState('');
     const [numero_recibo, setNumero_recibo] = useState('');
     const [foto_recibo, setFoto_recibo] = useState('');
-
+    const back = () => {
+        router.back();
+    }
     const handleCambio = async () =>{
         if (!user) {
             Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
@@ -103,7 +106,7 @@ export default function Home ()
                     <Text style={styles.TextBotao}>ADICIONAR VALOR CAMBIADO</Text>
                 </TouchableOpacity>
 
-                <View style={styles.containerLines}>
+                {/* <View style={styles.containerLines}>
                     <View style={styles.line} />
                     <Text style={styles.text}>Or</Text>
                     <View style={styles.line} />
@@ -113,8 +116,19 @@ export default function Home ()
                     <Text style={{color:"#24h91d", fontWeight:'bold'}}>Visualizar cambios cadastradas!  
                     <Text  style={{color:"#00835f", fontSize:17}}><Link href="/"> Ver agora</Link></Text>
                     </Text>
-                </View>
+                </View> */}
             </View>
+            <View style={styles.footer}>
+            
+            <TouchableOpacity onPress={back} style={{marginLeft:10}}>
+            <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
+            </TouchableOpacity>
+
+
+            <TouchableOpacity style={styles.profile}>
+            <FontAwesome name="user-o" size={20} color="blue" />
+            </TouchableOpacity>
+        </View>
         </View>
     );
 }
@@ -272,5 +286,40 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderWidth: 1,
         borderColor: "#ccc",
-    } 
+    },
+    footer: {
+        position: 'absolute', // Fixa o footer
+        bottom: 0,            // Cola no rodapé
+        width: '100%',        // Ocupa a largura toda
+        height: 70,           // Altura mínima de 70
+        backgroundColor: '#fafafa',
+        // borderTopWidth: 1,
+        // borderTopColor: '#ccc',
+        alignItems: 'center',
+        zIndex: 1,  // Garantir que o footer esteja acima da Animated View
+        display: 'flex',
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+        justifyContent: 'space-between',
+        padding:10,
+    },
+    profile:{
+        width: 100,
+        height: 50,
+        backgroundColor: '#a2564a',
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginLeft: 10,
+        padding: 10,
+        marginBottom: 5,
+    },
 })

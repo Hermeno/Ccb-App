@@ -19,3 +19,19 @@ export const cadastrarCredito = async ({ user_id, moeda, valor, referencia }, to
         throw error;
     }
 };
+
+
+
+export const buscarCredito = async (token) => {
+    try {
+        const response = await api.get('/buscar-creditos', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        console.log(response.data.creditos)
+        return response.data.creditos; // Retorna apenas o array de missões
+    } catch (error) {
+        throw error;
+    }
+};

@@ -1,8 +1,9 @@
 import React,  { useState, useEffect} from 'react';
 import { View, Text,StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
-import { useJwt } from './jwt'
-export default function App ()
+import { useJwt } from './jwt';
+import { MaterialIcons } from '@expo/vector-icons';
+export default function HomeScreen ()
 {
     const router = useRouter();
     const user = useJwt();
@@ -18,41 +19,44 @@ export default function App ()
     const MISSAO = () => {
         router.push('/missao');
     };
+    const DESPESA = () => {
+        router.push('/despesa');
+    };
     return (
         // <ScrollView   >
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                    {user ? (
+                    {/* {user ? (
                         <View style={styles.header}>
                             <Text style={styles.Textshow}>Ola, {user.name}</Text>
                         </View>
                     ) : (
                         <Text>Faca Login...</Text>
-                    )}
+                    )} */}
                     <View style={styles.content}>
                         <TouchableOpacity style={styles.cardInfo} onPress={sendOutraMoedas}>
                             <Text style={styles.Textshow}>Outras Moedas</Text>
-                            <Link href="/outras_moedas">About</Link>
+                            <Text><Link href="/outras_moedas"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.cardInfo} onPress={CREDITO}>
                             <Text style={styles.Textshow}>Credito</Text>
-                            <Link href="/">About</Link>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.cardInfo} onPress={CAMBIO}>
                             <Text style={styles.Textshow}>Cambio</Text>
-                            <Link href="/">About</Link>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
                         </TouchableOpacity>                
                         <TouchableOpacity style={styles.cardInfo} onPress={MISSAO}>
                             <Text style={styles.Textshow}>Missao</Text>
-                            <Link href="/">About</Link>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
                         </TouchableOpacity>                
-                        <TouchableOpacity style={styles.cardInfo}>
+                        <TouchableOpacity style={styles.cardInfo} onPress={DESPESA}>
                             <Text style={styles.Textshow}>Despesas</Text>
-                            <Link href="/">About</Link>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
                         </TouchableOpacity> 
-                        <TouchableOpacity style={styles.cardInfo}>
+                        <TouchableOpacity style={styles.cardInfoOut}>
                             <Text style={styles.Textshow}>Sair</Text>
-                            <Link href="/">About</Link>
+                            <Text><Link href="/"> <MaterialIcons name="logout" size={50} color="red" /></Link></Text>
                         </TouchableOpacity>                 
                     </View>
                 {/* </View>   */}
@@ -64,31 +68,42 @@ export default function App ()
 const styles = StyleSheet.create({
     container:{
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fafafa'
     },
     content:{
         padding: 10,
         width: '100%',
-        backgroundColor: '#fff',
+        backgroundColor: '#fafafa',
     },
     cardInfo:{
         margin: 10,
-        backgroundColor: '#00835f',
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 2, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 5,
-        elevation: 2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 180,
+        backgroundColor: '#dddddd',
+        // alignItems: 'center',
+        padding:20,
         color: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    cardInfoOut:{
+        margin: 10,
+        backgroundColor: '#DDD',
+        // alignItems: 'center',
+        padding:20,
+        color: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 50,
     },
     Textshow:{
-        fontSize: 32,
+        fontSize: 25,
         fontWeight: 'bold',
-        color: '#fff'
+        color: '#00835f'
     },
     header:{
         backgroundColor: '#00835f',
