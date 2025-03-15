@@ -56,7 +56,7 @@ export default function Home ()
             <Text style={styles.TextHeaderLogin}>Ola, {user?.name} Adicione seu saldo aqui!</Text>
             <View style={styles.CardLogin}>                
 
-            <Text style={styles.TextInput}>Selecione a moeda:</Text>
+            <Text style={styles.TextInputUp} >Selecione a moeda:</Text>
             <Picker
                 selectedValue={moeda}
                 onValueChange={(itemValue) => setMoeda(itemValue)}
@@ -129,15 +129,15 @@ export default function Home ()
 const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor: "#487d76",
+        backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "center",
     },
     TextHeaderLogin:{
         fontSize: 20,
         fontWeight: "bold",
-        color: "#ffffff",
-        marginBottom: 0,
+        color: "#00835f",
+        marginBottom: 40,
         height: 100,
         paddingTop: 40,
     },
@@ -145,9 +145,10 @@ const styles = StyleSheet.create({
         width: '100%',
         // height: 400,
         flex:1,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#fff",
         // borderRadius: 30,
         padding: 20,
+        marginTop: 0, 
         justifyContent: "center",
         alignItems: "center",
         // borderTopEndRadius: 40,
@@ -173,7 +174,16 @@ const styles = StyleSheet.create({
             textAlign: "left",
             marginTop: 10,
     },
-
+    TextInputUp:{
+        marginBottom: 10,
+        borderColor: "#121212",
+        width: "100%",
+        fontSize: 16,
+                color:"#121212",
+                fontWeight: "bold",
+            textAlign: "left",
+            marginTop: -70,
+    },
 
     BotaoLogin:{
         width: "100%",
