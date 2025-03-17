@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
 import { cadastrarCambio } from '../services/cambio';
+import { Picker } from '@react-native-picker/picker';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useJwt } from './jwt'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Home () 
 {
@@ -20,11 +22,12 @@ export default function Home ()
         router.back();
     }
     const handleCambio = async () =>{
+        const token = await AsyncStorage.getItem('userToken'); 
         if (!user) {
             Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
             return;
         }
-        if (!moeda_origem ||!moeda_destino ||!cotacao ||!total_a_cambiar ||!numero_recibo ||!foto_recibo) {
+        if (!moeda_origem ||!moeda_destino ||!cotacao ||!total_a_cambiar ||!numero_recibo) {
             Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
             return;
         }
@@ -35,26 +38,23 @@ export default function Home ()
                 cotacao,
                 total_a_cambiar,
                 total_cambiado,
-                numero_recibo,
-                foto_recibo,
-                user_id: user.id,
-                username: user.username,
-            })
+                numero_recibo
+            }, token)
             if(response.status === 200) {
                 Alert.alert('Cambio realizado com sucesso!');
             }
+            setCotacao('');
+            setMoeda_destino('');
+            setMoeda_origem('');
+            setTotal_a_cambiar('');
+            setTotal_cambiado('');
+            setNumero_recibo('');
         }catch(error) {
-            console.log(error, 'erro ao cadastrar cambio');
+            console.log(error, 'erro ao cadastrar cambio',user.id);
         }
     }
 
 
-
-
-
-
-
-    const [referencia, setReferencia] = useState('');
 
     return(
         <View style={styles.container}>
@@ -66,14 +66,40 @@ export default function Home ()
             
             <View style={styles.CardLogin}>                
             <View style={styles.ViewFlex}>
-                <View style={styles.ViewInput}>
-                <Text style={styles.TextInputs}>Moeda de Origem</Text>
-                <TextInput  value={moeda_origem} onChangeText={setMoeda_origem} style={styles.input} placeholder='Moeda de Origem' />
-                </View>
-                <View style={styles.ViewInput}>
-                <Text style={styles.TextInputs}>Moeda de Destino</Text>
-                <TextInput  value={moeda_destino} onChangeText={setMoeda_destino} style={styles.input} placeholder='Moeda de Destino' />
-                </View>
+            <View style={styles.ViewInput}>
+            <Text style={styles.TextInputs} >Moeda de Origem:</Text>
+            <Picker
+                selectedValue={moeda_origem}
+                onValueChange={(itemValue) => setMoeda_origem(itemValue)}
+                style={styles.picker}
+            > 
+                <Picker.Item label="Selecione uma moeda_origem..." value="" />
+                <Picker.Item label="Dólar" value="dolar" />
+                <Picker.Item label="Real" value="real" />
+                <Picker.Item label="Metical" value="metical" />
+                <Picker.Item label="Euro" value="euro" />
+                <Picker.Item label="Libra" value="libra" />
+                <Picker.Item label="Iene" value="iene" />
+            </Picker>
+            <Text style={styles.result}>Moeda selecionada: {moeda_origem}</Text>
+            </View>
+            <View style={styles.ViewInput}>       
+            <Text style={styles.TextInputs} >Moeda de Destino:</Text>
+            <Picker
+                selectedValue={moeda_destino}
+                onValueChange={(itemValue) => setMoeda_destino(itemValue)}
+                style={styles.picker}
+            > 
+                <Picker.Item label="Selecione uma moeda_destino..." value="" />
+                <Picker.Item label="Dólar" value="dolar" />
+                <Picker.Item label="Real" value="real" />
+                <Picker.Item label="Metical" value="metical" />
+                <Picker.Item label="Euro" value="euro" />
+                <Picker.Item label="Libra" value="libra" />
+                <Picker.Item label="Iene" value="iene" />
+            </Picker>
+            <Text style={styles.result}>Moeda selecionada: {moeda_destino}</Text>
+            </View>
             </View>
 
             <View style={styles.ViewFlex}>
@@ -118,7 +144,7 @@ export default function Home ()
                     </Text>
                 </View> */}
             </View>
-            <View style={styles.footer}>
+            {/* <View style={styles.footer}>
             
             <TouchableOpacity onPress={back} style={{marginLeft:10}}>
             <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
@@ -128,7 +154,7 @@ export default function Home ()
             <TouchableOpacity style={styles.profile}>
             <FontAwesome name="user-o" size={20} color="blue" />
             </TouchableOpacity>
-        </View>
+        </View> */}
         </View>
     );
 }
@@ -262,6 +288,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#00835f',
     },  
     ViewFlex:{
         flexDirection: 'row',

@@ -50,7 +50,7 @@ export default function App ()
             </View>
         </ScrollView>
 
-            <View style={styles.footer}>            
+            {/* <View style={styles.footer}>            
                 <TouchableOpacity onPress={back} style={{marginLeft:10}}>
                 <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
                 </TouchableOpacity>
@@ -59,7 +59,7 @@ export default function App ()
                 <TouchableOpacity style={styles.profile}>
                 <FontAwesome name="user-o" size={20} color="blue" />
                 </TouchableOpacity>
-            </View>
+            </View> */}
 
 
         </View>

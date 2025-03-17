@@ -29,7 +29,6 @@ export const buscarCredito = async (token) => {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log(response.data.creditos)
         return response.data.creditos; // Retorna apenas o array de missões
     } catch (error) {
         throw error;

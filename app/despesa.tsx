@@ -50,15 +50,16 @@ export default function Home() {
                         ? despesa.descricao.join(', ') 
                         : despesa.outro}
                     </Text>
-                    <Text>Data: {despesa.data_padrao ? new Date(despesa.data_padrao).toLocaleDateString() : 'Sem data'}</Text>
-                    <Text>Moeda: {despesa.moeda}</Text>
-                    <Text>Valor: {despesa.valor}</Text>
-                    <Text>Número do Recibo: {despesa.numero_recibo}</Text>
-                    <Text>Missão: {despesa.missao_name}</Text>
+                    <Text> <FontAwesome name="clock-o" size={18} color="black" />   Data: {despesa.data_padrao ? new Date(despesa.data_padrao).toLocaleDateString() : 'Sem data'}</Text>
+                    <Text> <FontAwesome name="usd" size={18} color="black" />   Moeda: {despesa.moeda}</Text>
+                    <Text> <FontAwesome name="dollar" size={18} color="black" />   Valor: {despesa.valor}</Text>
+                    <Text> <FontAwesome name="star" size={18} color="black" />   Número do Recibo: {despesa.numero_recibo}</Text>
+                    <View style={styles.line}></View>
+                    <Text style={styles.title}> <FontAwesome name="star" size={18} color="black" />   Missão: {despesa.missao_name}</Text>
                     </View>
                     <View style={styles.cardInfoFirstRight}>
-                        <TouchableOpacity style={styles.butonsdespesasVisualizar}><Text>ver e editar</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.butonsdespesasVisualizar} onPress={() => DESPESAS(despesa.id, despesa.descricao)}><Text>Cadastrar despesas</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.butonsdespesasVisualizar}><Text><FontAwesome name="edit" size={20} color="white" /></Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.butonsdespesasRemove} ><Text><FontAwesome name="trash" size={20} color="white" /></Text></TouchableOpacity>
                     </View>
                 </View>
             ))
@@ -66,7 +67,7 @@ export default function Home() {
             <Text style={styles.emptyText}>Nenhuma despesa encontrada</Text>
         )}
         </ScrollView>
-        <View style={styles.footer}>
+        {/* <View style={styles.footer}>
             
             <TouchableOpacity onPress={back} style={{marginLeft:10}}>
             <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
@@ -76,7 +77,7 @@ export default function Home() {
             <TouchableOpacity style={styles.profile}>
             <FontAwesome name="user-o" size={20} color="blue" />
             </TouchableOpacity>
-        </View>
+        </View> */}
         </View>
  )           
 }
@@ -92,12 +93,12 @@ const styles = StyleSheet.create({
     card: {
         marginBottom: 10,
         backgroundColor: '#fafafa',
-        borderRadius: 10,
-        // padding: 16,
+        borderRadius: 20,
+        padding: 16,
         flexDirection: 'row',
         justifyContent:'space-between',
         margin:10,
-        // borderWidth: 1,
+        borderWidth: 1,
         borderColor: '#ccc',
     },
 
@@ -113,18 +114,18 @@ const styles = StyleSheet.create({
     cardInfoFirstRight:{
         width: '30%',
         // height: 80,
-        backgroundColor: '#a2564a',
+        backgroundColor: '#fafafa',
         borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 2,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 2 },
+        // shadowOpacity: 0.8,
+        // shadowRadius: 2,
+        // elevation: 2,
     },
     butonsdespesasVisualizar:{
         padding:10,
-        backgroundColor: '#fff',
-        borderRadius: 20,
+        backgroundColor: "#487d76",
+        borderRadius: 8,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
@@ -132,12 +133,31 @@ const styles = StyleSheet.create({
         elevation: 2,
         justifyContent: 'center',
         alignItems: 'center',
-        height: 40,
+        // height: 40,
         color: '#a2564a',
         fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 5,
     },
+    butonsdespesasRemove:{
+        padding:10,
+        backgroundColor: '#FF5555',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // height: 40,
+        color: '#a2564a',
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+
+
     footer: {
         position: 'absolute', // Fixa o footer
         bottom: 0,            // Cola no rodapé
@@ -178,4 +198,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
     },  
+    line:{
+        width: '100%',
+        height: 1,
+        backgroundColor: '#ccc',
+        marginTop: 10,
+        marginBottom: 10,   
+    }
 });

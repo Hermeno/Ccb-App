@@ -110,7 +110,7 @@ export default function Home ()
                     </Text>
                 </View> */}
             </View>
-            <View style={styles.footer}>
+            {/* <View style={styles.footer}>
             
             <TouchableOpacity onPress={back} style={{marginLeft:10}}>
             <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
@@ -120,7 +120,7 @@ export default function Home ()
             <TouchableOpacity style={styles.profile}>
             <FontAwesome name="user-o" size={20} color="blue" />
             </TouchableOpacity>
-        </View>
+        </View> */}
         </View>
     );
 }
