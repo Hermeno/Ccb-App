@@ -38,12 +38,12 @@ export default function Home ()
 
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Esqueceu a senha ?, escreva seu email</Text>
+            <Text style={styles.TextHeaderLogin}>Esqueceu a senha?</Text>
             <View style={styles.CardLogin}>                
-                <Text style={styles.TextInput}>Email</Text>
+                <Text style={styles.TextInput}>INFORME SEU EMAIL</Text>
                 <TextInput  value={email} onChangeText={setEmail} style={styles.input} placeholder='Email do usuario' />
                 <TouchableOpacity style={styles.BotaoLogin} onPress={handleLogin}>
-                    <Text style={styles.TextBotao}>Login</Text>
+                    <Text style={styles.TextBotao}>ENVIAR</Text>
                 </TouchableOpacity>
 
                 <View style={styles.containerLines}>
@@ -72,39 +72,40 @@ export default function Home ()
 
 
 const styles = StyleSheet.create({
+ 
+
     container:{
         flex:1,
-        backgroundColor: "#487d76",
+        backgroundColor: "#ffffff",
         justifyContent: "center",
         alignItems: "center",
     },
     TextHeaderLogin:{
-        fontSize: 20,
+        fontSize: 30,
         fontWeight: "bold",
-        color: "#ffffff",
-        marginBottom: 30,
-        height: 120,
-        paddingTop: 40,
+        color: "#121212",
+        alignItems: "center",
+        textAlign: "left",
+        // marginTop: -130,
+        width: '80%',
     },
     CardLogin:{
-        width: '100%',
-        // height: 400,
-        flex:1,
-        backgroundColor: "#ffffff",
-        // borderRadius: 30,
-        padding: 20,
+        width: 330,
         justifyContent: "center",
         alignItems: "center",
-        borderTopEndRadius: 40,
-        borderTopStartRadius: 40,
+        marginTop:10
     },
     input:{
         marginBottom: 10,
-        // padding: 10,
-        borderBottomWidth: 2,
+        // borderBottomWidth: 2,
+        borderWidth: 1,
+
         borderColor: "#ccc",
-        width: "95%",
-        color:"#121212"
+        width: "100%",
+        borderRadius: 20,
+        padding: 10,
+        height: 50,
+        backgroundColor: "#fafafa"
     },
     TextInput:{
         marginBottom: 10,
@@ -118,27 +119,28 @@ const styles = StyleSheet.create({
 
     BotaoLogin:{
         width: "100%",
-        height: 40,
+        height: 50,
         backgroundColor: "#00835f",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 5,
+        borderRadius: 10,
         marginTop: 10,
         marginBottom: 20,
     },
     TextNaoPossuiConta:{
         marginTop: 20,
-        color: "#ffffff",
+        color: "#121212",
         fontSize: 18,
         fontWeight: "500",
 
     },
     TextRecuperarSenha:{
-        color: "#ffffff",
+        color: "#121212",
         fontSize: 16,
         fontWeight: "500",
         borderWidth: 1,
         borderColor: "#ccc",
+        borderRadius: 20,
         padding: 5,
         width: "100%",
         height: "15%",
@@ -150,10 +152,10 @@ const styles = StyleSheet.create({
     LinkRecuperarSenha:{
         justifyContent: "center",
         alignItems: "center", 
-        color: "#ffffff"      
+        color: "#24991d"      
     },
     TextBotao:{
-        color: "#ffffff",
+        color: "#fff",
         fontSize: 17,
         fontWeight: "bold",
     },
@@ -174,4 +176,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',  // Cor do texto
     },
+
 })

@@ -29,7 +29,7 @@ export default function RootLayout() {
                         headerTitle: "CADASTRO",
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
-                        headerTintColor: '#121212',
+                        headerTintColor: '#FFF',
                     }}
                 />
                 <Stack.Screen
@@ -53,10 +53,10 @@ export default function RootLayout() {
                 <Stack.Screen
                     name="lost_password"
                     options={{
-                        headerTitle: "Voltar",
+                        headerTitle: "ESQUECEU-SENHA",
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
-                        headerTintColor: '#487d76',
+                        headerTintColor: '#FFF',
                     }}
                 />
                 <Stack.Screen
@@ -165,7 +165,15 @@ export default function RootLayout() {
                     }}
                 />
 
-
+                <Stack.Screen
+                    name="camera"
+                    options={{
+                        headerTitle: "CAMERA",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />
             </Stack>
         </>
     );

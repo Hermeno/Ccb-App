@@ -18,9 +18,11 @@ export default function Home ()
     const [total_cambiado, setTotal_cambiado] = useState('');
     const [numero_recibo, setNumero_recibo] = useState('');
     const [foto_recibo, setFoto_recibo] = useState('');
-    const back = () => {
-        router.back();
+
+    const OPENCAMERA = () => {
+        router.push('/camera');
     }
+
     const handleCambio = async () =>{
         const token = await AsyncStorage.getItem('userToken'); 
         if (!user) {
@@ -124,7 +126,7 @@ export default function Home ()
             </View>
 
 
-                <TouchableOpacity style={styles.botaoAdicionaImageRecibo}>
+                <TouchableOpacity style={styles.botaoAdicionaImageRecibo} onPress={OPENCAMERA}>
                     <Text style={styles.TextAnexarImagem}>Anexar recibo</Text>
                 </TouchableOpacity>
 

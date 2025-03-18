@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert, Platform, Button, Modal, FlatList  } from 'react-native';
+import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert, Platform, Button, Modal, FlatList, Image  } from 'react-native';
 import { Link, useRouter, useLocalSearchParams   } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { cadastrarDespesa } from '../services/despesas';
@@ -11,7 +11,7 @@ export default function Home ()
 {
     const router = useRouter();
     const user = useJwt();
-    const { missao_id, missao_name } = useLocalSearchParams();
+    const { missao_id, missao_name, photos } = useLocalSearchParams();
     const [valor, setValor] = useState('');
     const [cidade, setCidade] = useState('');
     const [outro, setOutro] = useState('');
@@ -24,6 +24,35 @@ export default function Home ()
     const [moeda, setMoeda] = useState('');
     const [descricao, setDescricao] = useState<string[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [parsedPhotos, setParsedPhotos] = useState<string[]>([]);
+    // const { photos } = useLocalSearchParams();
+
+    // useEffect(() => {
+    //     if (photos) {
+    //       try {
+    //         const parsedPhotos = JSON.parse(
+    //           Array.isArray(photos) ? photos[0] : photos || '[]'
+    //         );
+    //         console.log(parsedPhotos)
+    //         setParsedPhotos(parsedPhotos || []);
+
+    //       } catch (error) {
+    //         console.error('Failed to parse photos:', error);
+    //         setParsedPhotos([]); // Define um valor padrão vazio em caso de erro
+    //       }
+    //     }
+    //   }, [photos]);    
+    useEffect(() => {
+        if (photos) {
+          try {
+            const parsed = JSON.parse(Array.isArray(photos) ? photos[0] : photos || '[]');
+            console.log(parsed)
+            setParsedPhotos(parsed);
+          } catch (error) {
+            console.error('Failed to parse photos:', error);
+          }
+        }
+      }, [photos]);
     const opcoes = [
         { id: '1', label: 'Taxi' },
         { id: '2', label: 'Almoço' },
@@ -45,7 +74,13 @@ export default function Home ()
     };
 
 
-
+    const OPENCAMERA = () => {
+        router.push({
+          pathname: '/camera',
+          params: { tipo: 'despesas' }
+        });
+      };
+      
 
 
     const handleDespesa = async () => {
@@ -215,9 +250,29 @@ export default function Home ()
             </View>
 
 
-                <TouchableOpacity style={styles.botaoAdicionaImageRecibo}>
+                <TouchableOpacity style={styles.botaoAdicionaImageRecibo} onPress={OPENCAMERA}>
                     <Text style={styles.TextAnexarImagem}>Anexar recibo</Text>
                 </TouchableOpacity>
+
+
+                {parsedPhotos && parsedPhotos.length > 0 ? (
+                <FlatList
+                    style={styles.flatL}
+                    data={parsedPhotos}
+                    keyExtractor={(item, index) => index.toString()} // Usando o índice como chave para garantir unicidade
+                    horizontal
+                    renderItem={({ item }) => (
+                    <Image source={{ uri: item }} style={styles.imagePreview} />
+                    )}
+                />
+                ) : (
+                <Text style={styles.TextAnexarImagem}>Anexar fotos</Text>
+                )}
+
+
+
+
+
 
                 <TouchableOpacity style={styles.BotaoLogin} onPress={handleDespesa}>
                     <Text style={styles.TextBotao}>CADASTRAR DESPESA</Text>
@@ -247,6 +302,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         // borderTopEndRadius: 40,
         // borderTopStartRadius: 40,
+        borderWidth:1,
+        borderColor: "#ccc",
     },
     input:{
         marginBottom: 10,
@@ -286,7 +343,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 0,
-        marginTop: 10,
+        // marginTop: 10,
         marginBottom: 20,
     },
 
@@ -329,7 +386,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 0,
         marginTop: 10,
-        marginBottom: 20,
+        // marginBottom: 20,
         borderWidth: 1,
         borderColor: "#ccc",
     },
@@ -406,5 +463,22 @@ const styles = StyleSheet.create({
         marginTop: 10,
         borderWidth:1,
         borderColor: '#ccc',
-    }   
+    } ,
+    flatL:{
+        display: 'flex',
+        flexDirection: 'row',
+        // height: 10,
+        marginBottom: 10,
+        width: '100%',
+        flexWrap: 'wrap',
+        paddingTop: 10,
+    },
+    imagePreview: {
+        width: 50,
+        height: 50,
+        margin: 5,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    }
 })

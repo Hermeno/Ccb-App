@@ -61,7 +61,7 @@ export default function Home ()
                 selectedValue={moeda}
                 onValueChange={(itemValue) => setMoeda(itemValue)}
                 style={styles.picker}
-            >
+            > 
                 <Picker.Item label="Selecione uma moeda..." value="" />
                 <Picker.Item label="Dólar" value="dolar" />
                 <Picker.Item label="Real" value="real" />

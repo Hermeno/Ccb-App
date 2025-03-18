@@ -37,18 +37,18 @@ export default function SignUp ()
     };
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Cadastro</Text>
+            <Text style={styles.TextHeaderLogin}>CRIE UMA CONTA</Text>
             <View style={styles.CardLogin}>                
-                <Text style={styles.TextInput}>Usuario</Text>
-                <TextInput value={user} onChangeText={setUser} style={styles.input} placeholder='nome do usuario'/>
+                {/* <Text style={styles.TextInput}>Usuario</Text>
+                <TextInput value={user} onChangeText={setUser} style={styles.input} placeholder='nome do usuario'/> */}
 
-                <Text style={styles.TextInput}>Nome completo</Text>
+                <Text style={styles.TextInput}>USUARIO</Text>
                 <TextInput value={name} onChangeText={setName} style={styles.input} placeholder='seu nome completo'/>
 
-                <Text style={styles.TextInput}>Email</Text>
+                <Text style={styles.TextInput}>EMAIL</Text>
                 <TextInput value={email} onChangeText={setEmail} style={styles.input} placeholder='email'/>
 
-                <Text style={styles.TextInput}>Password</Text>
+                <Text style={styles.TextInput}>PASSWORD</Text>
                 <TextInput value={password} onChangeText={setPassword} style={styles.input} secureTextEntry={true} placeholder='******'/>
 
                 <TouchableOpacity style={styles.BotaoLogin} onPress={handleSignUp}>
@@ -85,19 +85,27 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: "bold",
         color: "#121212",
+        alignItems: "center",
+        textAlign: "left",
         // marginTop: -130,
     },
     CardLogin:{
         width: 330,
         justifyContent: "center",
         alignItems: "center",
-        marginTop:150
+        marginTop:10
     },
     input:{
         marginBottom: 10,
-        borderBottomWidth: 2,
+        // borderBottomWidth: 2,
+        borderWidth: 1,
+
         borderColor: "#ccc",
         width: "100%",
+        borderRadius: 20,
+        padding: 10,
+        height: 50,
+        backgroundColor: "#fafafa"
     },
     TextInput:{
         marginBottom: 10,
@@ -115,7 +123,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#00835f",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 5,
+        borderRadius: 10,
         marginTop: 10,
         marginBottom: 20,
     },
@@ -132,6 +140,7 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         borderWidth: 1,
         borderColor: "#ccc",
+        borderRadius: 20,
         padding: 5,
         width: "100%",
         height: "15%",
