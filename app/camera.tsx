@@ -5,11 +5,13 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 
 export default function CameraScreen() {
   const router = useRouter();
-  const { tipo } = useLocalSearchParams();
+  const {  missao_id, missao_name } = useLocalSearchParams();
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [photos, setPhotos] = useState<string[]>([]); // Array para armazenar múltiplas fotos
   const cameraRef = useRef(null); // Referência para a câmera
+  const [parsedPhotos, setParsedPhotos] = useState<{ uri: string; name: string; type: string }[]>([]);
+
 
   if (!permission) {
     return <View />;
@@ -29,36 +31,30 @@ export default function CameraScreen() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  // Função para capturar foto
-  async function takePhoto() {
+
+ async function takePhoto() {
     if (!cameraRef.current) return;
 
     const photo = await cameraRef.current.takePictureAsync();
-    
-    // Adicionar a foto ao estado
-    setPhotos(prevPhotos => [...prevPhotos, photo.uri]);
-  }
+    const photoName = photo.uri.split('/').pop();
 
-
-
-
-
-  // function goBackWithPhotos() {
-  //   router.setParams({ photos: JSON.stringify(photos) });
-  //   router.back();
-  // }
+    setParsedPhotos(prevPhotos => [
+        ...prevPhotos,
+        { 
+            uri: photo.uri, 
+            name: photoName || `photo_${Date.now()}.jpg`, 
+            type: 'image/jpeg' 
+        }
+    ]);
+}
   
-  const goBackWithPhotos = () => {
-    const tipoString = Array.isArray(tipo) ? tipo[0] : tipo; // Garante que 'tipo' seja uma string
-    if (tipoString === 'despesas') {
-      // Converte as fotos para uma string JSON e envia como query param
-      const photosParam = encodeURIComponent(JSON.stringify(photos));
-      router.push(`/despesas?photos=${photosParam}`);
-    } else {
-      console.error('Rota inválida');
-    }
-  };
+const goBackWithPhotos = () => {
+  const photosParam = encodeURIComponent(JSON.stringify(photos));
+  const missaoIdParam = encodeURIComponent(missao_id ?? '');
+  const missaoNameParam = encodeURIComponent(missao_name ?? '');
 
+  router.push(`/despesas?photos=${photosParam}&missao_id=${missaoIdParam}&missao_name=${missaoNameParam}`);
+};
   return (
     <View style={styles.container}>
       <CameraView
@@ -146,3 +142,4 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
+

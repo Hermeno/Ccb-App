@@ -2,11 +2,35 @@ import React,  { useState, useEffect} from 'react';
 import { View, Text,StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Link, useRouter  } from 'expo-router';
 import { useJwt } from './jwt';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { buscarCreditoLimit } from '@/services/credito';
 import { MaterialIcons } from '@expo/vector-icons';
 export default function HomeScreen ()
 {
     const router = useRouter();
     const user = useJwt();
+    const [creditos, setCreditos] = useState([]);
+
+    useEffect(() => {
+      const carregarCredito = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          const data = await buscarCreditoLimit(token);
+          setCreditos(data || []);
+        } catch (error) {
+          console.error('Erro ao buscar créditos:', error);
+        }
+      };
+  
+      carregarCredito();
+    }, []);
+  
+
+
+
+
+
+
     const sendOutraMoedas = () => {
         router.push('/outras_moedas');
     };
@@ -26,13 +50,20 @@ export default function HomeScreen ()
         // <ScrollView   >
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* {user ? (
-                        <View style={styles.header}>
-                            <Text style={styles.Textshow}>Ola, {user.name}</Text>
-                        </View>
+
+                    <Text style={styles.title}>Saldo Disponível</Text>
+
+                    {creditos.length > 0 ? (
+                    creditos.map((credito) => (
+                        <TouchableOpacity key={credito.id} style={styles.card}>
+                        <Text style={styles.cardTitle}>Saldo em {credito.moeda}</Text>
+                        <Text style={styles.cardAmount}>R$ {credito.valor}</Text>
+                        </TouchableOpacity>
+                    ))
                     ) : (
-                        <Text>Faca Login...</Text>
-                    )} */}
+                    <Text style={styles.emptyText}>Nenhuma moeda encontrada</Text>
+                    )}
+
                     <View style={styles.content}>
                         <TouchableOpacity style={styles.cardInfo} onPress={sendOutraMoedas}>
                             <Text style={styles.Textshow}>Outras Moedas</Text>

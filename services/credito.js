@@ -34,3 +34,19 @@ export const buscarCredito = async (token) => {
         throw error;
     }
 };
+
+
+
+
+export const buscarCreditoLimit = async (token) => {
+    try {
+        const response = await api.get('/buscar-creditos-limit', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data.creditos; // Retorna apenas o array de missões
+    } catch (error) {
+        throw error;
+    }
+};

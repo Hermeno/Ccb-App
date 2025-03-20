@@ -25,34 +25,27 @@ export default function Home ()
     const [descricao, setDescricao] = useState<string[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [parsedPhotos, setParsedPhotos] = useState<string[]>([]);
-    // const { photos } = useLocalSearchParams();
 
-    // useEffect(() => {
-    //     if (photos) {
-    //       try {
-    //         const parsedPhotos = JSON.parse(
-    //           Array.isArray(photos) ? photos[0] : photos || '[]'
-    //         );
-    //         console.log(parsedPhotos)
-    //         setParsedPhotos(parsedPhotos || []);
 
-    //       } catch (error) {
-    //         console.error('Failed to parse photos:', error);
-    //         setParsedPhotos([]); // Define um valor padrão vazio em caso de erro
-    //       }
-    //     }
-    //   }, [photos]);    
+    const decodedPhotos = photos ? JSON.parse(decodeURIComponent(photos as string)) : [];
+    const decodedMissaoId = missao_id ? decodeURIComponent(missao_id as string) : '';
+    const decodedMissaoName = missao_name ? decodeURIComponent(missao_name as string) : '';
+ 
     useEffect(() => {
         if (photos) {
           try {
-            const parsed = JSON.parse(Array.isArray(photos) ? photos[0] : photos || '[]');
-            console.log(parsed)
+            // Verifique se `photos` é uma string ou um array e analise corretamente
+            const parsed = Array.isArray(photos) ? photos : JSON.parse(decodeURIComponent(photos));
             setParsedPhotos(parsed);
           } catch (error) {
-            console.error('Failed to parse photos:', error);
+            console.error('Falha ao analisar fotos:', error);
           }
         }
       }, [photos]);
+
+
+
+
     const opcoes = [
         { id: '1', label: 'Taxi' },
         { id: '2', label: 'Almoço' },
@@ -77,61 +70,58 @@ export default function Home ()
     const OPENCAMERA = () => {
         router.push({
           pathname: '/camera',
-          params: { tipo: 'despesas' }
+          params: { missao_id:missao_id, missao_name:missao_name }
         });
       };
       
 
+const handleDespesa = async () => {
+  const token = await AsyncStorage.getItem('userToken');
+  
+  if (!user) {
+    Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
+    return;
+  }
+  
+  if (!valor || !cidade || !numero_recibo || parsedPhotos.length === 0) {
+    Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
+    return;
+  }
+  
+  if ((Array.isArray(descricao) && descricao.length === 0) && !outro) {
+    Alert.alert('Erro', 'Pelo menos uma categoria ou outro campo precisa ser preenchido.');
+    return;
+  }
+  
+  try {
+    // Envie as fotos como parte de FormData se necessário
+    const formData = new FormData();
+    parsedPhotos.forEach((photoUri) => {
+      formData.append('photos', {
+        uri: photoUri,
+        type: 'image/jpeg', // ou o tipo correto dependendo do formato das fotos
+        name: `photo_${new Date().getTime()}.jpg`,
+      });
+    });
 
-    const handleDespesa = async () => {
-        const token = await AsyncStorage.getItem('userToken');
+    await cadastrarDespesa({
+      user_id: user.id,
+      moeda,
+      valor,
+      cidade,
+      descricao: JSON.stringify(descricao),
+      outro,                
+      numero_recibo,
+      missao_id: missao_id ?? null, 
+      missao_name: missao_name ?? null,
+      parsedPhotos: formData,
+    }, token);
     
-        if (!user) {
-            Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
-            return;
-        }
-    
-        if (!valor || !cidade || !data_padrao || !numero_recibo) {
-            Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
-            return;
-        }
-    
-        if ((Array.isArray(descricao) && descricao.length === 0) && !outro) {
-            Alert.alert('Erro', 'Pelo menos uma categoria ou outro campo precisa ser preenchido.');
-            return;
-        }
-    
-        try {
-            const response = await cadastrarDespesa({
-                user_id: user.id,
-                moeda,
-                valor,
-                cidade,
-                descricao: JSON.stringify(descricao), // ✅ Convertendo array para string JSON
-                outro,
-                data_padrao: data_padrao instanceof Date ? data_padrao.toISOString() : data_padrao, // ✅ Formatando para ISO
-                numero_recibo,
-                missao_id: missao_id ?? null, // ✅ Tratando caso missao_id esteja indefinido
-                missao_name: missao_name ?? null, // ✅ Tratando caso missao_name esteja indefinido
-            }, token);
-    
-            Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
-    
-            // ✅ Resetando os campos
-            setValor('');
-            setCidade('');
-            setDescricao([]);
-            setData_padrao(new Date());
-            setNumero_recibo('');
-            setOutro('');
-            setModalVisible(false);
-    
-        } catch (error) {
-            console.log(error, 'Erro ao cadastrar despesa');
-            Alert.alert('Erro', 'Não foi possível cadastrar a despesa. Tente novamente.');
-        }
-    };
-    
+    Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
+  } catch (error) {
+    console.log(error, 'Erro ao cadastrar despesa');
+  }
+};
 
     const onChangedata_padrao = (event: any, selectedDate?:Date) => {
         const currentDate = selectedDate || data_padrao;
@@ -145,11 +135,6 @@ export default function Home ()
 
     return(
         <View style={styles.container}>
-            {/* {user ? (
-                <Text style={styles.TextHeaderLogin}>Ola, {user.name} faca cadastro de despesas!</Text>
-            ) : (
-                <Text style={styles.TextHeaderLogin}>Esta carregando...</Text>
-            )} */}
             
             <View style={styles.CardLogin}> 
             <Text style={styles.TextInput}>Moeda a debitar:</Text>
