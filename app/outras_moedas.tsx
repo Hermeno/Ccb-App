@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { buscarCredito } from '@/services/credito';
+import { buscarCredito, buscarCreditoLimit } from '@/services/credito';
 import { useJwt } from './jwt';
 
 export default function App() {
@@ -25,15 +25,63 @@ export default function App() {
     carregarCredito();
   }, []);
 
+
+  const [creditosLimit, setCreditosLimit] = useState([]);
+
+  useEffect(() => {
+    const carregarCreditoLimit = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        const data = await buscarCreditoLimit(token);
+        console.log(data);
+        // Se for um array, usa diretamente; se for um objeto, transforma em array
+        setCreditosLimit(Array.isArray(data) ? data : data ? [data] : []);
+      } catch (error) {
+        console.error('Erro ao buscar créditos:', error);
+      }
+    };
+  
+    carregarCreditoLimit();
+  }, []);
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <View style={styles.container}>
+
+
+                    {creditosLimit.length > 0 ? (
+                    creditosLimit.map((credito) => (
+                        <TouchableOpacity key={credito.id} style={styles.cardTop}>
+                        <Text style={styles.titleTop}>Saldo Disponível</Text>
+                        <Text style={styles.titleTop}>Em {credito.moeda}</Text>
+                        <Text style={styles.titleTop}>R$ {credito.valor}</Text>
+                        </TouchableOpacity>
+                    ))
+                    ) : (
+                    <Text style={styles.emptyText}>SEM SALDO1</Text>
+                    )}
+
+
+
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Saldo Disponível</Text>
+        {/* <Text style={styles.title}>Saldo Disponível</Text> */}
 
         {creditos.length > 0 ? (
           creditos.map((credito) => (
-            <TouchableOpacity key={credito.id} style={styles.card}>
-              <Text style={styles.cardTitle}>Saldo em {credito.moeda}</Text>
+            <TouchableOpacity key={credito.id} style={styles.Top}>
+              <Text style={styles.TopTitle}>Saldo em {credito.moeda}</Text>
               <Text style={styles.cardAmount}>R$ {credito.valor}</Text>
             </TouchableOpacity>
           ))
@@ -48,12 +96,21 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 16,
+    backgroundColor: '#487d76',
+    // paddingHorizontal: 16,
     paddingTop: 20,
   },
   scrollContainer: {
     paddingBottom: 20,
+    backgroundColor: '#fff',
+    bottom: 0,
+    width: '100%',
+    position: 'absolute',
+    height: '95%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    // borderWidth: 1,
   },
   title: {
     fontSize: 24,
@@ -65,19 +122,25 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     paddingBottom: 10,
   },
-  card: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#ddd',
+  Top: {
+    backgroundColor: '#fff',
+    // borderRadius: 12,
+    // paddingVertical: 20,
+    // paddingHorizontal: 16,
+    // marginBottom: 12,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 6,
+    // elevation: 3,
+    // borderWidth: 1,
+    // borderColor: '#ddd',
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
+    padding: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent:'space-between',
   },
   cardTitle: {
     fontSize: 18,
@@ -97,5 +160,23 @@ const styles = StyleSheet.create({
     color: '#FF0000',
     marginTop: 20,
   },
+  cardTop:{
+    margin: 10,
+    backgroundColor: 'transparent',
+    padding: 20,
+    color: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    marginBottom: 10,
+    borderRadius:10
+},
+titleTop: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff'
+}
 });
 

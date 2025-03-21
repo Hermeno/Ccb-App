@@ -11,19 +11,22 @@ export default function HomeScreen ()
     const user = useJwt();
     const [creditos, setCreditos] = useState([]);
 
-    useEffect(() => {
-      const carregarCredito = async () => {
-        try {
-          const token = await AsyncStorage.getItem('userToken');
-          const data = await buscarCreditoLimit(token);
-          setCreditos(data || []);
-        } catch (error) {
-          console.error('Erro ao buscar créditos:', error);
-        }
-      };
-  
-      carregarCredito();
-    }, []);
+useEffect(() => {
+  const carregarCredito = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const data = await buscarCreditoLimit(token);
+      console.log(data);
+      // Se for um array, usa diretamente; se for um objeto, transforma em array
+      setCreditos(Array.isArray(data) ? data : data ? [data] : []);
+    } catch (error) {
+      console.error('Erro ao buscar créditos:', error);
+    }
+  };
+
+  carregarCredito();
+}, []);
+
   
 
 
@@ -49,15 +52,15 @@ export default function HomeScreen ()
     return (
         // <ScrollView   >
         <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            {/* <ScrollView showsVerticalScrollIndicator={false}> */}
 
-                    <Text style={styles.title}>Saldo Disponível</Text>
-
+                    
                     {creditos.length > 0 ? (
                     creditos.map((credito) => (
                         <TouchableOpacity key={credito.id} style={styles.card}>
-                        <Text style={styles.cardTitle}>Saldo em {credito.moeda}</Text>
-                        <Text style={styles.cardAmount}>R$ {credito.valor}</Text>
+                        <Text style={styles.title}>Saldo Disponível</Text>
+                        <Text style={styles.title}>Em {credito.moeda}</Text>
+                        <Text style={styles.title}>R$ {credito.valor}</Text>
                         </TouchableOpacity>
                     ))
                     ) : (
@@ -67,31 +70,31 @@ export default function HomeScreen ()
                     <View style={styles.content}>
                         <TouchableOpacity style={styles.cardInfo} onPress={sendOutraMoedas}>
                             <Text style={styles.Textshow}>Outras Moedas</Text>
-                            <Text><Link href="/outras_moedas"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
+                            <Text><Link href="/outras_moedas"> <MaterialIcons name="arrow-forward" size={30} color="black" /></Link></Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.cardInfo} onPress={CREDITO}>
                             <Text style={styles.Textshow}>Credito</Text>
-                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={30} color="black" /></Link></Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.cardInfo} onPress={CAMBIO}>
                             <Text style={styles.Textshow}>Cambio</Text>
-                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={30} color="black" /></Link></Text>
                         </TouchableOpacity>                
                         <TouchableOpacity style={styles.cardInfo} onPress={MISSAO}>
                             <Text style={styles.Textshow}>Missao</Text>
-                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={30} color="black" /></Link></Text>
                         </TouchableOpacity>                
                         <TouchableOpacity style={styles.cardInfo} onPress={DESPESA}>
                             <Text style={styles.Textshow}>Despesas</Text>
-                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={50} color="blue" /></Link></Text>
+                            <Text><Link href="/"> <MaterialIcons name="arrow-forward" size={30} color="black" /></Link></Text>
                         </TouchableOpacity> 
                         <TouchableOpacity style={styles.cardInfoOut}>
                             <Text style={styles.Textshow}>Sair</Text>
-                            <Text><Link href="/"> <MaterialIcons name="logout" size={50} color="red" /></Link></Text>
+                            <Text><Link href="/"> <MaterialIcons name="logout" size={30} color="red" /></Link></Text>
                         </TouchableOpacity>                 
                     </View>
                 {/* </View>   */}
-            </ScrollView>  
+            {/* </ScrollView>   */}
         </View>
     );
 }
@@ -99,16 +102,21 @@ export default function HomeScreen ()
 const styles = StyleSheet.create({
     container:{
         flex: 1,
-        backgroundColor: '#fafafa'
+        backgroundColor: '#487d76'
     },
     content:{
         padding: 10,
         width: '100%',
         backgroundColor: '#fafafa',
+        bottom: 0,
+        position: 'absolute',
+        borderTopRightRadius: 20,
+        borderTopLeftRadius: 20,
+        height: '85%',
     },
     cardInfo:{
         margin: 10,
-        backgroundColor: '#dddddd',
+        backgroundColor: 'transparent',
         // alignItems: 'center',
         padding:20,
         color: '#fff',
@@ -117,10 +125,11 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        borderRadius:10,
     },
     cardInfoOut:{
         margin: 10,
-        backgroundColor: '#DDD',
+        backgroundColor: 'transparent',
         // alignItems: 'center',
         padding:20,
         color: '#fff',
@@ -130,11 +139,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 50,
+        borderRadius:10,
     },
     Textshow:{
-        fontSize: 25,
+        fontSize: 20,
         fontWeight: 'bold',
-        color: '#00835f'
+        color: '#00835f',
+        // margin: 10,
+
     },
     header:{
         backgroundColor: '#00835f',
@@ -149,5 +161,41 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.12,
         shadowRadius: 5,
         elevation: 2,
+    },
+    // card:{
+    //     margin: 10,
+    //     backgroundColor: '#dddddd',
+    //     padding: 20,
+    //     color: '#fff',
+    //     borderWidth: 1,
+    //     borderColor: '#ccc',
+    //     display: 'flex',
+    //     flexDirection: 'row',
+    //     justifyContent:'space-between',
+    //     marginBottom: 10
+    // },
+    card:{
+        margin: 10,
+        backgroundColor: 'transparent',
+        padding: 20,
+        color: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent:'space-between',
+        marginBottom: 10,
+        borderRadius:10
+    },
+    title: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff'
+    },
+    emptyText: {
+        textAlign: 'center',
+        marginTop: 20,
+        fontSize: 16,
+        color: '#fff',
     }
 })
