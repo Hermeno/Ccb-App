@@ -60,14 +60,31 @@ export const cadastrarDespesa = async ({
 
 
 
-export const buscarDespesas= async (token) => {
+export const buscarDespesas = async (token, missaoId) => {
     try {
         const response = await api.get('/buscar-despesas', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
+            params: { missao_id: missaoId }, // Passa o missao_id via parâmetros de consulta
         });
-        return response.data.dispesas; // Retorna apenas o array de missões
+        return response.data.despesas; // Retorna o array de despesas
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+
+
+export const buscarCreditos = async (token) => {
+    try {
+        const response = await api.get('/buscar-moedas', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data.creditos; // Retorna o array de créditos
     } catch (error) {
         throw error;
     }

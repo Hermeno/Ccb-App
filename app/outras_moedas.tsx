@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter,useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { buscarCredito, buscarCreditoLimit } from '@/services/credito';
 import { useJwt } from './jwt';
@@ -10,12 +10,15 @@ export default function App() {
   const user = useJwt(); 
 
   const [creditos, setCreditos] = useState([]);
+  const [creditosLimit, setCreditosLimit] = useState([]);
+  const { missao_id } = useLocalSearchParams();  // Aqui você já está pegando o missao_id diretamente
 
+  // UseEffect para buscar créditos
   useEffect(() => {
     const carregarCredito = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-        const data = await buscarCredito(token);
+        const data = await buscarCredito(token, missao_id); // Passando missao_id para buscarCredito
         setCreditos(data || []);
       } catch (error) {
         console.error('Erro ao buscar créditos:', error);
@@ -23,61 +26,38 @@ export default function App() {
     };
 
     carregarCredito();
-  }, []);
+  }, [missao_id]);  // Certifique-se de que `missao_id` seja dependência para refazer a requisição se necessário
 
-
-  const [creditosLimit, setCreditosLimit] = useState([]);
-
+  // UseEffect para buscar créditos limitados
   useEffect(() => {
     const carregarCreditoLimit = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-        const data = await buscarCreditoLimit(token);
-        console.log(data);
-        // Se for um array, usa diretamente; se for um objeto, transforma em array
+        const data = await buscarCreditoLimit(token, missao_id);
         setCreditosLimit(Array.isArray(data) ? data : data ? [data] : []);
       } catch (error) {
         console.error('Erro ao buscar créditos:', error);
       }
     };
-  
+
     carregarCreditoLimit();
   }, []);
 
-
-
-
-
-
-
-
-
-
-
-
-
   return (
     <View style={styles.container}>
-
-
-                    {creditosLimit.length > 0 ? (
-                    creditosLimit.map((credito) => (
-                        <TouchableOpacity key={credito.id} style={styles.cardTop}>
-                        <Text style={styles.titleTop}>Saldo Disponível</Text>
-                        <Text style={styles.titleTop}>Em {credito.moeda}</Text>
-                        <Text style={styles.titleTop}>R$ {credito.valor}</Text>
-                        </TouchableOpacity>
-                    ))
-                    ) : (
-                    <Text style={styles.emptyText}>SEM SALDO1</Text>
-                    )}
-
-
-
+      {creditosLimit.length > 0 ? (
+        creditosLimit.map((credito) => (
+          <TouchableOpacity key={credito.id} style={styles.cardTop}>
+            <Text style={styles.titleTop}>Saldo Disponível</Text>
+            <Text style={styles.titleTop}>Em {credito.moeda}</Text>
+            <Text style={styles.titleTop}>R$ {credito.valor}</Text>
+          </TouchableOpacity>
+        ))
+      ) : (
+        <Text style={styles.emptyText}>SEM SALDO</Text>
+      )}
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
-        {/* <Text style={styles.title}>Saldo Disponível</Text> */}
-
         {creditos.length > 0 ? (
           creditos.map((credito) => (
             <TouchableOpacity key={credito.id} style={styles.Top}>
@@ -92,6 +72,7 @@ export default function App() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

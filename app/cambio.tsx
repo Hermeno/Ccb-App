@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Link, useRouter  } from 'expo-router';
+import { Link, useRouter,useLocalSearchParams  } from 'expo-router';
 import { cadastrarCambio } from '../services/cambio';
 import { Picker } from '@react-native-picker/picker';
+import { buscarCreditos } from '../services/despesas';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useJwt } from './jwt'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,7 +19,24 @@ export default function Home ()
     const [total_cambiado, setTotal_cambiado] = useState('');
     const [numero_recibo, setNumero_recibo] = useState('');
     const [foto_recibo, setFoto_recibo] = useState('');
-
+    const { missao_id } = useLocalSearchParams();
+    // const [moeda, setMoeda] = useState('');
+    const [creditos, setCreditos] = useState([]);
+  
+    useEffect(() => {
+        const carregarCreditos = async () => {
+          try {
+            const token = await AsyncStorage.getItem('userToken');
+            const data = await buscarCreditos(token);
+            setCreditos(data);
+          } catch (error) {
+            console.error('Erro ao carregar créditos:', error);
+          }
+        };
+    
+        carregarCreditos();
+      }, []);
+    
     const OPENCAMERA = () => {
         router.push('/camera');
     }
@@ -69,21 +87,39 @@ export default function Home ()
             <View style={styles.CardLogin}>                
             <View style={styles.ViewFlex}>
             <View style={styles.ViewInput}>
-            <Text style={styles.TextInputs} >Moeda de Origem:</Text>
-            <Picker
-                selectedValue={moeda_origem}
-                onValueChange={(itemValue) => setMoeda_origem(itemValue)}
-                style={styles.picker}
-            > 
-                <Picker.Item label="Selecione uma moeda_origem..." value="" />
-                <Picker.Item label="Dólar" value="dolar" />
-                <Picker.Item label="Real" value="real" />
-                <Picker.Item label="Metical" value="metical" />
-                <Picker.Item label="Euro" value="euro" />
-                <Picker.Item label="Libra" value="libra" />
-                <Picker.Item label="Iene" value="iene" />
-            </Picker>
-            <Text style={styles.result}>Moeda selecionada: {moeda_origem}</Text>
+            {/* <Text style={styles.TextInputs} >Moeda de Origem:</Text> */}
+                    {/* <Picker
+                        selectedValue={moeda_origem}
+                        onValueChange={(itemValue) => setMoeda_origem(itemValue)}
+                        style={styles.picker}
+                    > 
+                        <Picker.Item label="Selecione uma moeda_origem..." value="" />
+                        <Picker.Item label="Dólar" value="dolar" />
+                        <Picker.Item label="Real" value="real" />
+                        <Picker.Item label="Metical" value="metical" />
+                        <Picker.Item label="Euro" value="euro" />
+                        <Picker.Item label="Libra" value="libra" />
+                        <Picker.Item label="Iene" value="iene" />
+                    </Picker>
+                    <Text style={styles.result}>Moeda selecionada: {moeda_origem}</Text> */}
+
+                <>
+                <Text style={styles.TextInputs}>Moeda a debitar:</Text>
+                <Picker  selectedValue={moeda_origem}  onValueChange={(itemValue) => setMoeda_origem(itemValue)}  style={styles.picker} >
+                    <Picker.Item label="Selecione uma moeda de origem..." value="" />
+                    {creditos.map((credito) => (
+                    <Picker.Item
+                        key={credito.id}
+                        label={`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`} // Exibe nome e valor
+                        value={credito.moeda} // Usa apenas o nome da moeda como valor
+                    />
+                    ))}
+                </Picker>
+                <Text style={styles.result}>Moeda selecionada: {moeda_origem}</Text>
+                </>
+
+
+
             </View>
             <View style={styles.ViewInput}>       
             <Text style={styles.TextInputs} >Moeda de Destino:</Text>

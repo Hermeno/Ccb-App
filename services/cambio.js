@@ -19,8 +19,10 @@ export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, t
             },
         }   
     );
+        // return response.message;
         return response;
     } catch (error) {
+        // return r
         throw error;
     }
 

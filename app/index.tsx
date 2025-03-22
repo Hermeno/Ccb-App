@@ -38,6 +38,7 @@ export default function Home ()
             }
         } catch (error) {
             Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
+            throw error;
         }
     };
 

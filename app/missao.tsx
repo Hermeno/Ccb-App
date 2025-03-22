@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform, Button } from 'react-native';
+import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform, Button, Modal } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,6 +22,7 @@ export default function Home() {
     const [showFinal, setShowFinal] = useState(false);
     const showdata_inicio_prevista = () => setShowInicio(true);
     const showdata_final_prevista = () => setShowFinal(true);
+    const [modalVisible, setModalVisible] = useState(false);
     const [missoes, setMissoes] = useState([]);
     useEffect(() => {
         const carregarMissoes = async () => {
@@ -115,101 +116,148 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-        <ScrollView>
+
         {(missoes || []).length > 0 ? (
             missoes.map((missao) => (
                 <View key={missao.id} style={styles.card}>
                     <View style={styles.cardInfoFirstLeft}>
                         <Text style={styles.title}>{missao.missao}</Text>
-                        <Text>Início: {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
                         <Text>País: {missao.pais}</Text>
-                    </View>
-                    <View style={styles.cardInfoFirstRight}>
-                        <TouchableOpacity style={styles.butonsMissaosVisualizar}><Text>ver e editar</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}><Text>Cadastrar despesas</Text></TouchableOpacity>
                     </View>
                 </View>
             ))
         ) : (
             <Text style={styles.emptyText}>Nenhuma missão encontrada</Text>
         )}
-        </ScrollView> 
-            <TouchableOpacity style={styles.footer} onPress={toggleView}>
-                <Text style={styles.buttonText}>{visible ? 'FECHAR' : '+ ADICIONAR MISSÃO'}</Text>
-            </TouchableOpacity>
-            {visible && (
-                <Animated.View style={[styles.slideUpView, { transform: [{ translateY: slideAnim }] }]}>
-                    <View style={styles.CardLogin}>
+            <View style={styles.content}>
 
-                        <Text style={styles.TextInput}>Misao</Text>
-                        <TextInput
-                            value={missao}
-                            onChangeText={setMissao}
-                            style={styles.input}
-                            placeholder='Missao creditado'
-                        />
 
-                        <Text style={styles.TextInput}>Selecione a data de início</Text>
-                        <Button  onPress={showdata_inicio_prevista} title="Escolher data de início" />
-                        <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
-                        {showInicio && (
-                            <DateTimePicker
-                                value={data_inicio_prevista}
-                                mode="date"
-                                display="default"
-                                onChange={onChangedata_inicio_prevista}
-                                
-                            />
-                        )}
 
-                        <Text style={styles.TextInput}>Selecione a data final</Text>
-                        <Button  onPress={showdata_final_prevista} title="Escolher data final" />
-                        <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
-                        {showFinal && (
-                            <DateTimePicker
-                                value={data_final_prevista}
-                                mode="date"
-                                display="default"
-                                onChange={onChangedata_final_prevista}
-                            />
-                        )}
-                    <Text style={styles.TextInput}>Pais</Text>
-                        <TextInput
-                            value={pais}
-                            onChangeText={setPais}
-                            style={styles.input}
-                            placeholder='Estado / estado'
-                        />
-                    <Text style={styles.TextInput}>Estado / estado</Text>
-                        <TextInput
-                            value={estado}
-                            onChangeText={setEstado}
-                            style={styles.input}
-                            placeholder='Estado / estado'
-                        />
-                    <Text style={styles.TextInput}>Cidade</Text>
-                        <TextInput
-                            value={cidade}
-                            onChangeText={setCidade}
-                            style={styles.input}
-                            placeholder='Cidade'
-                        />
-                        <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
-                            <Text style={styles.TextBotao}>ADICIONAR</Text>
-                        </TouchableOpacity>
+                {(missoes || []).length > 0 ? (
+            missoes.map((missao) => (
+                <View key={missao.id} style={styles.card}>
+                    <View style={styles.cardInfoFirstLeft}>
+                        <Text style={styles.title}>{missao.missao}</Text>
+                        <Text>Início: {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
+                        <Text>País: {missao.pais}</Text>
+                        <Text>País: {missao.estado}</Text>
+                        <Text>País: {missao.cidade}</Text>
+                        <Text>País: {missao.pais}</Text>
                     </View>
-                </Animated.View>
-            )}
-        </View>
+
+                        <TouchableOpacity style={styles.butonsMissaosVisualizar}><Text>EDITAR</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}><Text>SALVAR DOCUMENTO CSV</Text></TouchableOpacity>
+
+                </View>
+            ))
+        ) : (
+
+                <TouchableOpacity style={styles.butonsMissaosVisualizarModal} onPress={() => setModalVisible(true)}>
+                <Text style={styles.buttonText}>Cadastrar missão</Text>
+            </TouchableOpacity>
+
+
+
+
+        )}
+
+
+
+
+
+            </View>
+
+
+
+            <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                <View style={styles.CardLogin}>
+
+                    <Text style={styles.TextInput}>Misao</Text>
+                    <TextInput
+                        value={missao}
+                        onChangeText={setMissao}
+                        style={styles.input}
+                        placeholder='Missao creditado'
+                    />
+
+                    <Text style={styles.TextInput}>Selecione a data de início</Text>
+                    <Button  onPress={showdata_inicio_prevista} title="Escolher data de início" />
+                    <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
+                    {showInicio && (
+                        <DateTimePicker
+                            value={data_inicio_prevista}
+                            mode="date"
+                            display="default"
+                            onChange={onChangedata_inicio_prevista}
+                            
+                        />
+                    )}
+
+                    <Text style={styles.TextInput}>Selecione a data final</Text>
+                    <Button  onPress={showdata_final_prevista} title="Escolher data final" />
+                    <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
+                    {showFinal && (
+                        <DateTimePicker
+                            value={data_final_prevista}
+                            mode="date"
+                            display="default"
+                            onChange={onChangedata_final_prevista}
+                        />
+                    )}
+                    <Text style={styles.TextInput}>Pais</Text>
+                    <TextInput
+                        value={pais}
+                        onChangeText={setPais}
+                        style={styles.input}
+                        placeholder='Pais'
+                    />
+                    <Text style={styles.TextInput}>Estado / estado</Text>
+                    <TextInput
+                        value={estado}
+                        onChangeText={setEstado}
+                        style={styles.input}
+                        placeholder='Estado / estado'
+                    />
+                    <Text style={styles.TextInput}>Cidade</Text>
+                    <TextInput
+                        value={cidade}
+                        onChangeText={setCidade}
+                        style={styles.input}
+                        placeholder='Cidade'
+                    />
+                    <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
+                        <Text style={styles.TextBotao}>ADICIONAR</Text>
+                    </TouchableOpacity>
+                    {/* </View> */}
+                    </View>
+
+
+
+
+
+                    <TouchableOpacity 
+                    style={styles.closeButton} 
+                    onPress={() => setModalVisible(false)}
+                    >
+                    <Text style={styles.buttonText}>Fechar</Text>
+                    </TouchableOpacity>
+                </View>
+                </View>
+            </Modal>
+
+</View>
+
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
-        // alignItems: "center",
-        justifyContent: 'flex-end',  // Garante que o conteúdo vai para o fundo da tela
+        backgroundColor: "#487d76",
+        alignItems: "center",
+        // justifyContent: 'flex-end',  // Garante que o conteúdo vai para o fundo da tela
     },
     TextHeaderLogin: {
         fontSize: 20,
@@ -228,6 +276,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f0f0f0',
         height: 45,
         color: "#000",
+        borderRadius: 10,
     },
     TextInput: {
         marginBottom: 3,
@@ -263,26 +312,24 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
     },
-    slideUpView: {
+    content: {
+        padding: 20,
         position: 'absolute',
-        bottom: 160,  // Ajusta para começar acima do footer fixo
+        bottom: 0,  // Ajusta para começar acima do footer fixo
         width: '100%',
-        height: '100%',
+        height: '85%',
         backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        padding: 20,
-        borderWidth: 1,
+        // borderWidth: 1,
         borderTopColor: '#fafafa',
+    },
 
-    },
     CardLogin: {
-        marginTop: 10,
-        padding: 16,
-        borderRadius: 10,
-        // borderWidth:1,
-        // borderColor:'#ccc'
+        padding: 10,
+        width: '100%',       
     },
+
     TextBotao: {
         fontSize: 16,
         fontWeight: 'bold',
@@ -301,14 +348,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },  
     
-    content:{
-        padding: 10,
-        width: '100%',
-        backgroundColor: '#fff',
-    },
     cardInfo:{
         margin: 10,
-        backgroundColor: '#a2564a',
+        backgroundColor: 'transparent',
         borderRadius: 0,
         shadowColor: '#000',
         shadowOffset: { width: 2, height: 4 },
@@ -333,7 +375,7 @@ const styles = StyleSheet.create({
     },
     cardInfoOut:{
         margin: 10,
-        backgroundColor: '#E20022',
+        backgroundColor: 'transparent',
         borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: { width: 2, height: 4 },
@@ -358,14 +400,11 @@ const styles = StyleSheet.create({
     },
     card: {
         marginBottom: 10,
-        backgroundColor: '#fafafa',
+        backgroundColor: 'transparent',
         borderRadius: 10,
-        // padding: 16,
-        flexDirection: 'row',
-        justifyContent:'space-between',
         margin:10,
         // borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#fff',
     },
 
     title: {
@@ -382,33 +421,27 @@ const styles = StyleSheet.create({
     cardInfoFirstLeft:{
         width: '60%',
         // height: 80,
-        backgroundColor: '#a2564a',
+        backgroundColor: 'transparent',
         borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 2, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 5,
-        elevation: 2,
         justifyContent: 'center',
         // alignItems: 'left',
         paddingLeft: 20,
     },
-    cardInfoFirstRight:{
-        width: '40%',
-        // height: 80,
-        backgroundColor: 'transparent',
-        // borderRadius: 0,
-        // shadowColor: '#000',
-        // shadowOffset: { width: 2, height: 4 },
-        // shadowOpacity: 0.12,
-        // shadowRadius: 5,
-        // elevation: 2,
+
+    butonsMissaosVisualizar:{
+        padding:10,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 10,
+        borderWidth:1,
+        borderColor: '#ccc',
     },
-    butonsMissaosVisualizar:{
-        // width: '45%',
-        // height: 80,
+
+
+    butonsMissaosVisualizarModal:{
         padding:10,
         backgroundColor: '#fff',
         borderRadius: 20,
@@ -422,7 +455,49 @@ const styles = StyleSheet.create({
         marginTop: 3,
         borderWidth:1,
         borderColor: '#ccc',
-    }
+    },
+
+
+    openButton: {
+        backgroundColor: '#4CAF50',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 10,
+        width: '80%',
+        alignItems: 'center',
+      },
+      modalContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      modalContent: {
+        width: '90%',
+        backgroundColor: '#FFF',
+        padding: 20,
+        borderRadius: 20,
+        alignItems: 'center',
+      },
+      modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 15,
+      },
+      closeButton:{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 10,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        width: 100,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }
+
+
 
 
 });

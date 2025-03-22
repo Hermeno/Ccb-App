@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert, Platform, Button, Modal, FlatList, Image  } from 'react-native';
 import { Link, useRouter, useLocalSearchParams   } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
-import { cadastrarDespesa } from '../services/despesas';
+import { cadastrarDespesa, buscarCreditos } from '../services/despesas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useJwt } from './jwt'
@@ -11,7 +11,8 @@ export default function Home ()
 {
     const router = useRouter();
     const user = useJwt();
-    const { missao_id, missao_name, photos } = useLocalSearchParams();
+    const { missao_id, missao_name } = useLocalSearchParams();
+    console.log(missao_id, missao_name)
     const [valor, setValor] = useState('');
     const [cidade, setCidade] = useState('');
     const [outro, setOutro] = useState('');
@@ -25,12 +26,23 @@ export default function Home ()
     const [descricao, setDescricao] = useState<string[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [parsedPhotos, setParsedPhotos] = useState<string[]>([]);
+    const [creditos, setCreditos] = useState([]);
+  
+    useEffect(() => {
+        const carregarCreditos = async () => {
+          try {
+            const token = await AsyncStorage.getItem('userToken');
+            const data = await buscarCreditos(token);
+            setCreditos(data);
+          } catch (error) {
+            console.error('Erro ao carregar créditos:', error);
+          }
+        };
+    
+        carregarCreditos();
+      }, []);
+    
 
-
-    const decodedPhotos = photos ? JSON.parse(decodeURIComponent(photos as string)) : [];
-    const decodedMissaoId = missao_id ? decodeURIComponent(missao_id as string) : '';
-    const decodedMissaoName = missao_name ? decodeURIComponent(missao_name as string) : '';
- 
     useEffect(() => {
         if (photos) {
           try {
@@ -137,18 +149,19 @@ const handleDespesa = async () => {
         <View style={styles.container}>
             
             <View style={styles.CardLogin}> 
-            <Text style={styles.TextInput}>Moeda a debitar:</Text>
-            <Picker selectedValue={moeda} onValueChange={(itemValue) => setMoeda(itemValue)} style={styles.picker} >
-                <Picker.Item label="Selecione uma moeda..." value="" />
-                <Picker.Item label="Dólar" value="dolar" />
-                <Picker.Item label="Real" value="real" />
-                <Picker.Item label="Metical" value="metical" />
-                <Picker.Item label="Euro" value="euro" />
-                <Picker.Item label="Libra" value="libra" />
-                <Picker.Item label="Iene" value="iene" />
-            </Picker>
-            <Text style={styles.result}>Moeda selecionada: {moeda}</Text>
-
+                <>
+                <Picker selectedValue={moeda} onValueChange={(itemValue) => setMoeda(itemValue)} style={styles.picker}>
+                    <Picker.Item label="Selecione uma moeda..." value="" />
+                    {creditos.map((credito) => (
+                        <Picker.Item
+                            key={credito.id}  // Garantindo que a chave seja única
+                            label={`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`} // Exibe nome e valor
+                            value={credito.moeda} // Usa apenas o nome da moeda como valor
+                        />
+                    ))}
+                </Picker>
+                <Text style={styles.result}>Moeda selecionada: {moeda}</Text>
+                </>
 
 
                

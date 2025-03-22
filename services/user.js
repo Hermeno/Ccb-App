@@ -29,7 +29,7 @@ export const loginUsuario = async ({ email, password }) => {
             throw new Error('Falha no login');
         }
     } catch (error) {
-        console.error('Erro no login:', error.message);
+        // console.error('Erro no login:', error.message);
         throw error;
     }
 };

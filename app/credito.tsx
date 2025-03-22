@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Link, useRouter  } from 'expo-router';
+import { Link, useRouter, useLocalSearchParams  } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { cadastrarCredito } from '../services/credito';
@@ -11,6 +11,7 @@ export default function Home ()
 {
     const router = useRouter();
     const  user = useJwt(); 
+    const { missao_id } = useLocalSearchParams();
     const [moeda, setMoeda] = useState('');
     const [valor, setValor] = useState('');
     const [referencia, setReferencia] = useState('');
@@ -39,6 +40,7 @@ export default function Home ()
                 moeda,
                 valor,
                 referencia,
+                missao_id
             }, token);
             Alert.alert('Sucesso!', 'Cadastrada com sucesso!');
             setMoeda('');
