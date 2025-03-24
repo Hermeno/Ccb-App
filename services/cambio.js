@@ -1,9 +1,8 @@
 import api from './api';
-export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, total_a_cambiar, total_cambiado, numero_recibo}, token) => {
+export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, total_a_cambiar, total_cambiado, numero_recibo,  missao_id}, token) => {
     console.log( moeda_origem, moeda_destino,
         cotacao, total_a_cambiar, total_cambiado, numero_recibo
     )
-    console.log(token)
     try {
         const response = await api.post('/cadastrar-cambio', {
             moeda_origem, 
@@ -12,6 +11,7 @@ export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, t
             total_a_cambiar,
             total_cambiado,
             numero_recibo,
+            missao_id
         },    
         {
             headers: {
@@ -27,6 +27,60 @@ export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, t
     }
 
 }
+
+
+export const buscarCambioPorId = async (token, missao_id) => {
+    try {
+        const response = await api.get('/buscar-cambioId', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: {
+                missao_id: missao_id,
+            }
+        });
+        return response.data.creditos;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+
+
+export const atualizarCambio = async (
+    id,
+    { moeda_origem, moeda_destino, cotacao, total_a_cambiar, total_cambiado, numero_recibo, missao_id },
+    token
+) => {
+    try {
+        const response = await api.put(`/atualizar-cambio/${id}`, {
+            moeda_origem,
+            moeda_destino,
+            cotacao,
+            total_a_cambiar,
+            total_cambiado,
+            numero_recibo,
+            missao_id
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+
+
+
+
+
+
+
 
 
 

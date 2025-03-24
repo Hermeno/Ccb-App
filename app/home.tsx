@@ -15,8 +15,6 @@ export default function HomeScreen() {
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState<string | null>(null);
   const [atualizar, setAtualizar] = useState(false);
-
-  // Função para carregar os créditos
   const carregarCredito = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -27,25 +25,10 @@ export default function HomeScreen() {
       console.error('Erro ao buscar créditos:', error);
     }
   };
-  // useEffect(() => {
-  //   const carregarCredito = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem('userToken');
-  //       const data = await buscarCreditoLimit(token);
-  //       setCreditosLimit(Array.isArray(data) ? data : data ? [data] : []);
-  //     } catch (error) {
-  //       console.error('Erro ao buscar créditos:', error);
-  //     }
-  //   };
-
-  //   carregarCredito();
-  // }, []);
-  // Função para carregar as missões
   const carregarMissoes = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const data = await buscarMissoes(token);
-      console.log(token);
       if (data && data.length > 0) {
         setMissoes(data);
         setMissaoId(data[0].id);
@@ -97,7 +80,7 @@ export default function HomeScreen() {
   };
 
   const MISSAO = () => {
-    router.push(`/missao`);
+    router.push(`/missao?missao_id=${missaoId}?missao_name=${missaoName}`);
   };
 
   const DESPESA = () => {

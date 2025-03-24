@@ -31,3 +31,62 @@ export const buscarMissoes = async (token) => {
         throw error;
     }
 };
+
+
+
+
+
+export const buscarMissaoPorId = async (missao_id, token) => {
+    try {
+        const response = await api.get('/buscar-missaoId', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: {
+                missao_id,
+            },
+        });
+        return response.data.missoes;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const buscarDespesas = async (token, missao_id) => {
+    try {
+        const response = await api.get('/buscar-despesas', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: { missao_id: missao_id },
+        });
+        console.log(
+            response.data.despesas
+        )
+        return response.data.despesas; 
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+
+
+export const editarMissao = async ({  missao_id, missao, estado, cidade, data_inicio_prevista, data_final_prevista, pais, username}, token) => {
+    try {
+        const response = await api.put(`/atualizar-missao/${missao_id}`, {
+             missao, estado, cidade, data_inicio_prevista, data_final_prevista, pais, username
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        return response
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+
+

@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform, Button, Modal } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useJwt } from './jwt';
-import  {cadastrarMissao, buscarMissoes} from '../services/missao'
+import  {cadastrarMissao, buscarMissoes, buscarDespesas} from '../services/missao'
 
 const { height } = Dimensions.get('window');
 
@@ -12,6 +12,7 @@ export default function Home() {
     const [missao, setMissao] = useState(''); 
     const [estado, setEstado] = useState('');
     const [pais, setPais] = useState('');
+    const { missao_id,  missao_name } = useLocalSearchParams();
     const [cidade, setCidade] = useState('');
     const [visible, setVisible] = useState(false);
     const  user = useJwt();  
@@ -24,19 +25,32 @@ export default function Home() {
     const showdata_final_prevista = () => setShowFinal(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [missoes, setMissoes] = useState([]);
+    const [despesas, setDespesas] = useState([]);
     useEffect(() => {
         const carregarMissoes = async () => {
-          try {
-            const token = await AsyncStorage.getItem('userToken');
-            const data = await buscarMissoes(token);            
-            setMissoes(data || []); // Garante que missoes será um array vazio caso data seja undefined
-          } catch (error) {
-            console.error('Erro ao buscar missões:', error);
-          }
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                const data = await buscarMissoes(token);            
+                setMissoes(data || []); // ✅ Garante que `missoes` será um array
+            } catch (error) {
+                console.error('Erro ao buscar missões:', error);
+            }
         };
-      
+    
+        const carregarDespesas = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                const data = await buscarDespesas(token, missao_id); 
+                setDespesas(data || []);
+            } catch (error) {
+                console.error('Erro ao buscar despesas:', error);
+            }
+        };
+    
         carregarMissoes();
-      }, []);
+        carregarDespesas();
+    }, []);
+    
 
 
 
@@ -94,6 +108,13 @@ export default function Home() {
             params: { missao_id, missao_name }
         });
     };
+
+    const Update = (missao_id: number, missao_name: string) => {
+        router.push({
+            pathname: '/updatemissao', // caminho correto
+            params: { missao_id, missao_name }
+        });
+    };
     
     const slideAnim = useRef(new Animated.Value(height)).current;  // Inicia fora da tela
 
@@ -119,7 +140,7 @@ export default function Home() {
 
         {(missoes || []).length > 0 ? (
             missoes.map((missao) => (
-                <View key={missao.id} style={styles.card}>
+                <View key={missao.id} style={styles.cardMission}>
                     <View style={styles.cardInfoFirstLeft}>
                         <Text style={styles.title}>{missao.missao}</Text>
                         <Text>País: {missao.pais}</Text>
@@ -134,23 +155,23 @@ export default function Home() {
 
 
                 {(missoes || []).length > 0 ? (
-            missoes.map((missao) => (
-                <View key={missao.id} style={styles.card}>
-                    <View style={styles.cardInfoFirstLeft}>
-                        <Text style={styles.title}>{missao.missao}</Text>
-                        <Text>Início: {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
-                        <Text>País: {missao.pais}</Text>
-                        <Text>País: {missao.estado}</Text>
-                        <Text>País: {missao.cidade}</Text>
-                        <Text>País: {missao.pais}</Text>
-                    </View>
+                    missoes.map((missao) => (
+                        <View key={missao.id} style={styles.cardMission}>
+                            <View style={styles.cardInfoFirstLeft}>
+                                <Text style={styles.title}>{missao.missao}</Text>
+                                <Text>Início: {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
+                                <Text>País: {missao.pais}</Text>
+                                <Text>País: {missao.estado}</Text>
+                                <Text>País: {missao.cidade}</Text>
+                                <Text>País: {missao.pais}</Text>
+                            </View>
 
-                        <TouchableOpacity style={styles.butonsMissaosVisualizar}><Text>EDITAR</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}><Text>SALVAR DOCUMENTO CSV</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(missao.id, missao.missao)}><Text>EDITAR</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}><Text>SALVAR DOCUMENTO CSV</Text></TouchableOpacity>
 
-                </View>
-            ))
-        ) : (
+                        </View>
+                    ))
+                ) : (
 
                 <TouchableOpacity style={styles.butonsMissaosVisualizarModal} onPress={() => setModalVisible(true)}>
                 <Text style={styles.buttonText}>Cadastrar missão</Text>
@@ -162,7 +183,21 @@ export default function Home() {
         )}
 
 
-
+        {despesas.length > 0 ? (
+            despesas.map((despesa) => (
+                <TouchableOpacity key={despesa.id} style={styles.card}>
+                    <Text style={styles.title}>
+                        {Array.isArray(despesa.descricao) && despesa.descricao.length > 0
+                            ? despesa.descricao.join(', ')
+                            : despesa.outro}
+                    </Text>
+                    <Text style={styles.title}>Em {despesa.cidade}</Text>
+                    <Text style={styles.title}>R$ {despesa.valor}</Text>
+                </TouchableOpacity>
+            ))
+        ) : (
+            <Text style={styles.emptyText}>Nenhuma Despesa encontrada</Text>
+        )}
 
 
             </View>
@@ -398,7 +433,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#ccc',
     },
-    card: {
+    cardMission: {
         marginBottom: 10,
         backgroundColor: 'transparent',
         borderRadius: 10,
@@ -406,6 +441,22 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         borderColor: '#fff',
     },
+    card:{
+        margin: 10,
+        backgroundColor: 'transparent',
+        padding: 20,
+        color: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent:'space-between',
+        marginBottom: 10,
+        borderRadius:10
+    },
+
+
+
 
     title: {
         fontSize: 16,

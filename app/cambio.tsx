@@ -58,7 +58,8 @@ export default function Home ()
                 cotacao,
                 total_a_cambiar,
                 total_cambiado,
-                numero_recibo
+                numero_recibo,
+                missao_id
             }, token)
             if(response.status === 200) {
                 Alert.alert('Cambio realizado com sucesso!');
@@ -87,22 +88,6 @@ export default function Home ()
             <View style={styles.CardLogin}>                
             <View style={styles.ViewFlex}>
             <View style={styles.ViewInput}>
-            {/* <Text style={styles.TextInputs} >Moeda de Origem:</Text> */}
-                    {/* <Picker
-                        selectedValue={moeda_origem}
-                        onValueChange={(itemValue) => setMoeda_origem(itemValue)}
-                        style={styles.picker}
-                    > 
-                        <Picker.Item label="Selecione uma moeda_origem..." value="" />
-                        <Picker.Item label="Dólar" value="dolar" />
-                        <Picker.Item label="Real" value="real" />
-                        <Picker.Item label="Metical" value="metical" />
-                        <Picker.Item label="Euro" value="euro" />
-                        <Picker.Item label="Libra" value="libra" />
-                        <Picker.Item label="Iene" value="iene" />
-                    </Picker>
-                    <Text style={styles.result}>Moeda selecionada: {moeda_origem}</Text> */}
-
                 <>
                 <Text style={styles.TextInputs}>Moeda a debitar:</Text>
                 <Picker  selectedValue={moeda_origem}  onValueChange={(itemValue) => setMoeda_origem(itemValue)}  style={styles.picker} >

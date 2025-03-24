@@ -12,7 +12,7 @@ export default function Home ()
     const router = useRouter();
     const user = useJwt();
     const { missao_id, missao_name } = useLocalSearchParams();
-    console.log(missao_id, missao_name)
+    // console.log(missao_id, missao_name)
     const [valor, setValor] = useState('');
     const [cidade, setCidade] = useState('');
     const [outro, setOutro] = useState('');
@@ -41,20 +41,6 @@ export default function Home ()
     
         carregarCreditos();
       }, []);
-    
-
-    useEffect(() => {
-        if (photos) {
-          try {
-            // Verifique se `photos` é uma string ou um array e analise corretamente
-            const parsed = Array.isArray(photos) ? photos : JSON.parse(decodeURIComponent(photos));
-            setParsedPhotos(parsed);
-          } catch (error) {
-            console.error('Falha ao analisar fotos:', error);
-          }
-        }
-      }, [photos]);
-
 
 
 
@@ -87,53 +73,57 @@ export default function Home ()
       };
       
 
-const handleDespesa = async () => {
-  const token = await AsyncStorage.getItem('userToken');
-  
-  if (!user) {
-    Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
-    return;
-  }
-  
-  if (!valor || !cidade || !numero_recibo || parsedPhotos.length === 0) {
-    Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
-    return;
-  }
-  
-  if ((Array.isArray(descricao) && descricao.length === 0) && !outro) {
-    Alert.alert('Erro', 'Pelo menos uma categoria ou outro campo precisa ser preenchido.');
-    return;
-  }
-  
-  try {
-    // Envie as fotos como parte de FormData se necessário
-    const formData = new FormData();
-    parsedPhotos.forEach((photoUri) => {
-      formData.append('photos', {
-        uri: photoUri,
-        type: 'image/jpeg', // ou o tipo correto dependendo do formato das fotos
-        name: `photo_${new Date().getTime()}.jpg`,
-      });
-    });
 
-    await cadastrarDespesa({
-      user_id: user.id,
-      moeda,
-      valor,
-      cidade,
-      descricao: JSON.stringify(descricao),
-      outro,                
-      numero_recibo,
-      missao_id: missao_id ?? null, 
-      missao_name: missao_name ?? null,
-      parsedPhotos: formData,
-    }, token);
+
+
+      const handleDespesa = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+      
+        if (!user) {
+            Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
+            return;
+        }
     
-    Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
-  } catch (error) {
-    console.log(error, 'Erro ao cadastrar despesa');
-  }
-};
+        if (!valor || !cidade || !numero_recibo) {
+            Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
+            return;
+        }
+    
+        if ((Array.isArray(descricao) && descricao.length === 0) && !outro) {
+            Alert.alert('Erro', 'Pelo menos uma categoria ou outro campo precisa ser preenchido.');
+            return;
+        }
+    
+        try {
+            await cadastrarDespesa({
+                moeda,
+                valor,
+                cidade,
+                descricao: JSON.stringify(descricao),
+                outro,
+                data_padrao,
+                numero_recibo,
+                missao_id: missao_id
+            }, token);
+    
+            Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
+            setValor('');
+            setCidade('');
+            setOutro('');
+            setNumero_recibo('');
+            setFoto_recibo('');
+            setMoeda('');
+            setDescricao([]);
+            setParsedPhotos([]);
+        } catch (error) {
+            console.log(error, 'Erro ao cadastrar despesa');
+            Alert.alert('Erro', 'Não foi possível cadastrar a despesa.');
+        }
+    };
+    
+
+
+
 
     const onChangedata_padrao = (event: any, selectedDate?:Date) => {
         const currentDate = selectedDate || data_padrao;
