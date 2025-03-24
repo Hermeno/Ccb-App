@@ -164,7 +164,15 @@ export default function RootLayout() {
 
                     }}
                 />
-
+                <Stack.Screen
+                    name="csv"
+                    options={{
+                        headerTitle: "csv",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />
                 <Stack.Screen
                     name="camera"
                     options={{

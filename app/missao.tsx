@@ -104,7 +104,7 @@ export default function Home() {
     }
     const DESPESAS = (missao_id: number, missao_name: string) => {
         router.push({
-            pathname: './despesas',
+            pathname: './csv',
             params: { missao_id, missao_name }
         });
     };
@@ -159,16 +159,22 @@ export default function Home() {
                         <View key={missao.id} style={styles.cardMission}>
                             <View style={styles.cardInfoFirstLeft}>
                                 <Text style={styles.title}>{missao.missao}</Text>
-                                <Text>Início: {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
-                                <Text>País: {missao.pais}</Text>
-                                <Text>País: {missao.estado}</Text>
-                                <Text>País: {missao.cidade}</Text>
-                                <Text>País: {missao.pais}</Text>
+                                <Text>DATA FINAL:  {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
+                                <Text>PAIS:  {missao.pais}</Text>
+                                <Text>ESTADO/PROVINCIA:  {missao.estado}</Text>
+                                <Text>CIDADE:  {missao.cidade}</Text>
+                                <Text>DATA FINAL:  {new Date(missao.data_final_prevista).toLocaleDateString()}</Text>
                             </View>
 
-                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(missao.id, missao.missao)}><Text>EDITAR</Text></TouchableOpacity>
-                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}><Text>SALVAR DOCUMENTO CSV</Text></TouchableOpacity>
+                            <View style={styles.flexButoes}>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(missao.id, missao.missao)}>
+                                    <Text>EDITAR</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}>
+                                    <Text>SALVAR DOCUMENTO CSV</Text>
+                                </TouchableOpacity>
 
+                            </View>
                         </View>
                     ))
                 ) : (
@@ -182,10 +188,13 @@ export default function Home() {
 
         )}
 
-
+        <Text style={styles.titledESPESAS}>DESPESAS
+        </Text>
         {despesas.length > 0 ? (
             despesas.map((despesa) => (
+                
                 <TouchableOpacity key={despesa.id} style={styles.card}>
+
                     <Text style={styles.title}>
                         {Array.isArray(despesa.descricao) && despesa.descricao.length > 0
                             ? despesa.descricao.join(', ')
@@ -437,7 +446,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         backgroundColor: 'transparent',
         borderRadius: 10,
-        margin:10,
+        // margin:10,
         // borderWidth: 1,
         borderColor: '#fff',
     },
@@ -546,7 +555,20 @@ const styles = StyleSheet.create({
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
-      }
+      },
+      flexButoes:{
+        flexDirection: 'row',
+        justifyContent:'flex-start',
+        margin: 15,
+        width: '100%',
+        columnGap: '10',
+      },
+      titledESPESAS:{
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        margin: 15,
+      },
 
 
 

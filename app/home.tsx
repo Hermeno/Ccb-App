@@ -19,7 +19,6 @@ export default function HomeScreen() {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const data = await buscarCreditoLimit(token);
-      // console.log(token);
       setCreditos(Array.isArray(data) ? data : data ? [data] : []);
     } catch (error) {
       console.error('Erro ao buscar créditos:', error);

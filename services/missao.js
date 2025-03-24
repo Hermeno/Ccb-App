@@ -60,9 +60,6 @@ export const buscarDespesas = async (token, missao_id) => {
             },
             params: { missao_id: missao_id },
         });
-        console.log(
-            response.data.despesas
-        )
         return response.data.despesas; 
     } catch (error) {
         throw error;
@@ -87,6 +84,20 @@ export const editarMissao = async ({  missao_id, missao, estado, cidade, data_in
     }
 }
 
-
+export const buscarCambioAll = async (token, missao_id) => {
+    try {
+        const response = await api.get('/buscar-cambio-All', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: {
+                missao_id: missao_id,
+            }
+        });
+        return response.data.creditos;
+    } catch (error) {
+        throw error;
+    }
+};
 
 
