@@ -32,6 +32,19 @@ export const buscarMissoes = async (token) => {
     }
 };
 
+export const buscarMissoesAll = async (token) => {
+    try {
+        const response = await api.get('/buscar-missoes-All', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        // console.log(response.data.missaos)
+        return response.data.missoes; // Retorna apenas o array de missões
+    } catch (error) {
+        throw error;
+    }
+};
 
 
 
@@ -53,6 +66,7 @@ export const buscarMissaoPorId = async (missao_id, token) => {
 };
 
 export const buscarDespesas = async (token, missao_id) => {
+
     try {
         const response = await api.get('/buscar-despesas', {
             headers: {
@@ -66,6 +80,39 @@ export const buscarDespesas = async (token, missao_id) => {
     }
 };
 
+
+export const buscarDespesasAll = async (token, missao_id) => {
+    console.log(token, missao_id)
+    try {
+        const response = await api.get('/buscar-despesas-All', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: { missao_id: missao_id },
+        });
+        console.log(response.data)
+        return response.data.despesas; 
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+export const buscarCambioAll = async (token, missao_id) => {
+    try {
+        const response = await api.get('/buscar-cambio-All', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: {
+                missao_id: missao_id,
+            }
+        });
+        return response.data.cambios;
+    } catch (error) {
+        throw error;
+    }
+};
 
 
 
@@ -84,20 +131,18 @@ export const editarMissao = async ({  missao_id, missao, estado, cidade, data_in
     }
 }
 
-export const buscarCambioAll = async (token, missao_id) => {
+
+
+export const terminarMissao = async (token, missaoId, status) => {
     try {
-        const response = await api.get('/buscar-cambio-All', {
+        const response = await api.put(`/missao/${missaoId}`, { status }, {
             headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            params: {
-                missao_id: missao_id,
+                Authorization: `Bearer ${token}`
             }
         });
-        return response.data.creditos;
+        return response.data;
     } catch (error) {
+        console.error('Erro ao atualizar missão:', error);
         throw error;
     }
 };
-
-

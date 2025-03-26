@@ -11,8 +11,8 @@ export default function Home ()
 {
     const router = useRouter();
     const user = useJwt();
-    const { missao_id, missao_name } = useLocalSearchParams();
-    // console.log(missao_id, missao_name)
+    const { missao_id } = useLocalSearchParams();
+    // console.log(missao_id)
     const [valor, setValor] = useState('');
     const [cidade, setCidade] = useState('');
     const [outro, setOutro] = useState('');
@@ -68,12 +68,12 @@ export default function Home ()
     const OPENCAMERA = () => {
         router.push({
           pathname: '/camera',
-          params: { missao_id:missao_id, missao_name:missao_name }
+          params: { missao_id:missao_id }
         });
       };
       
 
-
+      console.log(missao_id)
 
 
       const handleDespesa = async () => {
@@ -103,7 +103,7 @@ export default function Home ()
                 outro,
                 data_padrao,
                 numero_recibo,
-                missao_id: missao_id
+                missao_id
             }, token);
     
             Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
@@ -170,7 +170,7 @@ export default function Home ()
             <View  style={styles.ViewFlex}>
                 <View style={styles.ViewInputOne}>
                 <Text style={styles.TextInputs}>Cidade</Text>
-                <TextInput  value={cidade} onChangeText={setCidade} style={styles.inputOne} placeholder='Valor creditado' />
+                <TextInput  value={cidade} onChangeText={setCidade} style={styles.inputOne} placeholder='Cidade'  />
                 </View>
             </View>
 
@@ -206,7 +206,7 @@ export default function Home ()
                                 {showOutro && (
                                     <View style={styles.ViewInputOne}>
                                         <Text style={styles.TextInputs}>Outro</Text>
-                                        <TextInput  value={outro} onChangeText={setOutro} style={styles.inputOne} placeholder="Valor creditado" />
+                                        <TextInput  value={outro} onChangeText={setOutro} style={styles.inputOne} placeholder="Valor creditado" keyboardType="numeric" />
                                     </View>
                                 )}
                                 <TouchableOpacity style={styles.Outro} onPress={() => setShowOutro(!showOutro)}>
@@ -229,7 +229,7 @@ export default function Home ()
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Valor</Text>
-                <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor' />
+                <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor' keyboardType="numeric"  />
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>N do Recibo</Text>

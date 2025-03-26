@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform, Button, Modal } from 'react-native';
 import { Link, useRouter, useLocalSearchParams } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useJwt } from './jwt';
-import  {cadastrarMissao, buscarMissoes, buscarDespesas} from '../services/missao'
+import  {cadastrarMissao, buscarMissoes,buscarMissoesAll, buscarDespesas, terminarMissao} from '../services/missao'
 
 const { height } = Dimensions.get('window');
 
@@ -41,6 +42,7 @@ export default function Home() {
             try {
                 const token = await AsyncStorage.getItem('userToken');
                 const data = await buscarDespesas(token, missao_id); 
+                console.log(data);
                 setDespesas(data || []);
             } catch (error) {
                 console.error('Erro ao buscar despesas:', error);
@@ -115,7 +117,52 @@ export default function Home() {
             params: { missao_id, missao_name }
         });
     };
+
+
+    const goTo = (id_despesa: number) => {
+        router.push({
+            pathname: '/updatedespesa',
+            params: { id_despesa }
+        });
+    }
     
+    const handleAcceptOrCancel = () => {
+        Alert.alert(
+            'Confirmação',
+            'Você deseja mesmo terminar a missão?',
+            [
+                {
+                    text: 'Cancelar',
+                    onPress: () => {
+                        Alert.alert('Missão Cancelada', 'Nenhuma ação foi realizada.');
+                    },
+                    style: 'cancel',
+                },
+                {
+                    text: 'Aceitar',
+                    onPress: async () => {
+                        try {
+                            const token = await AsyncStorage.getItem('userToken');
+                            await terminarMissao(token, missao_id, 'terminado');
+                            Alert.alert('Missão Aceita', 'O status foi atualizado para "terminado".');
+                        } catch (error) {
+                            console.error('Erro ao aceitar missão:', error);
+                            Alert.alert('Erro', 'Falha ao atualizar o status da missão.');
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
+    };
+    
+
+
+
+
+
+
+
     const slideAnim = useRef(new Animated.Value(height)).current;  // Inicia fora da tela
 
     const toggleView = () => {
@@ -136,14 +183,18 @@ export default function Home() {
     };
 
     return (
+        // <ScrollView>
         <View style={styles.container}>
 
         {(missoes || []).length > 0 ? (
             missoes.map((missao) => (
                 <View key={missao.id} style={styles.cardMission}>
                     <View style={styles.cardInfoFirstLeft}>
-                        <Text style={styles.title}>{missao.missao}</Text>
-                        <Text>País: {missao.pais}</Text>
+                        <Text style={styles.titleMissioa}>{missao.missao}</Text>
+                        <Text style={styles.titleMisiContr}>País: {missao.pais}</Text>
+                        <TouchableOpacity style={styles.buttonTerminarMissao} onPress={handleAcceptOrCancel}>
+                            <Text style={styles.titleMisiContr}>Terminar missao</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             ))
@@ -157,9 +208,9 @@ export default function Home() {
                 {(missoes || []).length > 0 ? (
                     missoes.map((missao) => (
                         <View key={missao.id} style={styles.cardMission}>
-                            <View style={styles.cardInfoFirstLeft}>
+                            <View style={styles.cardInfoFirstLeftDown}>
                                 <Text style={styles.title}>{missao.missao}</Text>
-                                <Text>DATA FINAL:  {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
+                                <Text>DATA INICIAL:  {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
                                 <Text>PAIS:  {missao.pais}</Text>
                                 <Text>ESTADO/PROVINCIA:  {missao.estado}</Text>
                                 <Text>CIDADE:  {missao.cidade}</Text>
@@ -187,29 +238,33 @@ export default function Home() {
 
 
         )}
-
+        <ScrollView>
         <Text style={styles.titledESPESAS}>DESPESAS
         </Text>
         {despesas.length > 0 ? (
             despesas.map((despesa) => (
                 
-                <TouchableOpacity key={despesa.id} style={styles.card}>
+                <View key={despesa.id} style={styles.card}>
 
                     <Text style={styles.title}>
-                        {Array.isArray(despesa.descricao) && despesa.descricao.length > 0
+                        {(Array.isArray(despesa.descricao) ? despesa.descricao : []).length > 0
                             ? despesa.descricao.join(', ')
-                            : despesa.outro}
+                            : despesa.outro || ''}
                     </Text>
                     <Text style={styles.title}>Em {despesa.cidade}</Text>
                     <Text style={styles.title}>R$ {despesa.valor}</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttonUdate} onPress={ () => goTo(despesa.id)}>
+                        <Text style={styles.buttonText}><MaterialIcons name="edit" size={20} color="white" /></Text>
+                    </TouchableOpacity>
+                </View>
             ))
         ) : (
             <Text style={styles.emptyText}>Nenhuma Despesa encontrada</Text>
         )}
-
+        </ScrollView>
 
             </View>
+            
 
 
 
@@ -292,7 +347,7 @@ export default function Home() {
             </Modal>
 
 </View>
-
+// </ScrollView>
     );
 }
 
@@ -485,6 +540,15 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: 'center',
         // alignItems: 'left',
+        // paddingLeft: 20,
+    },
+    cardInfoFirstLeftDown:{
+        width: '60%',
+        // height: 80,
+        backgroundColor: 'transparent',
+        borderRadius: 20,
+        justifyContent: 'center',
+        // alignItems: 'left',
         paddingLeft: 20,
     },
 
@@ -569,8 +633,41 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         margin: 15,
       },
-
-
-
-
+      buttonUdate:{
+        width: '25%',
+        backgroundColor: '#4CAF50',
+        padding: 5,
+        borderRadius: 10,
+        marginBottom: 10,
+        marginLeft: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      titleMissioa:{
+        fontSize: 20,
+        fontWeight: 'bold',
+        // marginBottom: 10,
+        // marginLeft: 15,
+        color: '#FFFFFF',
+      },
+      titleMisiContr:{
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        // marginLeft: 15,
+        marginTop: 5,
+        color: '#FFFFFF',
+      },
+      buttonTerminarMissao:{
+        width: '100%',
+        // backgroundColor: '#4CAF50',
+        paddingLeft: 20,
+        paddingRight: 20,
+        borderRadius: 10,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth:1,
+        borderColor: '#ccc',
+      }
 });

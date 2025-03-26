@@ -39,6 +39,19 @@ export const buscarDespesas = async (token, missaoId) => {
     }
 };
 
+export const buscarDespesaOne = async (token, id_despesa) => {
+    try {
+        const response = await api.get('/buscar-despesas-One', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: { id_despesa },
+        });
+        return response.data.despesas;
+    } catch (error) {
+        throw error;
+    }
+};
 
 
 
@@ -54,3 +67,20 @@ export const buscarCreditos = async (token) => {
         throw error;
     }
 };
+
+
+
+export const atualizarDespesa = async ({ id_despesa,  valor,  cidade, descricao,  numero_recibo,  data_padrao }, token) => {
+    try {
+        const response = await api.put(`/despesa/${id_despesa}`, {
+             valor,  cidade, descricao,  numero_recibo,  data_padrao
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        return response
+    } catch (error) {
+        throw error;
+    }
+}

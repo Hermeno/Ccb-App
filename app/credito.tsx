@@ -75,7 +75,7 @@ export default function Home ()
             <Text style={styles.result}>Moeda selecionada: {moeda}</Text>
 
             <Text style={styles.TextInput}>Valor creditado</Text>
-            <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor creditado' />
+            <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor creditado' keyboardType="numeric" />
 
 
             <Text style={styles.TextInput}>Referencia:</Text>

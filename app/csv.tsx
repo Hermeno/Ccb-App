@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing'; // Importando o módulo para compartilhamento
 import { useJwt } from './jwt';
-import { buscarCambioAll, buscarDespesas } from '../services/missao';
+import { buscarCambioAll, buscarDespesasAll } from '../services/missao';
 
 export default function CsvScreen() {
-    const user = useJwt();  
+    const user = useJwt();
     const [cambio, setCambio] = useState([]);
     const [despesas, setDespesas] = useState([]);
     const { missao_id, missao_name } = useLocalSearchParams();   
@@ -16,7 +17,7 @@ export default function CsvScreen() {
         const carregarCambios = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                const data = await buscarCambioAll(token);            
+                const data = await buscarCambioAll(token, missao_id);  
                 setCambio(data || []);
             } catch (error) {
                 console.error('Erro ao buscar câmbios:', error);
@@ -26,7 +27,7 @@ export default function CsvScreen() {
         const carregarDespesas = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                const data = await buscarDespesas(token, missao_id); 
+                const data = await buscarDespesasAll(token, missao_id); 
                 setDespesas(data || []);
             } catch (error) {
                 console.error('Erro ao buscar despesas:', error);
@@ -40,7 +41,7 @@ export default function CsvScreen() {
     const exportarCSV = async () => {
         try {
             let csvContent = `Missão: ${missao_name}\n\n`;
-            
+
             // ➡️ Adicionando os dados de câmbio
             csvContent += `Dados de Câmbio:\n`;
             csvContent += `Moeda Origem,Moeda Destino,Cotação,Total a Cambiar,Total Cambiado,Número Recibo\n`;
@@ -60,16 +61,29 @@ export default function CsvScreen() {
 
             const fileUri = `${FileSystem.documentDirectory}relatorio.csv`;
 
-            // ➡️ Salvando o arquivo CSV
+            // ➡️ Salvando o arquivo CSV no dispositivo
             await FileSystem.writeAsStringAsync(fileUri, csvContent, {
                 encoding: FileSystem.EncodingType.UTF8,
             });
-
-            Alert.alert('Sucesso', `Arquivo CSV salvo em:\n${fileUri}`);
             console.log(`Arquivo CSV salvo em: ${fileUri}`);
+
+            // ➡️ Verificando se o dispositivo pode compartilhar arquivos
+            const canShare = await Sharing.isAvailableAsync();
+            console.log('Compartilhamento disponível:', canShare);
+
+            if (canShare) {
+                // Compartilhar o arquivo gerado
+                await Sharing.shareAsync(fileUri, {
+                    mimeType: 'text/csv', // Definir o tipo MIME adequado para o CSV
+                    dialogTitle: 'Compartilhar Relatório de Missão',
+                });
+            } else {
+                Alert.alert('Erro', 'O compartilhamento de arquivos não está disponível neste dispositivo.');
+            }
+
         } catch (error) {
             console.error('Erro ao salvar CSV:', error);
-            Alert.alert('Erro', 'Falha ao salvar o arquivo CSV.');
+            Alert.alert('Erro', `Falha ao salvar o arquivo CSV. Erro: ${error.message}`);
         }
     };
 
@@ -77,7 +91,7 @@ export default function CsvScreen() {
         <View style={styles.container}>
             <Text style={styles.title}>Exportar Relatório</Text>
             <TouchableOpacity style={styles.button} onPress={exportarCSV}>
-                <Text style={styles.buttonText}>Salvar CSV</Text>
+                <Text style={styles.buttonText}>Compartilhar CSV</Text>
             </TouchableOpacity>
         </View>
     );

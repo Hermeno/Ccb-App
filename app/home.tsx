@@ -11,10 +11,27 @@ export default function HomeScreen() {
   const router = useRouter();
   const user = useJwt();
   const [creditos, setCreditos] = useState([]);
+  // const [creditos, setCreditos] = useState<Credito[]>([]);
   const [missoes, setMissoes] = useState([]);
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState<string | null>(null);
   const [atualizar, setAtualizar] = useState(false);
+  const [atualizarCredito, setAtualizarCredito] = useState(false);
+
+  // const carregarCredito = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const data = await buscarCreditoLimit(token);
+  //     setCreditos(Array.isArray(data) ? data : data ? [data] : []);
+  //   } catch (error) {
+  //     console.error('Erro ao buscar créditos:', error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   carregarCredito();
+  // }, []);
+
   const carregarCredito = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -24,6 +41,18 @@ export default function HomeScreen() {
       console.error('Erro ao buscar créditos:', error);
     }
   };
+
+  useEffect(() => {
+    carregarCredito(); // Carrega uma vez ao iniciar
+    const interval = setInterval(() => {
+      carregarCredito(); // Atualiza os créditos a cada 5 segundos
+    }, 5000); // Ajuste o intervalo conforme necessário (em milissegundos)
+
+    return () => clearInterval(interval); // Limpa o intervalo quando o componente for desmontado
+  }, []);
+
+
+
   const carregarMissoes = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -40,13 +69,6 @@ export default function HomeScreen() {
       console.error('Erro ao buscar missões:', error);
     }
   };
-
-  // useEffect para carregar créditos
-  useEffect(() => {
-    carregarCredito();
-  }, []);
-
-  // useEffect para carregar missões
   useEffect(() => {
     carregarMissoes();
   }, [atualizar]);
@@ -79,11 +101,16 @@ export default function HomeScreen() {
   };
 
   const MISSAO = () => {
-    router.push(`/missao?missao_id=${missaoId}?missao_name=${missaoName}`);
+    router.push(`/missao?missao_id=${missaoId}`);
   };
 
   const DESPESA = () => {
-    if (missaoId) router.push(`/despesas?missao_id=${missaoId}?missao_name=${missaoName}`);
+    if (missaoId) router.push(`/despesas?missao_id=${missaoId}`);
+  };
+
+  const Logout = () => {
+    AsyncStorage.removeItem('userToken');
+    router.replace('/');
   };
 
   return (
@@ -138,7 +165,7 @@ export default function HomeScreen() {
           <Text style={styles.Textshow}>Cadastrar despesas </Text>
           <MaterialIcons name="arrow-forward" size={30} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.cardInfoOut}>
+        <TouchableOpacity style={styles.cardInfoOut} onPress={Logout}>
           <Text style={styles.Textshow}>Sair</Text>
           <MaterialIcons name="logout" size={30} color="red" />
         </TouchableOpacity>

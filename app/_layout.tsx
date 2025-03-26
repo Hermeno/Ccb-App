@@ -165,6 +165,44 @@ export default function RootLayout() {
                     }}
                 />
                 <Stack.Screen
+                    name="updatemissao"
+                    options={{
+                        headerTitle: "Update",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#121212',
+                            header: () => (
+                                <View style={styles.navbar}>
+                                    <TouchableOpacity onPress={back} style={{marginLeft:10}}>
+                                    <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
+                                    </TouchableOpacity>                                    
+                                    <Text style={styles.text}>DESPESAS</Text>
+                                </View>
+                            ),
+
+                    }}
+                />
+
+                <Stack.Screen
+                    name="updatedespesa"
+                    options={{
+                        headerTitle: "Update",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#121212',
+                            header: () => (
+                                <View style={styles.navbar}>
+                                    <TouchableOpacity onPress={back} style={{marginLeft:10}}>
+                                    <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
+                                    </TouchableOpacity>                                    
+                                    <Text style={styles.text}>DESPESAS</Text>
+                                </View>
+                            ),
+
+                    }}
+                />
+
+                <Stack.Screen
                     name="csv"
                     options={{
                         headerTitle: "csv",

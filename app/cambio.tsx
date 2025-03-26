@@ -128,17 +128,17 @@ export default function Home ()
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Cotacao</Text>
-                <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotacao' />
+                <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotacao' keyboardType="numeric"  />
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Total a Cambiar</Text>
-                <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar' />
+                <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar' keyboardType="numeric" />
                 </View>
             </View>
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Total Cambiado</Text>
-                <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado' />
+                <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado' keyboardType="numeric"  />
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>N do Recibo</Text>
