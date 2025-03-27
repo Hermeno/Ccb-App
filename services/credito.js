@@ -11,8 +11,6 @@ export const cadastrarCredito = async ({ user_id, moeda, valor, referencia, miss
                 },
             }
         );
-
-        console.log(response)
         return response;
     } catch (error) {
         console.log(error);

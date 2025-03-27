@@ -1,9 +1,6 @@
 import api from './api';
 
 export const cadastrarDespesa = async ({ moeda, valor, cidade, descricao, outro, data_padrao, numero_recibo, missao_id }, token) => {
-    console.log(
-        moeda, valor, cidade, descricao, outro, data_padrao, numero_recibo, missao_id
-    )
     try {
         const data = { moeda, valor, cidade, descricao, outro, data_padrao, numero_recibo, missao_id };
 
@@ -13,8 +10,7 @@ export const cadastrarDespesa = async ({ moeda, valor, cidade, descricao, outro,
             }
         });
 
-        console.log('Despesa cadastrada com sucesso:', response.data.dispesas);
-        return response.data.dispesas; // ✅ Corrigido para acessar response.data
+        return response.data;
 
     } catch (error) {
         console.error('Erro ao cadastrar despesa:', error.response?.data || error);
@@ -84,3 +80,55 @@ export const atualizarDespesa = async ({ id_despesa,  valor,  cidade, descricao,
         throw error;
     }
 }
+
+
+
+
+
+export const createfotos = async ({ fotos, id_post }, token) => {
+    try {
+        const formData = new FormData();
+        
+        // Adicionando as fotos ao FormData
+        fotos.forEach(foto => {
+            formData.append('file', {
+                uri: foto, 
+                type: 'image/jpeg',  // Altere o tipo de acordo com a foto
+                name: 'foto.jpg' // Nome para o arquivo
+            });
+        });
+
+        formData.append('id_post', id_post);
+
+        const response = await api.post('/fotos-despesas-cadastrar', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+
+export const buscarImagens = async ({ id_post, token }) => {
+    try {
+        const response = await api.get('/buscar-imagens', {
+            params: { id_post, type: 'despesa' },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        console.log(response.data);  // Verifique o que está sendo retornado no response
+
+        return response.data.imagens;  // Se 'imagens' não existir, ajuste conforme a resposta
+    } catch (error) {
+        console.error('Erro ao buscar imagens:', error);
+        throw error;
+    }
+};

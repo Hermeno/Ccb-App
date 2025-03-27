@@ -72,10 +72,6 @@ export default function Home ()
         });
       };
       
-
-      console.log(missao_id)
-
-
       const handleDespesa = async () => {
         const token = await AsyncStorage.getItem('userToken');
       
@@ -95,7 +91,7 @@ export default function Home ()
         }
     
         try {
-            await cadastrarDespesa({
+            const response = await cadastrarDespesa({
                 moeda,
                 valor,
                 cidade,
@@ -106,20 +102,34 @@ export default function Home ()
                 missao_id
             }, token);
     
-            Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
-            setValor('');
-            setCidade('');
-            setOutro('');
-            setNumero_recibo('');
-            setFoto_recibo('');
-            setMoeda('');
-            setDescricao([]);
-            setParsedPhotos([]);
+            // Verifique se a resposta contém o campo dispesas
+            if (response && response.dispesas) {
+                const despesaId = response.dispesas.id;  // Acesse o id da despesa no campo 'despesas'
+                console.log('Despesa ID:', despesaId);
+    
+                // Se o ID da despesa estiver presente, redirecione para a página de câmera de despesa
+                if (despesaId) {
+                    router.push(`/cameradespesas?id_post=${despesaId}`);
+                }
+    
+                Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
+                setValor('');
+                setCidade('');
+                setOutro('');
+                setNumero_recibo('');
+                setFoto_recibo('');
+                setMoeda('');
+                setDescricao([]);
+                setParsedPhotos([]);
+            }
+    
         } catch (error) {
             console.log(error, 'Erro ao cadastrar despesa');
             Alert.alert('Erro', 'Não foi possível cadastrar a despesa.');
         }
     };
+    
+    
     
 
 
@@ -206,7 +216,7 @@ export default function Home ()
                                 {showOutro && (
                                     <View style={styles.ViewInputOne}>
                                         <Text style={styles.TextInputs}>Outro</Text>
-                                        <TextInput  value={outro} onChangeText={setOutro} style={styles.inputOne} placeholder="Valor creditado" keyboardType="numeric" />
+                                        <TextInput  value={outro} onChangeText={setOutro} style={styles.inputOne} placeholder="Valor creditado" />
                                     </View>
                                 )}
                                 <TouchableOpacity style={styles.Outro} onPress={() => setShowOutro(!showOutro)}>
@@ -238,9 +248,9 @@ export default function Home ()
             </View>
 
 
-                <TouchableOpacity style={styles.botaoAdicionaImageRecibo} onPress={OPENCAMERA}>
+                {/* <TouchableOpacity style={styles.botaoAdicionaImageRecibo} onPress={OPENCAMERA}>
                     <Text style={styles.TextAnexarImagem}>Anexar recibo</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
 
                 {parsedPhotos && parsedPhotos.length > 0 ? (

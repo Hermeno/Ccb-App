@@ -2,7 +2,7 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import React, { useState, useRef } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { createfotos } from '../services/cambio';
+import { createfotos } from '../services/despesas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CameraScreen() {

@@ -16,25 +16,12 @@ export default function HomeScreen() {
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState<string | null>(null);
   const [atualizar, setAtualizar] = useState(false);
-  const [atualizarCredito, setAtualizarCredito] = useState(false);
-
-  // const carregarCredito = async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     const data = await buscarCreditoLimit(token);
-  //     setCreditos(Array.isArray(data) ? data : data ? [data] : []);
-  //   } catch (error) {
-  //     console.error('Erro ao buscar créditos:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   carregarCredito();
-  // }, []);
+  // const [atualizarCredito, setAtualizarCredito] = useState(false);
 
   const carregarCredito = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
+      // console.log(token);
       const data = await buscarCreditoLimit(token);
       setCreditos(Array.isArray(data) ? data : data ? [data] : []);
     } catch (error) {
@@ -99,6 +86,9 @@ export default function HomeScreen() {
   const CAMBIO = () => {
     if (missaoId) router.push(`/cambio?missao_id=${missaoId}`);
   };
+  const CAMBIOViSUALIZAR= () => {
+    if (missaoId) router.push(`/cambios?missao_id=${missaoId}`);
+  };
 
   const MISSAO = () => {
     router.push(`/missao?missao_id=${missaoId}`);
@@ -144,7 +134,7 @@ export default function HomeScreen() {
       )}
 
       {/* Botões de navegação */}
-      <View style={styles.content}>
+      <ScrollView style={styles.content}>
         <TouchableOpacity style={styles.cardInfo} onPress={sendOutraMoedas}>
           <Text style={styles.Textshow}>Outras Moedas</Text>
           <MaterialIcons name="arrow-forward" size={30} color="black" />
@@ -154,7 +144,11 @@ export default function HomeScreen() {
           <MaterialIcons name="arrow-forward" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.cardInfo} onPress={CAMBIO}>
-          <Text style={styles.Textshow}>Câmbio</Text>
+          <Text style={styles.Textshow}>Cadastrar Câmbio</Text>
+          <MaterialIcons name="arrow-forward" size={30} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.cardInfo} onPress={CAMBIOViSUALIZAR}>
+          <Text style={styles.Textshow}>Visualizar Câmbio</Text>
           <MaterialIcons name="arrow-forward" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.cardInfo} onPress={MISSAO}>
@@ -169,7 +163,7 @@ export default function HomeScreen() {
           <Text style={styles.Textshow}>Sair</Text>
           <MaterialIcons name="logout" size={30} color="red" />
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 }

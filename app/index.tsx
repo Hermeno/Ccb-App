@@ -69,7 +69,7 @@ export default function Home ()
                 </View>
                 <View style={styles.TextRecuperarSenha}>
                     <Text style={{color:"#24h91d", fontWeight:'bold'}}>Esqueceu a senha? 
-                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/lost_password"> Recuperar </Link></Text>
+                    <Text  style={{color:"#00835f", fontSize:17}}><Link href="/ForgetPasswordScreen"> Recuperar </Link></Text>
                     </Text>
                 </View>
             </View>

@@ -25,7 +25,6 @@ export const buscarMissoes = async (token) => {
                 Authorization: `Bearer ${token}`,
             },
         });
-        // console.log(response.data.missaos)
         return response.data.missoes; // Retorna apenas o array de missões
     } catch (error) {
         throw error;
@@ -39,7 +38,6 @@ export const buscarMissoesAll = async (token) => {
                 Authorization: `Bearer ${token}`,
             },
         });
-        // console.log(response.data.missaos)
         return response.data.missoes; // Retorna apenas o array de missões
     } catch (error) {
         throw error;
@@ -90,7 +88,6 @@ export const buscarDespesasAll = async (token, missao_id) => {
             },
             params: { missao_id: missao_id },
         });
-        console.log(response.data)
         return response.data.despesas; 
     } catch (error) {
         throw error;

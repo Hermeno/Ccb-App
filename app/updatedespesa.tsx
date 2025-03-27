@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Button, Modal, FlatList } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { buscarDespesaOne, atualizarDespesa } from '../services/despesas';
+import { buscarDespesaOne, atualizarDespesa, buscarImagens } from '../services/despesas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -15,6 +15,8 @@ export default function Update() {
   const [data_padrao, setData_padrao] = useState(new Date());
   const [showInicio, setShowInicio] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [imagensData, setImagensData] = useState([]);
+
 
   const opcoes = [
     { id: '1', label: 'Taxi' },
@@ -53,6 +55,17 @@ export default function Update() {
       setDescricao([...descricao, item]);
     }
   };
+
+
+ const DOWNLOD = () => {
+  router.push(`/image?id_post=${id_despesa}`)
+ }
+
+
+
+
+
+
 
   const handleUpdate = async () => {
     const token = await AsyncStorage.getItem('userToken');
@@ -161,6 +174,10 @@ export default function Update() {
         <TouchableOpacity style={styles.button} onPress={handleUpdate}>
           <Text style={styles.buttonText}>Atualizar Despesa</Text>
         </TouchableOpacity>
+
+9
+
+
       </View>
     </View>
   );

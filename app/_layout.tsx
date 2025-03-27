@@ -111,6 +111,24 @@ export default function RootLayout() {
                     }}
                 />
                 <Stack.Screen
+                    name="cambios"
+                    options={{
+                        headerTitle: "CAMBIO",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerTintColor: '#121212',
+                            header: () => (
+                                <View style={styles.navbar}>
+                                    <TouchableOpacity onPress={back} style={{marginLeft:10}}>
+                                    <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
+                                    </TouchableOpacity>                                    
+                                    <Text style={styles.text}>CAMBIO</Text>
+                                </View>
+                            ),
+
+                    }}
+                />
+
+                <Stack.Screen
                     name="missao"
                     options={{
                         headerTitle: "MISSOES",
@@ -220,9 +238,57 @@ export default function RootLayout() {
                         headerTintColor: '#FFF',
                     }}
                 />
+                <Stack.Screen
+                    name="cameradespesas"
+                    options={{
+                        headerTitle: "CAMERA",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />                
+                <Stack.Screen
+                    name="image"
+                    options={{
+                        headerTitle: "download",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />                
+                <Stack.Screen
+                    name="imagecambio"
+                    options={{
+                        headerTitle: "download",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />                
+
+                <Stack.Screen
+                    name="ForgetPasswordScreen"
+                    options={{
+                        headerTitle: "ForgetPasswordScreen",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />
+                <Stack.Screen
+                    name="ResetPasswordScreen"
+                    options={{
+                        headerTitle: "ResetPasswordScreen",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />
             </Stack>
         </>
     );
+    // ForgetPasswordScreen
+    // ResetPasswordScreen
 }
 
 

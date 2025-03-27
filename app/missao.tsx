@@ -42,7 +42,6 @@ export default function Home() {
             try {
                 const token = await AsyncStorage.getItem('userToken');
                 const data = await buscarDespesas(token, missao_id); 
-                console.log(data);
                 setDespesas(data || []);
             } catch (error) {
                 console.error('Erro ao buscar despesas:', error);
@@ -119,6 +118,10 @@ export default function Home() {
     };
 
 
+    const DOWNLOD = (id_despesa: number) => {
+        router.push(`/image?id_post=${id_despesa}`)
+    }
+      
     const goTo = (id_despesa: number) => {
         router.push({
             pathname: '/updatedespesa',
@@ -245,17 +248,22 @@ export default function Home() {
             despesas.map((despesa) => (
                 
                 <View key={despesa.id} style={styles.card}>
-
-                    <Text style={styles.title}>
-                        {(Array.isArray(despesa.descricao) ? despesa.descricao : []).length > 0
-                            ? despesa.descricao.join(', ')
-                            : despesa.outro || ''}
+                    <Text style={styles.titleSDaDespesa}>
+                    {
+                        (Array.isArray(despesa.descricao) && despesa.descricao.length > 0
+                        ? despesa.descricao.join(', ').substring(0, 15) // Limita a 15 caracteres
+                        : despesa.outro.substring(0, 15) || '') // Limita o 'outro' a 15 caracteres
+                    }
                     </Text>
-                    <Text style={styles.title}>Em {despesa.cidade}</Text>
-                    <Text style={styles.title}>R$ {despesa.valor}</Text>
-                    <TouchableOpacity style={styles.buttonUdate} onPress={ () => goTo(despesa.id)}>
-                        <Text style={styles.buttonText}><MaterialIcons name="edit" size={20} color="white" /></Text>
-                    </TouchableOpacity>
+
+                        <View style={styles.flexSonData}>
+                        <TouchableOpacity style={styles.buttonUdate} onPress={ () => goTo(despesa.id)}>
+                        <Text style={styles.buttonText}><MaterialIcons name="edit" size={20} color="black" /></Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonUdate} onPress={ () => DOWNLOD(despesa.id)}>
+                            <Text style={styles.buttonText}>baixar imagens</Text>
+                        </TouchableOpacity>
+                        </View>
                 </View>
             ))
         ) : (
@@ -508,13 +516,13 @@ const styles = StyleSheet.create({
     card:{
         margin: 10,
         backgroundColor: 'transparent',
-        padding: 20,
+        padding: 10,
         color: '#fff',
         borderWidth: 1,
         borderColor: '#ccc',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent:'space-between',
+        justifyContent:'space-around',
         marginBottom: 10,
         borderRadius:10
     },
@@ -526,6 +534,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 4,
+    },
+    titleSDaDespesa:{
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 4,
+        // marginLeft: 10,
+
     },
     emptyText: {
         textAlign: 'center',
@@ -634,14 +649,16 @@ const styles = StyleSheet.create({
         margin: 15,
       },
       buttonUdate:{
-        width: '25%',
-        backgroundColor: '#4CAF50',
-        padding: 5,
+        // width: '25%',
+        // backgroundColor: '#4CAF50',
+        padding: 10,
         borderRadius: 10,
-        marginBottom: 10,
-        marginLeft: 10,
+        // marginBottom: 10,
+        // marginLeft: 10,
         justifyContent: 'center',
-        alignItems: 'center',
+        // alignItems: 'center',
+        borderWidth:1,
+        borderColor: '#ccc',
       },
       titleMissioa:{
         fontSize: 20,
@@ -669,5 +686,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth:1,
         borderColor: '#ccc',
+      },
+      flexSonData:{
+        flexDirection: 'row',
+        justifyContent:'flex-end',
+        // margin: 15,
+        // width: '100%',
+        columnGap: '10',
       }
 });
