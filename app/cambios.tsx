@@ -12,7 +12,7 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
 
     const params = useLocalSearchParams();
-    const { missao_id } = params;
+    const { missao_id, missao_name } = params;
 
     useEffect(() => {
         const carregarCambios = async () => {
@@ -45,7 +45,7 @@ export default function Home() {
 
     const baixarFotos = (idCambio: string) => {
         console.log(`Baixando fotos para o câmbio ID: ${idCambio}`);
-        router.push(`./imagecambio?id_post=${idCambio}`)
+        router.push(`./imagecambio?id_post=${idCambio}&missao_id=${missao_id}&missao_name=${missao_name}`)
     };
 
     // Função para atualizar câmbio
@@ -63,11 +63,11 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            {user ? (
+            {/* {user ? (
                 <Text style={styles.TextHeaderLogin}>Olá, {user.name}!</Text>
             ) : (
                 <Text style={styles.TextHeaderLogin}>Carregando...</Text>
-            )}
+            )} */}
 
             <View style={styles.CardLogin}>
                 {loading ? (

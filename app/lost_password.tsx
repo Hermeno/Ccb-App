@@ -32,7 +32,7 @@ export default function Home ()
                 router.replace('/');
             }
         } catch (error) {
-            Alert.alert('Erro', 'Credenciais inválidas ou erro ao fazer login');
+            Alert.alert('Credenciais inválidas ou erro ao fazer login');
         }
     };
 

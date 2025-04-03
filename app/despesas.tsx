@@ -11,7 +11,7 @@ export default function Home ()
 {
     const router = useRouter();
     const user = useJwt();
-    const { missao_id } = useLocalSearchParams();
+    const { missao_id, missao_name } = useLocalSearchParams();
     // console.log(missao_id)
     const [valor, setValor] = useState('');
     const [cidade, setCidade] = useState('');
@@ -45,16 +45,15 @@ export default function Home ()
 
 
     const opcoes = [
-        { id: '1', label: 'Taxi' },
-        { id: '2', label: 'Almoço' },
-        { id: '3', label: 'Hospedagem' },
-        { id: '4', label: 'Atendimento' },
-        { id: '5', label: 'Bilhete Aerea' },
-        { id: '6', label: 'Cafe de Manha' },
-        { id: '7', label: 'Janta' },
-        { id: '8', label: 'Lanche' },
-        { id: '9', label: 'Medicamentos' },
-        { id: '10', label: 'Taxi / Uber' },
+        { id: '1', label: 'Almoço' },
+        { id: '3', label: 'Atendimento' },
+        { id: '2', label: 'Bilhete Aerea' },
+        { id: '4', label: 'Cafe de Manhá' },
+        { id: '5', label: 'Hospedagem' },
+        { id: '6', label: 'Janta' },
+        { id: '7', label: 'Lanche' },
+        { id: '8', label: 'Medicamentos' },
+        { id: '9', label: 'Taxi / Uber' }
     ];
     const handleSelectItem = (item: string) => {
         if (descricao.includes(item)) {
@@ -76,17 +75,17 @@ export default function Home ()
         const token = await AsyncStorage.getItem('userToken');
       
         if (!user) {
-            Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
+            Alert.alert('Usuário não identificado. Faça login novamente.');
             return;
         }
     
         if (!valor || !cidade || !numero_recibo) {
-            Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
+            Alert.alert('Todos os campos precisam ser preenchidos.');
             return;
         }
     
         if ((Array.isArray(descricao) && descricao.length === 0) && !outro) {
-            Alert.alert('Erro', 'Pelo menos uma categoria ou outro campo precisa ser preenchido.');
+            Alert.alert('Pelo menos uma categoria ou outro campo precisa ser preenchido.');
             return;
         }
     
@@ -107,9 +106,9 @@ export default function Home ()
                 const despesaId = response.dispesas.id;  // Acesse o id da despesa no campo 'despesas'
                 console.log('Despesa ID:', despesaId);
     
-                // Se o ID da despesa estiver presente, redirecione para a página de câmera de despesa
+                // Se o ID da despesa estiver presente, redirecione para a página de câmera de despesa router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
                 if (despesaId) {
-                    router.push(`/cameradespesas?id_post=${despesaId}`);
+                    router.replace(`/cameradespesas?id_post=${despesaId}&missao_id=${missao_id}&missao_name=${missao_name}`);
                 }
     
                 Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
@@ -125,7 +124,7 @@ export default function Home ()
     
         } catch (error) {
             console.log(error, 'Erro ao cadastrar despesa');
-            Alert.alert('Erro', 'Não foi possível cadastrar a despesa.');
+            Alert.alert('Não foi possível cadastrar a despesa.');
         }
     };
     
@@ -167,8 +166,8 @@ export default function Home ()
                
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInputOne}>
-                <Text style={styles.TextInput}>Selecione a data Padrao</Text>
-                    <Button  onPress={showdata_padrao} title="Escolher data padrao" />
+                <Text style={styles.TextInput}>Selecione a data Padrão</Text>
+                    <Button  onPress={showdata_padrao} title="Escolher data padrão" />
                         <Text  style={styles.textoEscolhido}>{data_padrao.toLocaleDateString()}</Text>
                         {showInicio && (
                             <DateTimePicker value={data_padrao} mode="date" display="default" onChange={onChangedata_padrao} />
@@ -264,7 +263,7 @@ export default function Home ()
                     )}
                 />
                 ) : (
-                <Text style={styles.TextAnexarImagem}>Anexar fotos</Text>
+                <Text style={styles.TextAnexarImagem}></Text>
                 )}
 
 

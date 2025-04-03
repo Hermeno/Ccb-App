@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, Animated, Dimensions, ScrollView , Platform, Button, Modal } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Link, useRouter, useLocalSearchParams } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useJwt } from './jwt';
@@ -21,6 +21,7 @@ export default function Despesa() {
     const [data_final_prevista, setData_final_prevista] = useState(new Date());
     const [showInicio, setShowInicio] = useState(false);
     const [showFinal, setShowFinal] = useState(false);
+    const { missao_id, missao_name } = useLocalSearchParams();
     const showdata_inicio_prevista = () => setShowInicio(true);
     const showdata_final_prevista = () => setShowFinal(true);
     const [modalVisible, setModalVisible] = useState(false);
@@ -57,12 +58,12 @@ export default function Despesa() {
     const cadastrar = async () => {
         const token = await AsyncStorage.getItem('userToken');
         if (!missao ||!estado ||!cidade) {
-            Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
+            Alert.alert('Preencha todos os campos obrigatórios.');
             return;
         }
         try{
             if (!user) {
-                Alert.alert('Erro', 'Usuário não identificado.');
+                Alert.alert('Usuário não identificado.');
                 return;
             }            
             const response = await cadastrarMissao ({
@@ -76,13 +77,14 @@ export default function Despesa() {
                 username: user.name
             }, token)
             Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
+            router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
             setCidade('');
             setPais('');
             setEstado('');
             setMissao('');
         } catch (error) {
-            console.error('Erro ao cadastrar missão', error);
-            Alert.alert('Erro', 'Erro ao cadastrar missão');
+            // console.error('Erro ao cadastrar missão', error);
+            Alert.alert('Erro ao cadastrar missão');
         }
     }
 

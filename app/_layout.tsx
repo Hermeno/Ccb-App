@@ -50,6 +50,24 @@ export default function RootLayout() {
 
                     }}
                 />
+                 <Stack.Screen
+                    name="mission"
+                    options={{
+                        headerTitle: "MISSÃO",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#121212',
+                            header: () => (
+                                <View style={styles.navbar}>
+                                    {/* <TouchableOpacity onPress={back} style={{marginLeft:10}}>
+                                    <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
+                                    </TouchableOpacity>                                     */}
+                                    <Text style={styles.text}>MISSÃO</Text>
+                                </View>
+                            ),
+
+                    }}
+                />                
                 <Stack.Screen
                     name="lost_password"
                     options={{
@@ -80,14 +98,14 @@ export default function RootLayout() {
                 <Stack.Screen
                     name="credito"
                     options={{
-                        headerTitle: "CREDITO",
+                        headerTitle: "CRÉDITO",
                         headerTintColor: '#121212',
                             header: () => (
                                 <View style={styles.navbar}>
                                     <TouchableOpacity onPress={back} style={{marginLeft:10}}>
                                     <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
                                     </TouchableOpacity>                                    
-                                    <Text style={styles.text}>CREDITO</Text>
+                                    <Text style={styles.text}>CRÉDITO</Text>
                                 </View>
                             ),
 
@@ -131,7 +149,7 @@ export default function RootLayout() {
                 <Stack.Screen
                     name="missao"
                     options={{
-                        headerTitle: "MISSOES",
+                        headerTitle: "MISSÃO",
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#121212',

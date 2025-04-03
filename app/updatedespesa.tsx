@@ -7,7 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function Update() {
   const router = useRouter();
-  const { id_despesa } = useLocalSearchParams();
+  const { id_despesa,  missao_id, missao_name  } = useLocalSearchParams();
   const [valor, setValor] = useState('');
   const [cidade, setCidade] = useState('');
   const [numero_recibo, setNumero_recibo] = useState('');
@@ -58,7 +58,8 @@ export default function Update() {
 
 
  const DOWNLOD = () => {
-  router.push(`/image?id_post=${id_despesa}`)
+  // router.push(`/image?id_post=${id_despesa}`)
+  router.replace(`/image?id_post=${id_despesa}&missao_id=${missao_id}&missao_name=${missao_name}`);
  }
 
 
@@ -71,12 +72,12 @@ export default function Update() {
     const token = await AsyncStorage.getItem('userToken');
 
     if (!valor || !cidade || !numero_recibo) {
-      Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
+      Alert.alert( 'Todos os campos precisam ser preenchidos.');
       return;
     }
 
     if (descricao.length === 0) {
-      Alert.alert('Erro', 'Pelo menos uma categoria precisa ser selecionada.');
+      Alert.alert( 'Pelo menos uma categoria precisa ser selecionada.');
       return;
     }
 
@@ -94,10 +95,10 @@ export default function Update() {
       );
 
       Alert.alert('Sucesso!', 'Despesa atualizada com sucesso!');
-      router.push('/home');
+      router.replace('/home');
     } catch (error) {
       console.error('Erro ao atualizar despesa:', error);
-      Alert.alert('Erro', 'Não foi possível atualizar a despesa.');
+      Alert.alert( 'Não foi possível atualizar a despesa.');
     }
   };
 

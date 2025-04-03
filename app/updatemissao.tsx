@@ -37,7 +37,7 @@ const user = useJwt();
         }
       } catch (error) {
         console.error('Erro ao carregar missão:', error);
-        Alert.alert('Erro', 'Erro ao carregar missão.');
+        Alert.alert('Erro ao carregar missão.');
       }
     };
   
@@ -61,12 +61,12 @@ const user = useJwt();
   const salvar = async () => {
     const token = await AsyncStorage.getItem('userToken');
    if (!missao || !estado || !cidade) {
-        Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
+        Alert.alert( 'Preencha todos os campos obrigatórios.');
         return;
     }
     try {
         if (!user) {
-            Alert.alert('Erro', 'Usuário não identificado.');
+            Alert.alert('Usuário não identificado.');
             return;
         }
         
@@ -82,13 +82,14 @@ const user = useJwt();
         }, token);
 
         Alert.alert('Sucesso!', 'Missão atualizada com sucesso!');
+        router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
         setCidade('');
         setPais('');
         setEstado('');
         setMissao('');
     } catch (error) {
         console.error('Erro ao atualizar missão', error);
-        Alert.alert('Erro', 'Erro ao atualizar missão');
+        Alert.alert('Erro ao atualizar missão');
     }
 
 

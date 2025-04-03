@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import axios from 'axios';
 import { cadastrarUsuario } from '../services/user'; 
 
@@ -22,12 +22,13 @@ export default function SignUp ()
             });
             if (response.status === 201) {
                 Alert.alert('Cadastro realizado com sucesso!');
+                router.replace('/');
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                Alert.alert('Erro', error.response?.data?.error || 'Erro ao cadastrar usuário');
+                Alert.alert('Erro ao cadastrar usuário');
             } else {
-                Alert.alert('Erro', 'Erro inesperado ao se comunicar com o servidor');
+                Alert.alert('Erro inesperado ao se comunicar com o servidor');
             }
         }
     };

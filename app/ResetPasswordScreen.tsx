@@ -26,7 +26,7 @@ export default function ResetPasswordScreen() {
 
     const handleResetPassword = async () => {
         try {
-            const response = await fetch('http://192.168.43.226:3000/redefinir-senha', {
+            const response = await fetch('https://api-com-nodejs-express-mongodb-prisma.onrender.com/redefinir-senha', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, newPassword })
@@ -38,11 +38,11 @@ export default function ResetPasswordScreen() {
                 Alert.alert('Sucesso', 'Senha redefinida com sucesso');
                 router.replace('/');
             } else {
-                Alert.alert('Erro', data.error || 'Erro ao redefinir senha');
+                Alert.alert(data.error || 'Erro ao redefinir senha');
             }
         } catch (error) {
             console.error(error);
-            Alert.alert('Erro', 'Erro ao redefinir senha');
+            Alert.alert('Erro ao redefinir senha');
         }
     };
 

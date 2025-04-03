@@ -2,22 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useJwt } from './jwt';
 import { buscarCreditoLimit } from '@/services/credito';
-import { buscarMissoes } from '../services/missao';
+import { buscarMissaoPorId } from '../services/missao';
 
 export default function HomeScreen() {
   const router = useRouter();
   const user = useJwt();
   const [creditos, setCreditos] = useState([]);
-  // const [creditos, setCreditos] = useState<Credito[]>([]);
+  const { missao_id, missao_name } = useLocalSearchParams();
   const [missoes, setMissoes] = useState([]);
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState<string | null>(null);
   const [atualizar, setAtualizar] = useState(false);
-  // const [atualizarCredito, setAtualizarCredito] = useState(false);
-
   const carregarCredito = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -40,62 +38,62 @@ export default function HomeScreen() {
 
 
 
-  const carregarMissoes = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      const data = await buscarMissoes(token);
-      if (data && data.length > 0) {
-        setMissoes(data);
-        setMissaoId(data[0].id);
-        setMissaoName(data[0].missao);
-      } else {
-        setMissoes([]);
-        setMissaoId(null);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar missões:', error);
-    }
-  };
-  useEffect(() => {
-    carregarMissoes();
-  }, [atualizar]);
+  // const carregarMissoes = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const data = await buscarMissaoPorId(missao_id, token);
+  //     if (data && data.length > 0) {
+  //       setMissoes(data);
+  //       setMissaoId(data[0].id);
+  //       setMissaoName(data[0].missao);
+  //     } else {
+  //       setMissoes([]);
+  //       setMissaoId(null);
+  //     }
+  //   } catch (error) {
+  //     console.error('Erro ao buscar missões:', error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   carregarMissoes();
+  // }, [atualizar]);
 
-  // Função para forçar a atualização
-  const forcarAtualizacao = () => {
-    setAtualizar(prev => !prev);  // Alterna o valor para forçar a atualização
-  };
+  // // Função para forçar a atualização
+  // const forcarAtualizacao = () => {
+  //   setAtualizar(prev => !prev);  // Alterna o valor para forçar a atualização
+  // };
 
-  // Intervalo para atualização automática das missões
-  useEffect(() => {
-    const interval = setInterval(() => {
-      carregarMissoes();  // Atualiza automaticamente a cada 1 segundo
-    }, 1000);
+  // // Intervalo para atualização automática das missões
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     carregarMissoes();  // Atualiza automaticamente a cada 1 segundo
+  //   }, 1000);
 
-    return () => clearInterval(interval);  // Remove o intervalo ao desmontar
-  }, []);
+  //   return () => clearInterval(interval);  // Remove o intervalo ao desmontar
+  // }, []);
 
   // Funções de navegação para os botões
   const sendOutraMoedas = () => {
-    if (missaoId) router.push(`/outras_moedas?missao_id=${missaoId}`);
+    if (missao_id) router.push(`/outras_moedas?missao_id=${missao_id}&missao_name=${missao_name}`);
   };
 
   const CREDITO = () => {
-    if (missaoId) router.push(`/credito?missao_id=${missaoId}`);
+    if (missao_id) router.push(`/credito?missao_id=${missao_id}&missao_name=${missao_name}`);
   };
 
   const CAMBIO = () => {
-    if (missaoId) router.push(`/cambio?missao_id=${missaoId}`);
+    if (missao_id) router.push(`/cambio?missao_id=${missao_id}&missao_name=${missao_name}`);
   };
   const CAMBIOViSUALIZAR= () => {
-    if (missaoId) router.push(`/cambios?missao_id=${missaoId}`);
+    if (missao_id) router.push(`/cambios?missao_id=${missao_id}&missao_name=${missao_name}`);
   };
 
   const MISSAO = () => {
-    router.push(`/missao?missao_id=${missaoId}`);
+    router.push(`/missao?missao_id=${missao_id}&missao_name=${missao_name}`);
   };
 
   const DESPESA = () => {
-    if (missaoId) router.push(`/despesas?missao_id=${missaoId}`);
+    if (missao_id) router.push(`/despesas?missao_id=${missao_id}&missao_name=${missao_name}`);
   };
 
   const Logout = () => {
@@ -105,21 +103,11 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Exibe as missões */}
-      {(missoes.length > 0) ? (
-        missoes.map((missao) => (
-          <View key={missao.id}>
+          <View>
             <View style={styles.cardInfoFirstLeft}>
-              <Text style={styles.title}>Missão: {missao.missao}</Text>
-              {/* <Text style={styles.title}>País: {missao.pais}</Text> */}
-              <Text style={styles.title}>Estado: {missao.status}</Text>
+              <Text style={styles.title}>Missão: {missao_name}</Text>
             </View>
           </View>
-        ))
-      ) : (
-        <Text style={styles.emptyText}>CADASTRA UMA MISSAO</Text>
-      )}
-
       {/* Exibe os créditos */}
       {creditos.length > 0 ? (
         creditos.map((credito) => (
@@ -205,7 +193,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 50,
+    marginTop: 20,
     borderRadius: 10,
   },
   Textshow: {

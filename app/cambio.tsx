@@ -27,7 +27,7 @@
      const [creditos, setCreditos] = useState([]);
      
      const params = useLocalSearchParams();     
-     const { missao_id } = useLocalSearchParams();     
+     const { missao_id, missao_name } = useLocalSearchParams();     
 
      useEffect(() => {
          const carregarCreditos = async () => {
@@ -77,8 +77,8 @@
                  const cambioId = response.data.cambio.id; // Acesse o campo 'id' dentro de 'cambio'
                 //  console.log('ID do cambio:', cambioId);
      
-                 // Descomente a linha abaixo para redirecionar com o ID
-                 router.push(`/camera?id_post=${cambioId}`);
+                 // Descomente a linha abaixo para redirecionar com o ID (`/home?missao_id=${missao_id}&missao_name=${missao_name}`)
+                 router.push(`/camera?id_post=${cambioId}&missao_id=${missao_id}&missao_name=${missao_name}`);
 
 
              }
@@ -91,12 +91,12 @@
  
      return(
          <View style={styles.container}>
-             {user ? (
+             {/* {user ? (
                  <Text style={styles.TextHeaderLogin}>Ola, {user.name} faca cambio aqui!</Text>
              ) : (
                  <Text style={styles.TextHeaderLogin}>Esta carregando...</Text>
              )}
-             
+              */}
              <View style={styles.CardLogin}>                
              <View style={styles.ViewFlex}>
              <View style={styles.ViewInput}>
@@ -139,8 +139,8 @@
  
              <View style={styles.ViewFlex}>
                  <View style={styles.ViewInput}>
-                 <Text style={styles.TextInputs}>Cotacao</Text>
-                 <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotacao' keyboardType="numeric"  />
+                 <Text style={styles.TextInputs}>Cotação</Text>
+                 <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotação' keyboardType="numeric"  />
                  </View>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>Total a Cambiar</Text>

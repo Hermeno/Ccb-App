@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity , Alert} from 'react-native';
 import { useRouter,useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { buscarCredito, buscarCreditoLimit } from '@/services/credito';
@@ -11,7 +11,7 @@ export default function App() {
 
   const [creditos, setCreditos] = useState([]);
   const [creditosLimit, setCreditosLimit] = useState([]);
-  const { missao_id } = useLocalSearchParams();  // Aqui você já está pegando o missao_id diretamente
+  const { missao_id, missao_name  } = useLocalSearchParams();  // Aqui você já está pegando o missao_id diretamente
 
   // UseEffect para buscar créditos
   useEffect(() => {
@@ -45,6 +45,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      Alert(missao_id)
       {creditosLimit.length > 0 ? (
         creditosLimit.map((credito) => (
           <TouchableOpacity key={credito.id} style={styles.cardTop}>

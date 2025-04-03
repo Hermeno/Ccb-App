@@ -6,7 +6,7 @@ export default function ForgetPasswordScreen() {
 
     const handleForgotPassword = async () => {
         try {
-            const response = await fetch('http://192.168.43.226:3000/esqueci-senha', {
+            const response = await fetch('https://api-com-nodejs-express-mongodb-prisma.onrender.com/esqueci-senha', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })

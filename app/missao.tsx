@@ -76,7 +76,7 @@ export default function Home() {
         }
         try{
             if (!user) {
-                Alert.alert('Erro', 'Usuário não identificado.');
+                Alert.alert('Usuário não identificado.');
                 return;
             }            
             const response = await cadastrarMissao ({
@@ -85,18 +85,19 @@ export default function Home() {
                 estado,
                 cidade,
                 data_inicio_prevista,
-                data_final_prevista,
+                data_final_prevista, 
                 pais,
                 username: user.name
             }, token)
             Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
+            router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
             setCidade('');
             setPais('');
             setEstado('');
             setMissao('');
         } catch (error) {
             console.error('Erro ao cadastrar missão', error);
-            Alert.alert('Erro', 'Erro ao cadastrar missão');
+            Alert.alert('Erro ao cadastrar missão');
         }
     }
 
@@ -129,7 +130,7 @@ export default function Home() {
         });
     }
     
-    const handleAcceptOrCancel = () => {
+    const handleAcceptOrCancel = (missao_id: string) => {
         Alert.alert(
             'Confirmação',
             'Você deseja mesmo terminar a missão?',
@@ -146,11 +147,15 @@ export default function Home() {
                     onPress: async () => {
                         try {
                             const token = await AsyncStorage.getItem('userToken');
+                            if (!missao_id) {
+                                Alert.alert('Erro', 'ID da missão não encontrado.');
+                                return;
+                            }
                             await terminarMissao(token, missao_id, 'terminado');
-                            Alert.alert('Missão Aceita', 'O status foi atualizado para "terminado".');
+                            Alert.alert('Missão terminada.');
                         } catch (error) {
                             console.error('Erro ao aceitar missão:', error);
-                            Alert.alert('Erro', 'Falha ao atualizar o status da missão.');
+                            Alert.alert('Falha ao terminar a missão.');
                         }
                     },
                 },
@@ -158,7 +163,7 @@ export default function Home() {
             { cancelable: true }
         );
     };
-    
+      
 
 
 
@@ -188,59 +193,21 @@ export default function Home() {
     return (
         // <ScrollView>
         <View style={styles.container}>
-
-        {(missoes || []).length > 0 ? (
-            missoes.map((missao) => (
-                <View key={missao.id} style={styles.cardMission}>
+                <View  style={styles.cardMission}>
                     <View style={styles.cardInfoFirstLeft}>
-                        <Text style={styles.titleMissioa}>{missao.missao}</Text>
-                        <Text style={styles.titleMisiContr}>País: {missao.pais}</Text>
-                        <TouchableOpacity style={styles.buttonTerminarMissao} onPress={handleAcceptOrCancel}>
-                            <Text style={styles.titleMisiContr}>Terminar missao</Text>
-                        </TouchableOpacity>
+                        <Text style={styles.titleMissioa}>{missao_name}</Text>
+                        <View style={styles.flexButoes}>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(missao_id, missao_name)}>
+                                    <Text style={styles.titleBTN}>EDITAR</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao_id, missao_name)}>
+                                    <Text style={styles.titleBTN}>SALVAR DOCUMENTO CSV</Text>
+                                </TouchableOpacity>
+                         </View>
                     </View>
                 </View>
-            ))
-        ) : (
-            <Text style={styles.emptyText}>Nenhuma missão encontrada</Text>
-        )}
             <View style={styles.content}>
 
-
-
-                {(missoes || []).length > 0 ? (
-                    missoes.map((missao) => (
-                        <View key={missao.id} style={styles.cardMission}>
-                            <View style={styles.cardInfoFirstLeftDown}>
-                                <Text style={styles.title}>{missao.missao}</Text>
-                                <Text>DATA INICIAL:  {new Date(missao.data_inicio_prevista).toLocaleDateString()}</Text>
-                                <Text>PAIS:  {missao.pais}</Text>
-                                <Text>ESTADO/PROVINCIA:  {missao.estado}</Text>
-                                <Text>CIDADE:  {missao.cidade}</Text>
-                                <Text>DATA FINAL:  {new Date(missao.data_final_prevista).toLocaleDateString()}</Text>
-                            </View>
-
-                            <View style={styles.flexButoes}>
-                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(missao.id, missao.missao)}>
-                                    <Text>EDITAR</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao.id, missao.missao)}>
-                                    <Text>SALVAR DOCUMENTO CSV</Text>
-                                </TouchableOpacity>
-
-                            </View>
-                        </View>
-                    ))
-                ) : (
-
-                <TouchableOpacity style={styles.butonsMissaosVisualizarModal} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Cadastrar missão</Text>
-            </TouchableOpacity>
-
-
-
-
-        )}
         <ScrollView>
         <Text style={styles.titledESPESAS}>DESPESAS
         </Text>
@@ -248,13 +215,7 @@ export default function Home() {
             despesas.map((despesa) => (
                 
                 <View key={despesa.id} style={styles.card}>
-                    <Text style={styles.titleSDaDespesa}>
-                    {
-                        (Array.isArray(despesa.descricao) && despesa.descricao.length > 0
-                        ? despesa.descricao.join(', ').substring(0, 15) // Limita a 15 caracteres
-                        : despesa.outro.substring(0, 15) || '') // Limita o 'outro' a 15 caracteres
-                    }
-                    </Text>
+                    <Text style={styles.titleSDaDespesa}>{despesa.cidade}</Text>
 
                         <View style={styles.flexSonData}>
                         <TouchableOpacity style={styles.buttonUdate} onPress={ () => goTo(despesa.id)}>
@@ -282,37 +243,37 @@ export default function Home() {
                 <View style={styles.CardLogin}>
 
                     <Text style={styles.TextInput}>Misao</Text>
-                    <TextInput
-                        value={missao}
-                        onChangeText={setMissao}
-                        style={styles.input}
-                        placeholder='Missao creditado'
+                    <TextInput value={missao} onChangeText={setMissao} style={styles.input} placeholder='Nome da Missao'
                     />
-
-                    <Text style={styles.TextInput}>Selecione a data de início</Text>
-                    <Button  onPress={showdata_inicio_prevista} title="Escolher data de início" />
-                    <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
-                    {showInicio && (
-                        <DateTimePicker
-                            value={data_inicio_prevista}
-                            mode="date"
-                            display="default"
-                            onChange={onChangedata_inicio_prevista}
-                            
-                        />
-                    )}
-
-                    <Text style={styles.TextInput}>Selecione a data final</Text>
-                    <Button  onPress={showdata_final_prevista} title="Escolher data final" />
-                    <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
-                    {showFinal && (
-                        <DateTimePicker
-                            value={data_final_prevista}
-                            mode="date"
-                            display="default"
-                            onChange={onChangedata_final_prevista}
-                        />
-                    )}
+                    <View style={styles.inputsButtons}>
+                        <View>
+                        <Text style={styles.TextInput}>Data de início</Text>
+                            <Button   onPress={showdata_inicio_prevista} title="Escolher data inicio" />
+                            <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
+                            {showInicio && (
+                                <DateTimePicker
+                                    value={data_inicio_prevista}
+                                    mode="date"
+                                    display="default"
+                                    onChange={onChangedata_inicio_prevista}
+                                    
+                                />
+                            )}                            
+                        </View>
+                        <View>
+                            <Text style={styles.TextInput}>Data final</Text>
+                            <Button  onPress={showdata_final_prevista} title="Escolher data final" />
+                            <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
+                            {showFinal && (
+                                <DateTimePicker
+                                    value={data_final_prevista}
+                                    mode="date"
+                                    display="default"
+                                    onChange={onChangedata_final_prevista}
+                                />
+                            )}
+                        </View>
+                    </View>
                     <Text style={styles.TextInput}>Pais</Text>
                     <TextInput
                         value={pais}
@@ -391,7 +352,7 @@ const styles = StyleSheet.create({
         color: "#121212",
         fontWeight: "bold",
         textAlign: "left",
-        marginTop: 10,
+        marginTop: 3,
     },
     BotaoLogin: {
         width: "100%",
@@ -506,12 +467,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
     cardMission: {
-        marginBottom: 10,
-        backgroundColor: 'transparent',
-        borderRadius: 10,
-        // margin:10,
-        // borderWidth: 1,
-        borderColor: '#fff',
+        alignItems: 'center',
     },
     card:{
         margin: 10,
@@ -538,7 +494,7 @@ const styles = StyleSheet.create({
     titleSDaDespesa:{
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 4,
+        marginTop: 10,
         // marginLeft: 10,
 
     },
@@ -548,18 +504,20 @@ const styles = StyleSheet.create({
         color: '#777',
         marginTop: 20,
     },
+    emptyTextTop: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#fff',
+        marginTop: 20,
+    },
     cardInfoFirstLeft:{
         width: '60%',
-        // height: 80,
         backgroundColor: 'transparent',
         borderRadius: 20,
         justifyContent: 'center',
-        // alignItems: 'left',
-        // paddingLeft: 20,
     },
     cardInfoFirstLeftDown:{
         width: '60%',
-        // height: 80,
         backgroundColor: 'transparent',
         borderRadius: 20,
         justifyContent: 'center',
@@ -569,14 +527,14 @@ const styles = StyleSheet.create({
 
     butonsMissaosVisualizar:{
         padding:10,
-        backgroundColor: '#fff',
+        backgroundColor: 'transparent',
         borderRadius: 10,
 
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
         borderWidth:1,
-        borderColor: '#ccc',
+        borderColor: '#fff',
     },
 
 
@@ -637,7 +595,7 @@ const styles = StyleSheet.create({
       },
       flexButoes:{
         flexDirection: 'row',
-        justifyContent:'flex-start',
+        justifyContent:'center',
         margin: 15,
         width: '100%',
         columnGap: '10',
@@ -663,9 +621,9 @@ const styles = StyleSheet.create({
       titleMissioa:{
         fontSize: 20,
         fontWeight: 'bold',
-        // marginBottom: 10,
-        // marginLeft: 15,
+        alignContent: 'center',
         color: '#FFFFFF',
+        alignItems: 'center',
       },
       titleMisiContr:{
         fontSize: 16,
@@ -693,5 +651,29 @@ const styles = StyleSheet.create({
         // margin: 15,
         // width: '100%',
         columnGap: '10',
+      },
+      inputsButtons:{
+        flexDirection: 'row',
+        justifyContent:'center',
+        // margin: 15,
+        // width: '100%',
+        columnGap: '10',
+      },
+      btnTime:{
+        padding: 10,
+        borderRadius: 10,
+        // marginBottom: 10,
+        // marginLeft: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth:1,
+        borderColor: '#ccc',
+      },
+      titleBTN:{
+        fontSize: 16,
+        // fontWeight: 'bold',
+        // marginBottom: 10,
+        // marginLeft: 15,
+        color: '#FFFFFF',
       }
 });

@@ -11,7 +11,7 @@ export default function Home ()
 {
     const router = useRouter();
     const  user = useJwt(); 
-    const { missao_id } = useLocalSearchParams();
+    const { missao_id, missao_name } = useLocalSearchParams();
     const [moeda, setMoeda] = useState('');
     const [valor, setValor] = useState('');
     const [referencia, setReferencia] = useState('');
@@ -23,16 +23,16 @@ export default function Home ()
     const cadastrar = async () => {
         const token = await AsyncStorage.getItem('userToken'); 
         if (!moeda || !valor || !referencia) {
-            Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
+            Alert.alert('Preencha todos os campos obrigatórios.');
             return;
         } 
         if (!user) {
-            Alert.alert('Erro', 'Usuário não identificado.');
+            Alert.alert('Usuário não identificado.');
             return;
         }
         try {            
             if (!token) {
-                Alert.alert('Erro', 'Token não encontrado. Faça login novamente.'+ token);
+                Alert.alert('Token não encontrado. Faça login novamente.'+ token);
                 return;
             }
             const response = await cadastrarCredito({
@@ -43,11 +43,12 @@ export default function Home ()
                 missao_id
             }, token);
             Alert.alert('Sucesso!', 'Cadastrada com sucesso!');
+            router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
             setMoeda('');
             setValor('');
             setReferencia('');
         } catch (error) {
-            Alert.alert('Erro!', 'Ocorreu um erro ao cadastrar seu crédito. Tente novamente.');
+            Alert.alert('Ocorreu um erro ao cadastrar seu crédito. Tente novamente.');
         }
     };
     
@@ -55,7 +56,7 @@ export default function Home ()
 
     return(
         <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>Ola, {user?.name} Adicione seu saldo aqui!</Text>
+            {/* <Text style={styles.TextHeaderLogin}>Ola, {user?.name} Adicione seu saldo aqui!</Text> */}
             <View style={styles.CardLogin}>                
 
             <Text style={styles.TextInputUp} >Selecione a moeda:</Text>
@@ -78,19 +79,20 @@ export default function Home ()
             <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor creditado' keyboardType="numeric" />
 
 
-            <Text style={styles.TextInput}>Referencia:</Text>
+            <Text style={styles.TextInput}>Referência:</Text>
             <Picker
                 selectedValue={referencia}
                 onValueChange={(itemValue) => setReferencia(itemValue)}
                 style={styles.picker}
             >
-                <Picker.Item label="Selecione uma referencia..." value="" />
-                <Picker.Item label="Para alimentacao" value="Para alimentacao" />
-                <Picker.Item label="Pra Gazolina" value="Pra Gazolina" />
-                <Picker.Item label="Pra hospedaria" value="Pra hospedaria" />
-                <Picker.Item label="Pra viajem" value="Pra viajem" />
+                <Picker.Item label="Selecione uma Referência..." value="" />
+                <Picker.Item label="Atendimento" value="Atendimento" />
+                <Picker.Item label="Alimentação" value="Alimentação" />
+                <Picker.Item label="Bilhetes" value="Bilhetes" />
+                <Picker.Item label="Hospedagem" value="Hospedagem" />
+                <Picker.Item label="Diversos" value="Diversos" />
             </Picker>
-            <Text style={styles.result}>Referencia selecionada: {referencia}</Text>
+            <Text style={styles.result}>Referência selecionada: {referencia}</Text>
 
 
 

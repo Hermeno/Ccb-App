@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function UpdatePage() {
     const router = useRouter();
-    const { missao_id } = useLocalSearchParams(); // missao_id do câmbio a ser atualizado
+    const { missao_id, missao_name  } = useLocalSearchParams(); // missao_id do câmbio a ser atualizado
     const [cotacao, setCotacao] = useState('');
     const [moeda_origem, setMoeda_origem] = useState('');
     const [moeda_destino, setMoeda_destino] = useState('');
@@ -45,7 +45,7 @@ export default function UpdatePage() {
 
     const handleUpdate = async () => {
         if (!moeda_origem || !moeda_destino || !cotacao || !total_a_cambiar || !numero_recibo || !missao_id) {
-            Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
+            Alert.alert( 'Todos os campos precisam ser preenchidos.');
             return;
         }
     
@@ -67,11 +67,11 @@ export default function UpdatePage() {
     
             if (response.status === 200) {
                 Alert.alert('Sucesso', 'Câmbio atualizado com sucesso!');
-                router.push('/home');
+                router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
             }
         } catch (error) {
             console.error('Erro ao atualizar câmbio:', error);
-            Alert.alert('Erro', 'Não foi possível atualizar o câmbio.');
+            Alert.alert( 'Não foi possível atualizar o câmbio.');
         }
     };
     

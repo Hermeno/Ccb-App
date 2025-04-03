@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as MediaLibrary from 'expo-media-library';
 
 const Imagens = () => {
-  const { id_post } = useLocalSearchParams();
+  const { id_post, missao_id, missao_name  } = useLocalSearchParams();
   const [images, setImages] = useState<string[]>([]);
 
   const getPermission = async () => {
@@ -24,13 +24,15 @@ const Imagens = () => {
         return;
       }
 
-      const response = await fetch(`http://192.168.43.226:3000/fotos-despesas/${id_post}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(`https://api-com-nodejs-express-mongodb-prisma.onrender.com/fotos-despesas/${id_post}`, {
+        // const response = await fetch(`http://192.168.43.226:3000/fotos-despesas/${id_post}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
 
       if (!response.ok) {
         throw new Error(`Erro ao buscar imagens: ${response.status} - ${response.statusText}`);
@@ -41,13 +43,13 @@ const Imagens = () => {
 
       // ✅ Extrair caminhos das imagens
       const paths = data.flatMap((item) =>
-        item.fotos.map((foto) => `http://192.168.43.226:3000/uploads/${foto}`)
+        item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
       );
 
       setImages(paths);
     } catch (error) {
-      console.error('Erro ao buscar imagens:', error);
-      Alert.alert('Erro', 'Erro ao buscar imagens.');
+      // console.error('Erro ao buscar imagens:', error);
+      Alert.alert('Sem imagens.');
     }
   };
 
@@ -72,7 +74,7 @@ const Imagens = () => {
       Alert.alert('Sucesso', 'Imagem salva na galeria!');
     } catch (error) {
       console.error('Erro ao baixar imagem:', error);
-      Alert.alert('Erro', 'Erro ao baixar imagem.');
+      Alert.alert('Erro ao baixar imagem.');
     }
   };
 
