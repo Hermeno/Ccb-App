@@ -51,18 +51,46 @@ export const buscarDespesaOne = async (token, id_despesa) => {
 
 
 
-export const buscarCreditos = async (token) => {
+// export const buscarCreditos = async (token, missao_id) => {
+//     try {
+//         // console.log(missao_id)
+//         const response = await api.get('/buscar-moedas', {
+//             missao_id: missao_id
+//         },{ headers: {
+//                 Authorization: `Bearer ${token}`,
+//             }
+//         });
+//         return response.data.creditos; 
+//     } catch (error) {
+//         throw error;
+//     }
+// };
+
+
+export const buscarCreditos = async (token, missao_id) => {
     try {
-        const response = await api.get('/buscar-moedas', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+        const response = await api.get(`/buscar-moedas?missao_id=${missao_id}`, { 
+            headers: { Authorization: `Bearer ${token}` }
         });
-        return response.data.creditos; // Retorna o array de créditos
+        return response.data.creditos; 
     } catch (error) {
         throw error;
     }
 };
+
+
+// export const buscarCreditos = async (token, missao_id) => {
+//     try {
+//         const response = await api.get('/buscar-moedas', {
+//          headers: {
+//                 Authorization: `Bearer ${token}`,
+//             }
+//         });
+//         return response.data.creditos; // Retorna o array de créditos
+//     } catch (error) {
+//         throw error;
+//     }
+// };
 
 
 

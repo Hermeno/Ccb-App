@@ -12,6 +12,7 @@ export default function Home ()
     const router = useRouter();
     const  user = useJwt(); 
     const { missao_id, missao_name } = useLocalSearchParams();
+    // console.log(missao_id )
     const [moeda, setMoeda] = useState('');
     const [valor, setValor] = useState('');
     const [referencia, setReferencia] = useState('');

@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "#ccc",
         borderRadius: 20,
         padding: 10,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
         color: "#121212",
         fontSize: 16,
         fontWeight: "500",
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "#ccc",
         borderRadius: 20,
         padding: 5,

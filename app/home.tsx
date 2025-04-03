@@ -51,7 +51,7 @@ export default function HomeScreen() {
         setMissaoId(null);
       }
     } catch (error) {
-      console.error('Erro ao buscar missões:', error);
+      // console.error('Erro ao buscar missões:', error);
     }
   };
   useEffect(() => {
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    height: '80%',
+    height: '85%',
   },
   cardInfo: {
     margin: 5,

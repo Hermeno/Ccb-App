@@ -70,15 +70,15 @@ export default function Mission() {
         carregarMissoes();
     }, []);
 
-    useEffect(() => {
-        carregarMissoes(); // Carregar inicialmente
+    // useEffect(() => {
+    //     carregarMissoes(); // Carregar inicialmente
     
-        const interval = setInterval(() => {
-            carregarMissoes();
-        }, 1000); // Atualiza a cada 5 segundos
+    //     const interval = setInterval(() => {
+    //         carregarMissoes();
+    //     }, 1000); // Atualiza a cada 5 segundos
     
-        return () => clearInterval(interval); // Limpa o intervalo ao desmontar
-    }, []);
+    //     return () => clearInterval(interval); // Limpa o intervalo ao desmontar
+    // }, []);
     
 
 
@@ -93,16 +93,19 @@ export default function Mission() {
 
     const cadastrar = async () => {
         const token = await AsyncStorage.getItem('userToken');
-        if (!missao ||!estado ||!cidade) {
+    
+        if (!missao || !estado || !cidade) {
             Alert.alert('Erro!', 'Preencha todos os campos obrigatórios.');
             return;
         }
-        try{
+    
+        try {
             if (!user) {
                 Alert.alert('Usuário não identificado.');
                 return;
-            }            
-            const response = await cadastrarMissao ({
+            }
+    
+            await cadastrarMissao({
                 user_id: user.id,
                 missao,
                 estado,
@@ -111,18 +114,24 @@ export default function Mission() {
                 data_final_prevista,
                 pais,
                 username: user.name
-            }, token)
+            }, token);
+    
             Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
+    
+            // Limpar os campos do formulário
             setCidade('');
             setPais('');
             setEstado('');
             setMissao('');
+    
+            // Atualizar a lista de missões
+            await carregarMissoes();  // <--- Adiciona essa linha para atualizar a lista
+            setModalVisible(false);   // Fechar o modal após cadastrar
         } catch (error) {
             console.error('Erro ao cadastrar missão', error);
             Alert.alert('Erro ao cadastrar missão');
-
-            }
         }
+    };
       
 
         const move = (missao_id: string, missao_name: string) => {

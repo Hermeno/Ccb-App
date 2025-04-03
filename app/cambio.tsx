@@ -1,6 +1,3 @@
- 
- 
- 
  import React, { useState, useEffect } from 'react';
  import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert ,Button} from 'react-native';
  import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
@@ -30,20 +27,21 @@
      const { missao_id, missao_name } = useLocalSearchParams();     
 
      useEffect(() => {
-         const carregarCreditos = async () => {
-           try {
-             const token = await AsyncStorage.getItem('userToken');
-             const data = await buscarCreditos(token);
-             setCreditos(data);
-           } catch (error) {
-             console.error('Erro ao carregar créditos:', error);
-           }
-         };
-     
-         carregarCreditos();
-       }, []);
-     
-   
+        const carregarCreditos = async () => {
+            if (!missao_id) return; // Garante que missao_id existe antes de chamar a API
+    
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                const data = await buscarCreditos(token, missao_id);
+                setCreditos(data || []); // Garante que setCreditos não receba undefined
+            } catch (error) {
+                console.error('Erro ao carregar créditos:', error);
+                setCreditos([]); // Define como array vazio em caso de erro
+            }
+        };
+    
+        carregarCreditos();
+    }, [missao_id]);
  
      const handleCambio = async () =>{
          const token = await AsyncStorage.getItem('userToken'); 
@@ -51,7 +49,7 @@
              Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
              return;
          }
-         if (!moeda_origem ||!moeda_destino ||!cotacao ||!total_a_cambiar ||!numero_recibo) {
+         if (!moeda_origem ||!moeda_destino ||!cotacao ||!total_a_cambiar ||!numero_recibo) { 
              Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
              return;
          }

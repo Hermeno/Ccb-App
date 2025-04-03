@@ -10,12 +10,12 @@ export default function RootLayout() {
     }
     return (
         <>
-            {/* StatusBar para todas as telas */}
-            <StatusBar 
-                barStyle="dark-content" 
-                backgroundColor="#487d76" 
-                translucent={false}
-            />
+<StatusBar 
+    barStyle="light-content" 
+    backgroundColor="#487d76" 
+    translucent={false}
+    hidden={false} 
+/>
             <Stack>
                 <Stack.Screen
                     name="index"

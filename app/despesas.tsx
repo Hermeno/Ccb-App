@@ -32,7 +32,7 @@ export default function Home ()
         const carregarCreditos = async () => {
           try {
             const token = await AsyncStorage.getItem('userToken');
-            const data = await buscarCreditos(token);
+            const data = await buscarCreditos(token, missao_id);
             setCreditos(data);
           } catch (error) {
             console.error('Erro ao carregar créditos:', error);
