@@ -104,14 +104,14 @@ export default function Home() {
     const back = () => {
         router.back();
     }
-    const DESPESAS = (missao_id: number, missao_name: string) => {
+    const DESPESAS = (missao_id: string, missao_name: string) => {
         router.push({
             pathname: './csv',
             params: { missao_id, missao_name }
         });
     };
 
-    const Update = (missao_id: number, missao_name: string) => {
+    const Update = (missao_id: string, missao_name: string) => {
         router.push({
             pathname: '/updatemissao', // caminho correto
             params: { missao_id, missao_name }
@@ -119,11 +119,11 @@ export default function Home() {
     };
 
 
-    const DOWNLOD = (id_despesa: number) => {
+    const DOWNLOD = (id_despesa: string) => {
         router.push(`/image?id_post=${id_despesa}`)
     }
       
-    const goTo = (id_despesa: number) => {
+    const goTo = (id_despesa: string) => {
         router.push({
             pathname: '/updatedespesa',
             params: { id_despesa }

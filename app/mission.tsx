@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, FlatList, ScrollView, Button, TextInput, Platform, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { buscarMissoesAll, cadastrarMissao } from '../services/missao';
 import { useJwt } from './jwt';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Mission() {
@@ -140,7 +140,7 @@ export default function Mission() {
                 <Text style={styles.TextHeaderLogin}>Carregando...</Text>
             )} */}
             
-            <View style={{ width: '100%', marginBottom:120 }}>
+            <View style={{ width: '100%' , marginBottom:100 }}>
                 {missoes.length > 0 ? (
                     <FlatList
                         data={missoes}
@@ -154,7 +154,8 @@ export default function Mission() {
                                 <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Início:</Text> {item.data_inicio_prevista}</Text>
                                 <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Final:</Text> {item.data_final_prevista}</Text>
                                 <TouchableOpacity style={styles.registerButtonUI} onPress={() => move(item.id, item.missao) }>
-                                    <Text style={styles.registerButtonText}>Entrar</Text>
+                                    <Text style={styles.registerButtonText}>Entrar </Text>
+                                    <FontAwesome name="arrow-right" size={20} color="#00835f" style={styles.icon} />
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -223,17 +224,15 @@ export default function Mission() {
                         style={styles.input}
                         placeholder='Cidade'
                     />
-                    <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
-                        <Text style={styles.TextBotao}>ADICIONAR</Text>
-                    </TouchableOpacity>
-                    {/* </View> */}
-                    {/* </View> */}
-
-
+                        <View style={styles.btnModalFLEX}>
+                        <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
+                        <Text style={styles.modalCloseText}>SALVAR</Text>
+                        </TouchableOpacity>
 
                         <TouchableOpacity  style={styles.modalCloseButton}  onPress={() => setModalVisible(false)}>
                             <Text style={styles.modalCloseText}>Fechar</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity>                        
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -241,7 +240,8 @@ export default function Mission() {
             {/* Footer fixo com botão */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.registerButton} onPress={() => setModalVisible(true)} >
-                    <Text style={styles.registerButtonText}>+ CADASTRAR MISSÃO</Text>
+                <FontAwesome name="plus" size={20} color="#000" style={styles.icon} />
+                    <Text style={styles.registerButtonText}>CADASTRAR MISSÃO</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         padding: 15,
         margin: 10,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "#ccc",
     },
     cardItemTitle: {
@@ -288,24 +288,40 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         width: '100%',
-        // backgroundColor: 'red',
-        padding: 10,
+        backgroundColor: 'transparent',
+        // padding: 10,
         borderTopWidth: 1,
         borderColor: '#ccc',
+        height:100,
     },
     registerButton: {
-        backgroundColor: "#f8f8f8",
+        backgroundColor: "#fff",
         padding: 15,
         borderRadius: 5,
         alignItems: "center",
+        width: '100%',
+        height: '100%',
+
+
+        display: 'flex',
+        justifyContent: "space-around",
+        flexDirection: "row",
+
     },
     registerButtonUI: {
         backgroundColor: "transparent",
-        padding: 5,
-        borderRadius: 15,
+        // padding: 5,
+        // borderRadius: 15,
         alignItems: "center",
-        borderWidth:1,
+        borderTopWidth:2,
         borderColor: '#ccc',
+        width: '100%',
+
+
+
+        display: 'flex',
+        justifyContent: "space-around",
+        flexDirection: "row",
     },
     registerButtonText: {
         color: "#000",
@@ -331,10 +347,15 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     modalCloseButton: {
-        marginTop: 15,
+        // marginTop: 15,
         backgroundColor: "#ff4444",
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 15,
+        alignItems: "center",
+        width: '20%',
+        height: 40,
+
+
     },
     modalCloseText: {
         color: "#fff",
@@ -343,6 +364,7 @@ const styles = StyleSheet.create({
     TextInput:{
         marginBottom: 10,
         fontSize: 16,
+        textAlign: "left"
     },
     textoEscolhido:{
         fontSize: 16,
@@ -355,14 +377,11 @@ const styles = StyleSheet.create({
     },
     BotaoLogin:{
         backgroundColor: '#4ac578',
-        padding: 15,
+        padding: 10,
         borderRadius: 15,
         alignItems: "center",
-
-        // borderWidth: 1,
-        // borderColor: '#ccc',
-    },
-    TextBotao:{
+        width: '70%',
+        height: 40,
     },
     input:{
         marginBottom: 10,
@@ -371,6 +390,7 @@ const styles = StyleSheet.create({
         borderColor: "#ccc",
         width: "100%",
         color:"#121212",
+        borderRadius:10,
     },
     inputsButtons:{
         flexDirection: 'row',
@@ -390,10 +410,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 10,
     },
-    TextBotao:{
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 18,
+    btnModalFLEX:{
+        flexDirection: 'row',
+        justifyContent:'space-between',
+        width: '100%',
+        marginBottom: 10,
+    },
+    icon:{
+        margin: 5,
     }
 
 });

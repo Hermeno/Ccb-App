@@ -20,6 +20,7 @@ const user = useJwt();
   const [showFinal, setShowFinal] = useState(false);
 
   useEffect(() => {
+    // let intervalId: NodeJS.Timeout;
     const carregarMissao = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
@@ -40,7 +41,11 @@ const user = useJwt();
         Alert.alert('Erro ao carregar missão.');
       }
     };
+    // carregarMissao(); // Carregar os dados inicialmente
+
+    // intervalId = setInterval(carregarMissao, 5000); // Atualizar a cada 5 segundos
   
+    // return () => clearInterval(intervalId);   
     carregarMissao();
   }, [missao_id]);
   

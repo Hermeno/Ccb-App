@@ -212,7 +212,7 @@ export default function RootLayout() {
                                     <TouchableOpacity onPress={back} style={{marginLeft:10}}>
                                     <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
                                     </TouchableOpacity>                                    
-                                    <Text style={styles.text}>DESPESAS</Text>
+                                    <Text style={styles.text}>ARUALIZAR MISSÃO</Text>
                                 </View>
                             ),
 

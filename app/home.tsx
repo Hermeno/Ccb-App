@@ -20,7 +20,7 @@ export default function HomeScreen() {
     try {
       const token = await AsyncStorage.getItem('userToken');
       // console.log(token);
-      const data = await buscarCreditoLimit(token);
+      const data = await buscarCreditoLimit(token, missao_id);
       setCreditos(Array.isArray(data) ? data : data ? [data] : []);
     } catch (error) {
       console.error('Erro ao buscar créditos:', error);
@@ -38,62 +38,62 @@ export default function HomeScreen() {
 
 
 
-  // const carregarMissoes = async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     const data = await buscarMissaoPorId(missao_id, token);
-  //     if (data && data.length > 0) {
-  //       setMissoes(data);
-  //       setMissaoId(data[0].id);
-  //       setMissaoName(data[0].missao);
-  //     } else {
-  //       setMissoes([]);
-  //       setMissaoId(null);
-  //     }
-  //   } catch (error) {
-  //     console.error('Erro ao buscar missões:', error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   carregarMissoes();
-  // }, [atualizar]);
+  const carregarMissoes = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const data = await buscarMissaoPorId(missao_id, token);
+      if (data && data.length > 0) {
+        setMissoes(data);
+        setMissaoId(data[0].id);
+        setMissaoName(data[0].missao);
+      } else {
+        setMissoes([]);
+        setMissaoId(null);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar missões:', error);
+    }
+  };
+  useEffect(() => {
+    carregarMissoes();
+  }, [atualizar]);
 
-  // // Função para forçar a atualização
-  // const forcarAtualizacao = () => {
-  //   setAtualizar(prev => !prev);  // Alterna o valor para forçar a atualização
-  // };
+  // Função para forçar a atualização
+  const forcarAtualizacao = () => {
+    setAtualizar(prev => !prev);  // Alterna o valor para forçar a atualização
+  };
 
-  // // Intervalo para atualização automática das missões
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     carregarMissoes();  // Atualiza automaticamente a cada 1 segundo
-  //   }, 1000);
+  // Intervalo para atualização automática das missões
+  useEffect(() => {
+    const interval = setInterval(() => {
+      carregarMissoes();  // Atualiza automaticamente a cada 1 segundo
+    }, 1000);
 
-  //   return () => clearInterval(interval);  // Remove o intervalo ao desmontar
-  // }, []);
+    return () => clearInterval(interval);  // Remove o intervalo ao desmontar
+  }, []);
 
   // Funções de navegação para os botões
   const sendOutraMoedas = () => {
-    if (missao_id) router.push(`/outras_moedas?missao_id=${missao_id}&missao_name=${missao_name}`);
+    if (missao_id) router.push(`/outras_moedas?missao_id=${missao_id}&missao_name=${missaoName}`);
   };
 
   const CREDITO = () => {
-    if (missao_id) router.push(`/credito?missao_id=${missao_id}&missao_name=${missao_name}`);
+    if (missao_id) router.push(`/credito?missao_id=${missao_id}&missao_name=${missaoName}`);
   };
 
   const CAMBIO = () => {
-    if (missao_id) router.push(`/cambio?missao_id=${missao_id}&missao_name=${missao_name}`);
+    if (missao_id) router.push(`/cambio?missao_id=${missao_id}&missao_name=${missaoName}`);
   };
   const CAMBIOViSUALIZAR= () => {
-    if (missao_id) router.push(`/cambios?missao_id=${missao_id}&missao_name=${missao_name}`);
+    if (missao_id) router.push(`/cambios?missao_id=${missao_id}&missao_name=${missaoName}`);
   };
 
   const MISSAO = () => {
-    router.push(`/missao?missao_id=${missao_id}&missao_name=${missao_name}`);
+    router.push(`/missao?missao_id=${missao_id}&missao_name=${missaoName}`);
   };
 
   const DESPESA = () => {
-    if (missao_id) router.push(`/despesas?missao_id=${missao_id}&missao_name=${missao_name}`);
+    if (missao_id) router.push(`/despesas?missao_id=${missao_id}&missao_name=${missaoName}`);
   };
 
   const Logout = () => {
@@ -105,7 +105,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
           <View>
             <View style={styles.cardInfoFirstLeft}>
-              <Text style={styles.title}>Missão: {missao_name}</Text>
+              <Text style={styles.title}>Missão: {missaoName}</Text>
             </View>
           </View>
       {/* Exibe os créditos */}
@@ -172,29 +172,29 @@ const styles = StyleSheet.create({
     height: '80%',
   },
   cardInfo: {
-    margin: 10,
+    margin: 5,
     backgroundColor: 'transparent',
     padding: 20,
     color: '#fff',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ccc',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderRadius: 10,
+    borderRadius: 20,
   },
   cardInfoOut: {
-    margin: 10,
+    margin: 5,
     backgroundColor: 'transparent',
     padding: 20,
     color: '#fff',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ccc',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 20,
-    borderRadius: 10,
+    borderRadius: 20,
   },
   Textshow: {
     fontSize: 20,
