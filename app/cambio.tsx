@@ -19,20 +19,36 @@
      const [total_a_cambiar, setTotal_a_cambiar] = useState('');
      const [total_cambiado, setTotal_cambiado] = useState('');
      const [numero_recibo, setNumero_recibo] = useState('');
-     const [foto_recibo, setFoto_recibo] = useState('');
-     
      const [creditos, setCreditos] = useState([]);
-     
-     const params = useLocalSearchParams();     
-     const { missao_id, missao_name } = useLocalSearchParams();     
+
+
+
+
+     const [missaoId, setMissaoId] = useState<string | null>(null);
+     const [missaoName, setMissaoName] = useState('');  
+     useEffect(() => {
+        const fetchMissao = async () => {
+          const missao_id = await AsyncStorage.getItem('missao_id');
+          const missao_name = await AsyncStorage.getItem('missao_name');         
+          if (missao_id) {
+            setMissaoId(missao_id);
+          }
+          if (missao_name) {
+            setMissaoName(missao_name);
+          }
+        };   
+        fetchMissao();
+      }, []);   
+      
+      
+
+
 
      useEffect(() => {
         const carregarCreditos = async () => {
-            if (!missao_id) return; // Garante que missao_id existe antes de chamar a API
-    
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                const data = await buscarCreditos(token, missao_id);
+                const data = await buscarCreditos(token, missaoId);
                 setCreditos(data || []); // Garante que setCreditos não receba undefined
             } catch (error) {
                 console.error('Erro ao carregar créditos:', error);
@@ -41,7 +57,7 @@
         };
     
         carregarCreditos();
-    }, [missao_id]);
+    }, [missaoId]);
  
      const handleCambio = async () =>{
          const token = await AsyncStorage.getItem('userToken'); 
@@ -61,7 +77,7 @@
                  total_a_cambiar,
                  total_cambiado,
                  numero_recibo,
-                 missao_id
+                 missao_id:missaoId
              }, token)
              if(response.status === 200) {
                  Alert.alert('Cambio realizado com sucesso!');
@@ -73,20 +89,30 @@
                  setNumero_recibo('');
 
                  const cambioId = response.data.cambio.id; // Acesse o campo 'id' dentro de 'cambio'
-                //  console.log('ID do cambio:', cambioId);
-     
-                 // Descomente a linha abaixo para redirecionar com o ID (`/home?missao_id=${missao_id}&missao_name=${missao_name}`)
-                 router.push(`/camera?id_post=${cambioId}&missao_id=${missao_id}&missao_name=${missao_name}`);
+                 router.push(`/camera?id_post=${cambioId}`);
 
 
              }
 
-         }catch(error) {
-             console.log(error, 'erro ao cadastrar cambio');
-         }
-     }
+         }catch (error: unknown) {
+            console.log('Erro ao cadastrar câmbio:', error);
+    
+            if (error && typeof error === 'object' && 'response' in error) {
+                const err = error as { response?: { data?: { message?: string } } };
+                const errorMessage = err.response?.data?.message || 'Erro desconhecido ao cadastrar câmbio.';
+                Alert.alert('Erro ao cadastrar câmbio', errorMessage);
+            } else {
+                Alert.alert('Erro ao cadastrar câmbio', 'Erro desconhecido ao cadastrar câmbio.');
+            }
+        }
+    };
 
- 
+
+
+
+
+
+
      return(
          <View style={styles.container}>
              {/* {user ? (
@@ -99,7 +125,7 @@
              <View style={styles.ViewFlex}>
              <View style={styles.ViewInput}>
                  <>
-                 <Text style={styles.TextInputs}>Moeda a debitar:</Text>
+                 <Text style={styles.TextInputs}>Moeda a debitar:</Text> 
                  <Picker  selectedValue={moeda_origem}  onValueChange={(itemValue) => setMoeda_origem(itemValue)}  style={styles.picker} >
                      <Picker.Item label="Selecione uma moeda de origem..." value="" />
                      {creditos.map((credito) => (

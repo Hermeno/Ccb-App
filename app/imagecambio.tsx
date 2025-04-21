@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as MediaLibrary from 'expo-media-library';
 
 const Imagens = () => {
-  const { id_post, missao_id, missao_name  } = useLocalSearchParams();
+  const { id_post } = useLocalSearchParams();
   const [images, setImages] = useState<string[]>([]);
 
   const getPermission = async () => {

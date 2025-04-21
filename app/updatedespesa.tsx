@@ -7,7 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function Update() {
   const router = useRouter();
-  const { id_despesa,  missao_id, missao_name  } = useLocalSearchParams();
+  const { id_despesa } = useLocalSearchParams();
   const [valor, setValor] = useState('');
   const [cidade, setCidade] = useState('');
   const [numero_recibo, setNumero_recibo] = useState('');
@@ -17,18 +17,31 @@ export default function Update() {
   const [modalVisible, setModalVisible] = useState(false);
   const [imagensData, setImagensData] = useState([]);
 
-
+  const [missaoId, setMissaoId] = useState<string | null>(null);
+  const [missaoName, setMissaoName] = useState('');  
+  useEffect(() => {
+     const fetchMissao = async () => {
+       const missao_id = await AsyncStorage.getItem('missao_id');
+       const missao_name = await AsyncStorage.getItem('missao_name');         
+       if (missao_id) {
+         setMissaoId(missao_id);
+       }
+       if (missao_name) {
+         setMissaoName(missao_name);
+       }
+     };   
+     fetchMissao();
+   }, []);  
   const opcoes = [
-    { id: '1', label: 'Taxi' },
-    { id: '2', label: 'Almoço' },
-    { id: '3', label: 'Hospedagem' },
-    { id: '4', label: 'Atendimento' },
-    { id: '5', label: 'Bilhete Aerea' },
-    { id: '6', label: 'Cafe de Manha' },
-    { id: '7', label: 'Janta' },
-    { id: '8', label: 'Lanche' },
-    { id: '9', label: 'Medicamentos' },
-    { id: '10', label: 'Taxi / Uber' },
+    { id: '1', label: 'Almoço' },
+    { id: '3', label: 'Atendimento' },
+    { id: '2', label: 'Bilhete Aerea' },
+    { id: '4', label: 'Cafe de Manhá' },
+    { id: '5', label: 'Hospedagem' },
+    { id: '6', label: 'Janta' },
+    { id: '7', label: 'Lanche' },
+    { id: '8', label: 'Medicamentos' },
+    { id: '9', label: 'Taxi / Uber' }
   ];
 
   useEffect(() => {
@@ -39,7 +52,7 @@ export default function Update() {
         setValor(data.valor);
         setCidade(data.cidade);
         setNumero_recibo(data.numero_recibo);
-        setDescricao(JSON.parse(data.descricao));
+        setDescricao(data.descricao);
         setData_padrao(new Date(data.data_padrao));
       } catch (error) {
         console.error('Erro ao carregar despesa:', error);
@@ -49,17 +62,13 @@ export default function Update() {
   }, [id_despesa]);
 
   const handleSelectItem = (item: string) => {
-    if (descricao.includes(item)) {
-      setDescricao(descricao.filter((desc) => desc !== item));
-    } else {
-      setDescricao([...descricao, item]);
-    }
+    setDescricao(item); // Define o item como a descrição, substituindo a anterior
+    setModalVisible(false); // Fecha o modal assim que o item for selecionado
   };
-
 
  const DOWNLOD = () => {
   // router.push(`/image?id_post=${id_despesa}`)
-  router.replace(`/image?id_post=${id_despesa}&missao_id=${missao_id}&missao_name=${missao_name}`);
+  router.replace(`/image?id_post=${id_despesa}`);
  }
 
 
@@ -87,7 +96,7 @@ export default function Update() {
           id_despesa,
           valor,
           cidade,
-          descricao: JSON.stringify(descricao),
+          descricao: descricao,
           numero_recibo,
           data_padrao: data_padrao.toISOString(),
         },
@@ -95,7 +104,7 @@ export default function Update() {
       );
 
       Alert.alert('Sucesso!', 'Despesa atualizada com sucesso!');
-      router.replace('/home');
+      router.replace(`/home`);
     } catch (error) {
       console.error('Erro ao atualizar despesa:', error);
       Alert.alert( 'Não foi possível atualizar a despesa.');
@@ -146,30 +155,32 @@ export default function Update() {
           placeholder="Digite o número do recibo" 
         />
 
-        {/* Descrição */}
-        <Text style={styles.label}>Descrição</Text>
-        <TouchableOpacity style={styles.input} onPress={() => setModalVisible(true)}>
-          <Text>{descricao.length > 0 ? descricao.join(', ') : 'Selecione uma ou mais opções'}</Text>
-        </TouchableOpacity>
+<Text style={styles.label}>Descrição</Text>
+    <TouchableOpacity style={styles.input} onPress={() => setModalVisible(true)}>
+      <Text>
+        {descricao.length > 0 ? descricao : 'Selecione uma opção'} {/* Exibe a descrição selecionada ou o texto padrão */}
+      </Text>
+    </TouchableOpacity>
 
-        {/* Modal para opções */}
-        <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-          <View style={styles.modalContainer}>
-            <FlatList
-              data={opcoes}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.optionItem, descricao.includes(item.label) && styles.optionSelected]}
-                  onPress={() => handleSelectItem(item.label)}
-                >
-                  <Text>{item.label}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <Button title="Fechar" onPress={() => setModalVisible(false)} />
-          </View>
-        </Modal>
+    {/* Modal para opções */}
+    <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+      <View style={styles.modalContainer}>
+        <FlatList
+          data={opcoes}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[styles.optionItem, descricao === item.label && styles.optionSelected]} // Seleção única
+              onPress={() => handleSelectItem(item.label)} 
+            >
+              <Text>{item.label}</Text>
+            </TouchableOpacity>
+          )}
+        />
+        <Button title="Fechar" onPress={() => setModalVisible(false)} />
+      </View>
+    </Modal>
+
 
         {/* Botão para atualizar */}
         <TouchableOpacity style={styles.button} onPress={handleUpdate}>

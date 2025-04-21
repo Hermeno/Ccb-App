@@ -11,7 +11,27 @@ export default function App() {
 
   const [creditos, setCreditos] = useState([]);
   const [creditosLimit, setCreditosLimit] = useState([]);
-  const { missao_id, missao_name  } = useLocalSearchParams();  // Aqui você já está pegando o missao_id diretamente
+
+  const { missao_id, missao_name } = useLocalSearchParams();
+  // const [missaoId, setMissaoId] = useState<string | null>(null);
+  // const [missaoName, setMissaoName] = useState('');  
+  // useEffect(() => {
+  //    const fetchMissao = async () => {
+  //      const missao_id = await AsyncStorage.getItem('missao_id');
+  //      const missao_name = await AsyncStorage.getItem('missao_name');         
+  //      if (missao_id) {
+  //        setMissaoId(missao_id);
+  //      }
+  //      if (missao_name) {
+  //        setMissaoName(missao_name);
+  //      }
+  //    };   
+  //    fetchMissao();
+  //  }, []);  
+
+
+
+
 
   // UseEffect para buscar créditos
   useEffect(() => {
@@ -45,7 +65,6 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      Alert(missao_id)
       {creditosLimit.length > 0 ? (
         creditosLimit.map((credito) => (
           <TouchableOpacity key={credito.id} style={styles.cardTop}>

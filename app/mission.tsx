@@ -47,7 +47,12 @@ export default function Mission() {
         setData_final_prevista(currentDate);
     };
 
-
+    const Update = (missao_id: string, missao_name: string) => {
+        router.push({
+            pathname: '/updatemissao', // caminho correto
+            params: { missao_id, missao_name }
+        });
+    };
 
     const carregarMissoes = async () => {
         try {
@@ -134,12 +139,19 @@ export default function Mission() {
     };
       
 
-        const move = (missao_id: string, missao_name: string) => {
-            if (missao_id) {
-                router.push(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
+    const move = async (missao_id: string, missao_name: string) => {
+        if (missao_id && missao_name) {
+            try {
+                await AsyncStorage.setItem('missao_id', missao_id);
+                await AsyncStorage.setItem('missao_name', missao_name);
+                router.replace('/home');                
+            } catch (error) {
+                console.error('Erro ao salvar missão no AsyncStorage:', error);
+                Alert.alert('Erro ao salvar missão selecionada.');
             }
-        };
-        
+        }
+    };
+    
 
     return (
         <View style={styles.container}>
@@ -162,6 +174,9 @@ export default function Mission() {
                                 <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>País:</Text> {item.pais}</Text>
                                 <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Início:</Text> {item.data_inicio_prevista}</Text>
                                 <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Final:</Text> {item.data_final_prevista}</Text>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(item.id, item.missao)}>
+                                <Text style={styles.titleBTN}>EDITAR</Text>
+                                </TouchableOpacity>
                                 <TouchableOpacity style={styles.registerButtonUI} onPress={() => move(item.id, item.missao) }>
                                     <Text style={styles.registerButtonText}>Entrar </Text>
                                     <FontAwesome name="arrow-right" size={20} color="#00835f" style={styles.icon} />
@@ -322,13 +337,13 @@ const styles = StyleSheet.create({
         // padding: 5,
         // borderRadius: 15,
         alignItems: "center",
-        borderTopWidth:2,
+        borderTopWidth:1,
         borderColor: '#ccc',
-        width: '100%',
+        width: '90%',
+        marginLeft:20,
 
 
-
-        display: 'flex',
+        // display: 'flex',
         justifyContent: "space-around",
         flexDirection: "row",
     },
@@ -427,6 +442,18 @@ const styles = StyleSheet.create({
     },
     icon:{
         margin: 5,
-    }
+    },
+    butonsMissaosVisualizar:{
+        padding:10,
+        backgroundColor: 'transparent',
+        borderRadius: 10,
+
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+        borderWidth:2,
+        borderColor: '#ccc',
+        marginBottom:5
+    },
 
 });

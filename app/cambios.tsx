@@ -12,13 +12,32 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
 
     const params = useLocalSearchParams();
-    const { missao_id, missao_name } = params;
+
+    const [missaoId, setMissaoId] = useState<string | null>(null);
+    const [missaoName, setMissaoName] = useState('');  
+    useEffect(() => {
+       const fetchMissao = async () => {
+         const missao_id = await AsyncStorage.getItem('missao_id');
+         const missao_name = await AsyncStorage.getItem('missao_name');         
+         if (missao_id) {
+           setMissaoId(missao_id);
+         }
+         if (missao_name) {
+           setMissaoName(missao_name);
+         }
+       };   
+       fetchMissao();
+     }, []);   
+     
+
+
+
 
     useEffect(() => {
         const carregarCambios = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                const data = await buscarCabiosOneByOne(token, missao_id);
+                const data = await buscarCabiosOneByOne(token, missaoId);
                 setCambios(data || []);
             } catch (error) {
                 console.error('Erro ao carregar câmbios:', error);
@@ -28,12 +47,12 @@ export default function Home() {
             }
         };
 
-        if (missao_id) {
+        if (missaoId) {
             carregarCambios();
         } else {
             setLoading(false);
         }
-    }, [missao_id]);
+    }, [missaoId]);
 
 
 
@@ -45,7 +64,7 @@ export default function Home() {
 
     const baixarFotos = (idCambio: string) => {
         console.log(`Baixando fotos para o câmbio ID: ${idCambio}`);
-        router.push(`./imagecambio?id_post=${idCambio}&missao_id=${missao_id}&missao_name=${missao_name}`)
+        router.push(`./imagecambio?id_post=${idCambio}`)
     };
 
     // Função para atualizar câmbio
@@ -74,7 +93,7 @@ export default function Home() {
                     <ActivityIndicator size="large" color="#487d76" />
                 ) : (
                     <>
-                        {missao_id && (
+                        {missaoId && (
                             <View style={styles.cardSection}>
                                 
                                 {Array.isArray(cambios) && cambios.length > 0 ? (

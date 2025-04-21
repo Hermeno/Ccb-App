@@ -8,7 +8,6 @@ import { editarMissao, buscarMissaoPorId } from '../services/missao';
 
 export default function UpdateMissao() {
   const router = useRouter();
-  const { missao_id, missao_name } = useLocalSearchParams();
 const user = useJwt();
   const [missao, setMissao] = useState('');
   const [estado, setEstado] = useState('');
@@ -18,6 +17,10 @@ const user = useJwt();
   const [data_final_prevista, setData_final_prevista] = useState(new Date());
   const [showInicio, setShowInicio] = useState(false);
   const [showFinal, setShowFinal] = useState(false);
+const { missao_id, missao_name } = useLocalSearchParams();
+
+
+
 
   useEffect(() => {
     // let intervalId: NodeJS.Timeout;
@@ -76,7 +79,7 @@ const user = useJwt();
         }
         
         const response = await editarMissao({
-            missao_id:missao_id,
+            missao_id,
             missao,
             estado,
             cidade,
@@ -87,11 +90,7 @@ const user = useJwt();
         }, token);
 
         Alert.alert('Sucesso!', 'Missão atualizada com sucesso!');
-        router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
-        setCidade('');
-        setPais('');
-        setEstado('');
-        setMissao('');
+        router.replace(`/mission`);
     } catch (error) {
         console.error('Erro ao atualizar missão', error);
         Alert.alert('Erro ao atualizar missão');
@@ -212,7 +211,7 @@ const styles = StyleSheet.create({
   BotaoLogin: {
       width: "100%",
       height: 50,
-      backgroundColor: "#00835f",
+      backgroundColor: "#fff",
       justifyContent: "center",
       alignItems: "center",
       marginTop: 10,

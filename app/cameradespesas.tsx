@@ -12,7 +12,7 @@ export default function CameraScreen() {
   const cameraRef = useRef(null); // Referência para o CameraView
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { id_post, missao_id, missao_name } = useLocalSearchParams();
+  const { id_post } = useLocalSearchParams();
 
   if (!permission) {
     return <View />;
@@ -46,7 +46,7 @@ export default function CameraScreen() {
       const response = await createfotos({ fotos: photos, id_post }, token);
       if (response.status === 200) {
         Alert.alert('Fotos enviadas com sucesso!');
-        router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
+        router.replace(`/home`);
       }
     } catch (error) {
       Alert.alert('Erro', 'Falha ao enviar fotos');

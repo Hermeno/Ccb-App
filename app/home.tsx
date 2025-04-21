@@ -10,96 +10,170 @@ import { buscarMissaoPorId } from '../services/missao';
 export default function HomeScreen() {
   const router = useRouter();
   const user = useJwt();
-  const [creditos, setCreditos] = useState([]);
-  const { missao_id, missao_name } = useLocalSearchParams();
-  const [missoes, setMissoes] = useState([]);
-  const [missaoId, setMissaoId] = useState<string | null>(null);
-  const [missaoName, setMissaoName] = useState<string | null>(null);
-  const [atualizar, setAtualizar] = useState(false);
-  const carregarCredito = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      // console.log(token);
-      const data = await buscarCreditoLimit(token, missao_id);
-      setCreditos(Array.isArray(data) ? data : data ? [data] : []);
-    } catch (error) {
-      console.error('Erro ao buscar créditos:', error);
-    }
-  };
-
-  useEffect(() => {
-    carregarCredito(); // Carrega uma vez ao iniciar
-    const interval = setInterval(() => {
-      carregarCredito(); // Atualiza os créditos a cada 5 segundos
-    }, 5000); // Ajuste o intervalo conforme necessário (em milissegundos)
-
-    return () => clearInterval(interval); // Limpa o intervalo quando o componente for desmontado
-  }, []);
+  // const [creditos, setCreditos] = useState([]);
+  // const [missoes, setMissoes] = useState([]);
+  // const [atualizar, setAtualizar] = useState(false);
 
 
+  // const [missaoId, setMissaoId] = useState<string | null>(null);
+  // const [missaoName, setMissaoName] = useState('');  
+  // useEffect(() => {
+  //    const fetchMissao = async () => {
+  //      const missao_id = await AsyncStorage.getItem('missao_id');
+  //      const missao_name = await AsyncStorage.getItem('missao_name');         
+  //      if (missao_id) {
+  //        setMissaoId(missao_id);
+  //      }
+  //      if (missao_name) {
+  //        setMissaoName(missao_name);
+  //      }
+  //    };   
+  //    fetchMissao();
+  //  }, []);  
+  
 
-  const carregarMissoes = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      const data = await buscarMissaoPorId(missao_id, token);
-      if (data && data.length > 0) {
-        setMissoes(data);
-        setMissaoId(data[0].id);
-        setMissaoName(data[0].missao);
-      } else {
-        setMissoes([]);
-        setMissaoId(null);
-      }
-    } catch (error) {
-      // console.error('Erro ao buscar missões:', error);
-    }
-  };
-  useEffect(() => {
-    carregarMissoes();
-  }, [atualizar]);
+   const [token, setToken] = useState(null);
+   const [missaoId, setMissaoId] = useState(null);
+   const [missaoName, setMissaoName] = useState('');
+   const [creditos, setCreditos] = useState([]);
+ 
+   // Buscar dados do AsyncStorage
+   useEffect(() => {
+     const fetchStorageData = async () => {
+       const storedToken = await AsyncStorage.getItem('userToken');
+       const storedMissaoId = await AsyncStorage.getItem('missao_id');
+       const storedMissaoName = await AsyncStorage.getItem('missao_name');
+ 
+       if (!storedToken) {
+         router.replace('/'); // redireciona pro login
+         return;
+       }
+ 
+       setToken(storedToken);
+       setMissaoId(storedMissaoId);
+       setMissaoName(storedMissaoName);
+     };
+ 
+     fetchStorageData();
+   }, []);
+ 
+   // Buscar créditos periodicamente
+   useEffect(() => {
+     if (!token || !missaoId) return;
+ 
+     const carregarCredito = async () => {
+       try {
+         const data = await buscarCreditoLimit(token, missaoId);
+         setCreditos(Array.isArray(data) ? data : data ? [data] : []);
+       } catch (error) {
+         console.error('Erro ao buscar créditos:', error);
+       }
+     };
+ 
+     carregarCredito(); // Carrega uma vez ao iniciar
+ 
+     const interval = setInterval(() => {
+       carregarCredito();
+     }, 5000); // atualiza a cada 5 segundos
+ 
+     return () => clearInterval(interval); // limpa intervalo ao desmontar
+   }, [token, missaoId]);
+ 
+   // Logout
+   const Logout = async () => {
+     await AsyncStorage.removeItem('userToken');
+     await AsyncStorage.removeItem('missao_id');
+     await AsyncStorage.removeItem('missao_name');
+     router.replace('/'); // redireciona para o login
+   };
+ 
 
-  // Função para forçar a atualização
-  const forcarAtualizacao = () => {
-    setAtualizar(prev => !prev);  // Alterna o valor para forçar a atualização
-  };
 
-  // Intervalo para atualização automática das missões
-  useEffect(() => {
-    const interval = setInterval(() => {
-      carregarMissoes();  // Atualiza automaticamente a cada 1 segundo
-    }, 1000);
 
-    return () => clearInterval(interval);  // Remove o intervalo ao desmontar
-  }, []);
+
+
+  // const carregarCredito = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     console.log(token);
+  //     const data = await buscarCreditoLimit(token, missaoId);
+  //     setCreditos(Array.isArray(data) ? data : data ? [data] : []);
+  //   } catch (error) {
+  //     console.error('Erro ao buscar créditos:', error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   carregarCredito(); // Carrega uma vez ao iniciar
+  //   const interval = setInterval(() => {
+  //     carregarCredito(); // Atualiza os créditos a cada 5 segundos
+  //   }, 5000); // Ajuste o intervalo conforme necessário (em milissegundos)
+
+  //   return () => clearInterval(interval); // Limpa o intervalo quando o componente for desmontado
+  // }, []);
+
+
+
+  // const carregarMissoes = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const data = await buscarMissaoPorId(missaoId, token);
+  //     if (data && data.length > 0) {
+  //       setMissoes(data);
+  //       setMissaoId(data[0].id);
+  //       setMissaoName(data[0].missao);
+  //     } else {
+  //       setMissoes([]);
+  //       setMissaoId(null);
+  //     }
+  //   } catch (error) {
+  //     // console.error('Erro ao buscar missões:', error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   carregarMissoes();
+  // }, [atualizar]);
+
+  // // Função para forçar a atualização
+  // const forcarAtualizacao = () => {
+  //   setAtualizar(prev => !prev);  // Alterna o valor para forçar a atualização
+  // };
+
+  // // Intervalo para atualização automática das missões
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     carregarMissoes();  // Atualiza automaticamente a cada 1 segundo
+  //   }, 1000);
+
+  //   return () => clearInterval(interval);  // Remove o intervalo ao desmontar
+  // }, []);
 
   // Funções de navegação para os botões
   const sendOutraMoedas = () => {
-    if (missao_id) router.push(`/outras_moedas?missao_id=${missao_id}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/outras_moedas?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
 
   const CREDITO = () => {
-    if (missao_id) router.push(`/credito?missao_id=${missao_id}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/credito?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
 
   const CAMBIO = () => {
-    if (missao_id) router.push(`/cambio?missao_id=${missao_id}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/cambio?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
   const CAMBIOViSUALIZAR= () => {
-    if (missao_id) router.push(`/cambios?missao_id=${missao_id}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/cambios?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
 
   const MISSAO = () => {
-    router.push(`/missao?missao_id=${missao_id}&missao_name=${missaoName}`);
+    router.push(`/missao?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
 
   const DESPESA = () => {
-    if (missao_id) router.push(`/despesas?missao_id=${missao_id}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/despesas?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
 
-  const Logout = () => {
-    AsyncStorage.removeItem('userToken');
-    router.replace('/');
-  };
+
+  
 
   return (
     <View style={styles.container}>

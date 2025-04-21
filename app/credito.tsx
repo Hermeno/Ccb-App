@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Link, useRouter, useLocalSearchParams  } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
@@ -11,16 +11,30 @@ export default function Home ()
 {
     const router = useRouter();
     const  user = useJwt(); 
-    const { missao_id, missao_name } = useLocalSearchParams();
-    // console.log(missao_id )
     const [moeda, setMoeda] = useState('');
     const [valor, setValor] = useState('');
     const [referencia, setReferencia] = useState('');
 
-    const back = () => {
-        router.back();
-    }
-  
+    // const [missaoId, setMissaoId] = useState(null);
+    const [missaoId, setMissaoId] = useState<string | null>(null);
+
+    const [missaoName, setMissaoName] = useState('');  
+    useEffect(() => {
+       const fetchMissao = async () => {
+         const missao_id = await AsyncStorage.getItem('missao_id');
+         const missao_name = await AsyncStorage.getItem('missao_name');         
+         if (missao_id) {
+           setMissaoId(missao_id);
+         }
+         if (missao_name) {
+           setMissaoName(missao_name);
+         }
+       };   
+       fetchMissao();
+      
+     }, []);  
+
+
     const cadastrar = async () => {
         const token = await AsyncStorage.getItem('userToken'); 
         if (!moeda || !valor || !referencia) {
@@ -41,10 +55,10 @@ export default function Home ()
                 moeda,
                 valor,
                 referencia,
-                missao_id
+                missao_id:missaoId
             }, token);
             Alert.alert('Sucesso!', 'Cadastrada com sucesso!');
-            router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
+            router.replace(`/home`);
             setMoeda('');
             setValor('');
             setReferencia('');
@@ -53,7 +67,7 @@ export default function Home ()
         }
     };
     
-    
+
 
     return(
         <View style={styles.container}>

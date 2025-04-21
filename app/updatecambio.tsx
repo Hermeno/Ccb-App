@@ -8,7 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function UpdatePage() {
     const router = useRouter();
-    const { missao_id, missao_name  } = useLocalSearchParams(); // missao_id do câmbio a ser atualizado
     const [cotacao, setCotacao] = useState('');
     const [moeda_origem, setMoeda_origem] = useState('');
     const [moeda_destino, setMoeda_destino] = useState('');
@@ -16,6 +15,26 @@ export default function UpdatePage() {
     const [total_cambiado, setTotal_cambiado] = useState('');
     const [numero_recibo, setNumero_recibo] = useState('');
     const [creditos, setCreditos] = useState([]);
+
+    const [missaoId, setMissaoId] = useState<string | null>(null);
+    const [missaoName, setMissaoName] = useState('');  
+    useEffect(() => {
+       const fetchMissao = async () => {
+         const missao_id = await AsyncStorage.getItem('missao_id');
+         const missao_name = await AsyncStorage.getItem('missao_name');         
+         if (missao_id) {
+           setMissaoId(missao_id);
+         }
+         if (missao_name) {
+           setMissaoName(missao_name);
+         }
+       };   
+       fetchMissao();
+     }, []);  
+
+
+
+
 
     useEffect(() => {
         const carregarDados = async () => {
@@ -27,7 +46,7 @@ export default function UpdatePage() {
                 setCreditos(data);
 
                 // Carregar os valores existentes do câmbio
-                const cambio = await buscarCambioPorId(missao_id, token);
+                const cambio = await buscarCambioPorId(missaoId, token);
                 setMoeda_origem(cambio.moeda_origem);
                 setMoeda_destino(cambio.moeda_destino);
                 setCotacao(String(cambio.cotacao));
@@ -41,10 +60,10 @@ export default function UpdatePage() {
         };
 
         carregarDados();
-    }, [missao_id]);
+    }, [missaoId]);
 
     const handleUpdate = async () => {
-        if (!moeda_origem || !moeda_destino || !cotacao || !total_a_cambiar || !numero_recibo || !missao_id) {
+        if (!moeda_origem || !moeda_destino || !cotacao || !total_a_cambiar || !numero_recibo || !missaoId) {
             Alert.alert( 'Todos os campos precisam ser preenchidos.');
             return;
         }
@@ -52,7 +71,7 @@ export default function UpdatePage() {
         try {
             const token = await AsyncStorage.getItem('userToken');
             const response = await atualizarCambio(
-                missao_id,
+                missaoId,
                 {
                     moeda_origem,
                     moeda_destino,
@@ -60,14 +79,14 @@ export default function UpdatePage() {
                     total_a_cambiar,
                     total_cambiado,
                     numero_recibo,
-                    missao_id // ✅ Adicionando missao_id aqui
+                    missao_id:missaoId // ✅ Adicionando missaoId aqui
                 },
                 token
             );
     
             if (response.status === 200) {
                 Alert.alert('Sucesso', 'Câmbio atualizado com sucesso!');
-                router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
+                router.replace(`/home`);
             }
         } catch (error) {
             console.error('Erro ao atualizar câmbio:', error);

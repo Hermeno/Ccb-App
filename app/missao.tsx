@@ -13,7 +13,6 @@ export default function Home() {
     const [missao, setMissao] = useState(''); 
     const [estado, setEstado] = useState('');
     const [pais, setPais] = useState('');
-    const { missao_id,  missao_name } = useLocalSearchParams();
     const [cidade, setCidade] = useState('');
     const [visible, setVisible] = useState(false);
     const  user = useJwt();  
@@ -27,6 +26,28 @@ export default function Home() {
     const [modalVisible, setModalVisible] = useState(false);
     const [missoes, setMissoes] = useState([]);
     const [despesas, setDespesas] = useState([]);
+
+
+
+    const [missaoId, setMissaoId] = useState<string | null>(null);
+    const [missaoName, setMissaoName] = useState('');  
+    useEffect(() => {
+       const fetchMissao = async () => {
+         const missao_id = await AsyncStorage.getItem('missao_id');
+         const missao_name = await AsyncStorage.getItem('missao_name');         
+         if (missao_id) {
+           setMissaoId(missao_id);
+         }
+         if (missao_name) {
+           setMissaoName(missao_name);
+         }
+       };   
+       fetchMissao();
+     }, []);  
+
+
+
+
     useEffect(() => {
         const carregarMissoes = async () => {
             try {
@@ -41,7 +62,7 @@ export default function Home() {
         const carregarDespesas = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                const data = await buscarDespesas(token, missao_id); 
+                const data = await buscarDespesas(token, missaoId); 
                 setDespesas(data || []);
             } catch (error) {
                 console.error('Erro ao buscar despesas:', error);
@@ -90,7 +111,7 @@ export default function Home() {
                 username: user.name
             }, token)
             Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
-            router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
+            router.replace(`/home`);
             setCidade('');
             setPais('');
             setEstado('');
@@ -104,17 +125,17 @@ export default function Home() {
     const back = () => {
         router.back();
     }
-    const DESPESAS = (missao_id: string, missao_name: string) => {
+    const DESPESAS = (missaoId: string, missaoName: string) => {
         router.push({
             pathname: './csv',
-            params: { missao_id, missao_name }
+            params: { missaoId, missaoName }
         });
     };
 
-    const Update = (missao_id: string, missao_name: string) => {
+    const Update = (missaoId: string, missaoName: string) => {
         router.push({
             pathname: '/updatemissao', // caminho correto
-            params: { missao_id, missao_name }
+            params: { missaoId, missaoName }
         });
     };
 
@@ -126,11 +147,11 @@ export default function Home() {
     const goTo = (id_despesa: string) => {
         router.push({
             pathname: '/updatedespesa',
-            params: { id_despesa }
+            params: { id_despesa, missaoId, missaoName }
         });
     }
     
-    const handleAcceptOrCancel = (missao_id: string) => {
+    const handleAcceptOrCancel = (missaoId: string) => {
         Alert.alert(
             'Confirmação',
             'Você deseja mesmo terminar a missão?',
@@ -147,11 +168,11 @@ export default function Home() {
                     onPress: async () => {
                         try {
                             const token = await AsyncStorage.getItem('userToken');
-                            if (!missao_id) {
+                            if (!missaoId) {
                                 Alert.alert('Erro', 'ID da missão não encontrado.');
                                 return;
                             }
-                            await terminarMissao(token, missao_id, 'terminado');
+                            await terminarMissao(token, missaoId, 'terminado');
                             Alert.alert('Missão terminada.');
                         } catch (error) {
                             console.error('Erro ao aceitar missão:', error);
@@ -195,12 +216,9 @@ export default function Home() {
         <View style={styles.container}>
                 <View  style={styles.cardMission}>
                     <View style={styles.cardInfoFirstLeft}>
-                        <Text style={styles.titleMissioa}>{missao_name}</Text>
+                        <Text style={styles.titleMissioa}>{missaoName}</Text>
                         <View style={styles.flexButoes}>
-                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(missao_id, missao_name)}>
-                                    <Text style={styles.titleBTN}>EDITAR</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missao_id, missao_name)}>
+                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => DESPESAS(missaoId, missaoName)}>
                                     <Text style={styles.titleBTN}>SALVAR DOCUMENTO CSV</Text>
                                 </TouchableOpacity>
                          </View>
@@ -215,14 +233,14 @@ export default function Home() {
             despesas.map((despesa) => (
                 
                 <View key={despesa.id} style={styles.card}>
-                    <Text style={styles.titleSDaDespesa}>{despesa.cidade}</Text>
+                    <Text style={styles.titleSDaDespesa}>{despesa.descricao}</Text>
 
                         <View style={styles.flexSonData}>
                         <TouchableOpacity style={styles.buttonUdate} onPress={ () => goTo(despesa.id)}>
                         <Text style={styles.buttonText}><MaterialIcons name="edit" size={20} color="black" /></Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonUdate} onPress={ () => DOWNLOD(despesa.id)}>
-                            <Text style={styles.buttonText}>baixar imagens</Text>
+                            <Text style={styles.buttonText}>Imagens</Text>
                         </TouchableOpacity>
                         </View>
                 </View>
@@ -467,7 +485,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
     cardMission: {
-        alignItems: 'center',
+        // alignItems: 'center',
     },
     card:{
         margin: 10,
@@ -480,7 +498,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent:'space-around',
         marginBottom: 10,
-        borderRadius:10
+        borderRadius:20
     },
 
 
@@ -511,10 +529,12 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     cardInfoFirstLeft:{
-        width: '60%',
-        backgroundColor: 'transparent',
+        // width: '60%',
+        // backgroundColor: 'red',
         borderRadius: 20,
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        alignItems:'center',
+        alignContent:'center'
     },
     cardInfoFirstLeftDown:{
         width: '60%',
@@ -596,9 +616,9 @@ const styles = StyleSheet.create({
       flexButoes:{
         flexDirection: 'row',
         justifyContent:'center',
-        margin: 15,
+        marginTop: 15,
         width: '100%',
-        columnGap: '10',
+        // columnGap: '10',
       },
       titledESPESAS:{
         fontSize: 16,
@@ -609,8 +629,10 @@ const styles = StyleSheet.create({
       buttonUdate:{
         // width: '25%',
         // backgroundColor: '#4CAF50',
-        padding: 10,
-        borderRadius: 10,
+        // padding: 10,
+        paddingVertical:10,
+        paddingHorizontal:20,
+        borderRadius: 288,
         // marginBottom: 10,
         // marginLeft: 10,
         justifyContent: 'center',

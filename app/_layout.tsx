@@ -1,6 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar, Platform, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Platform, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 
 export default function RootLayout() {
     
@@ -9,13 +10,10 @@ export default function RootLayout() {
         router.back();
     }
     return (
-        <>
-<StatusBar 
-    barStyle="light-content" 
-    backgroundColor="#487d76" 
-    translucent={false}
-    hidden={false} 
-/>
+            <>
+            <StatusBar style="light" backgroundColor="#487d76" translucent={false} />
+         
+            
             <Stack>
                 <Stack.Screen
                     name="index"
@@ -322,6 +320,7 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 30,
     },
+
     text: {
         color: '#fff',
         fontSize: 20,

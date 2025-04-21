@@ -11,9 +11,8 @@ export default function Home ()
 {
     const router = useRouter();
     const user = useJwt();
-    const { missao_id, missao_name } = useLocalSearchParams();
-    // console.log(missao_id)
     const [valor, setValor] = useState('');
+    const { missao_id, missao_name } = useLocalSearchParams();
     const [cidade, setCidade] = useState('');
     const [outro, setOutro] = useState('');
     const [showOutro, setShowOutro] = useState(false);
@@ -23,16 +22,34 @@ export default function Home ()
     const [numero_recibo, setNumero_recibo] = useState('');
     const [foto_recibo, setFoto_recibo] = useState('');
     const [moeda, setMoeda] = useState('');
-    const [descricao, setDescricao] = useState<string[]>([]);
+    const [descricao, setDescricao] = useState<string>('');
     const [modalVisible, setModalVisible] = useState(false);
     const [parsedPhotos, setParsedPhotos] = useState<string[]>([]);
     const [creditos, setCreditos] = useState([]);
-  
+
+    // const [missaoId, setMissaoId] = useState<string | null>(null);
+    // const [missaoName, setMissaoName] = useState('');  
+    // useEffect(() => {
+    //    const fetchMissao = async () => {
+    //      const missao_id = await AsyncStorage.getItem('missao_id');
+    //      const missao_name = await AsyncStorage.getItem('missao_name');         
+    //      if (missao_id) {
+    //        setMissaoId(missao_id);
+    //      }
+    //      if (missao_name) {
+    //        setMissaoName(missao_name);
+    //      }
+    //    };   
+    //    fetchMissao();
+    //  }, []);  
+    
+
     useEffect(() => {
         const carregarCreditos = async () => {
           try {
             const token = await AsyncStorage.getItem('userToken');
             const data = await buscarCreditos(token, missao_id);
+            console.log(missao_id)
             setCreditos(data);
           } catch (error) {
             console.error('Erro ao carregar créditos:', error);
@@ -56,12 +73,11 @@ export default function Home ()
         { id: '9', label: 'Taxi / Uber' }
     ];
     const handleSelectItem = (item: string) => {
-        if (descricao.includes(item)) {
-            setDescricao(descricao.filter((desc) => desc !== item));
-        } else {
-            setDescricao([...descricao, item]);
-        }
+        setOutro(''); // Limpa o campo "Outro"
+        setDescricao(item); // Define a descrição
+        setModalVisible(false); // Fecha o modal automaticamente
     };
+    
 
 
     const OPENCAMERA = () => {
@@ -94,21 +110,19 @@ export default function Home ()
                 moeda,
                 valor,
                 cidade,
-                descricao: JSON.stringify(descricao),
+                descricao,
                 outro,
                 data_padrao,
-                numero_recibo,
+                numero_recibo, 
                 missao_id
             }, token);
     
-            // Verifique se a resposta contém o campo dispesas
             if (response && response.dispesas) {
-                const despesaId = response.dispesas.id;  // Acesse o id da despesa no campo 'despesas'
+                const despesaId = response.dispesas.id;
                 console.log('Despesa ID:', despesaId);
     
-                // Se o ID da despesa estiver presente, redirecione para a página de câmera de despesa router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
                 if (despesaId) {
-                    router.replace(`/cameradespesas?id_post=${despesaId}&missao_id=${missao_id}&missao_name=${missao_name}`);
+                    router.replace(`/cameradespesas?id_post=${despesaId}`);
                 }
     
                 Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
@@ -118,13 +132,19 @@ export default function Home ()
                 setNumero_recibo('');
                 setFoto_recibo('');
                 setMoeda('');
-                setDescricao([]);
+                setDescricao('');
                 setParsedPhotos([]);
             }
+        } catch (error: unknown) {
+            console.log('Erro ao cadastrar despesa:', error);
     
-        } catch (error) {
-            console.log(error, 'Erro ao cadastrar despesa');
-            Alert.alert('Não foi possível cadastrar a despesa.');
+            if (error && typeof error === 'object' && 'response' in error) {
+                const err = error as { response?: { data?: { message?: string } } };
+                const errorMessage = err.response?.data?.message || 'Erro desconhecido ao cadastrar despesa.';
+                Alert.alert('Erro ao cadastrar despesa', errorMessage);
+            } else {
+                Alert.alert('Erro ao cadastrar despesa', 'Erro desconhecido ao cadastrar despesa.');
+            }
         }
     };
     
@@ -185,14 +205,23 @@ export default function Home ()
 
 
             <View style={styles.ViewFlex}>
-                <View style={styles.ViewInputOne}>
-                    <Text style={styles.TextInputs}>Descrição</Text>
-                    <TouchableOpacity style={styles.input} onPress={() => setModalVisible(true)}>
-                        <Text>
-                            {descricao.length > 0 ? descricao.join(', ') : 'Selecione uma ou mais opções'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+
+
+
+
+
+
+
+
+
+            <View style={styles.ViewInputOne}>
+                <Text style={styles.TextInputs}>Descrição</Text>
+                <TouchableOpacity style={styles.input} onPress={() => setModalVisible(true)}>
+                    <Text>
+                        {descricao.length > 0 ? descricao : 'Selecione uma opção ou escreva outra'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
                 <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)} >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
@@ -212,10 +241,18 @@ export default function Home ()
                             )}
                         />
                             <View>
-                                {showOutro && (
+                            {showOutro && (
                                     <View style={styles.ViewInputOne}>
                                         <Text style={styles.TextInputs}>Outro</Text>
-                                        <TextInput  value={outro} onChangeText={setOutro} style={styles.inputOne} placeholder="Valor creditado" />
+                                        <TextInput
+                                            value={outro}
+                                            onChangeText={(text) => {
+                                                setOutro(text);
+                                                setDescricao(text); // Atualiza descricao com o valor do "Outro"
+                                            }}
+                                            style={styles.inputOne}
+                                            placeholder="Digite outra descrição"
+                                        />
                                     </View>
                                 )}
                                 <TouchableOpacity style={styles.Outro} onPress={() => setShowOutro(!showOutro)}>
@@ -223,14 +260,39 @@ export default function Home ()
                                 </TouchableOpacity>
                             </View>
                         <View>
-                            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                            {/* <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
                                 <Text style={styles.closeButtonText}>Fechar</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                         </View>
                     </View>
                 </View>
-            </Modal>                
+            </Modal>   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </View>
 
 
@@ -245,11 +307,6 @@ export default function Home ()
                 <TextInput  value={numero_recibo} onChangeText={setNumero_recibo} style={styles.input} placeholder='N do Recibo' />
                 </View>
             </View>
-
-
-                {/* <TouchableOpacity style={styles.botaoAdicionaImageRecibo} onPress={OPENCAMERA}>
-                    <Text style={styles.TextAnexarImagem}>Anexar recibo</Text>
-                </TouchableOpacity> */}
 
 
                 {parsedPhotos && parsedPhotos.length > 0 ? (

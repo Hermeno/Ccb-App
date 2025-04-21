@@ -12,7 +12,26 @@ export default function CsvScreen() {
     const [cambio, setCambio] = useState([]);
     const [despesas, setDespesas] = useState([]);
     const { missao_id, missao_name } = useLocalSearchParams();   
+ 
     
+  const [missaoId, setMissaoId] = useState<string | null>(null);
+  const [missaoName, setMissaoName] = useState('');  
+  useEffect(() => {
+     const fetchMissao = async () => {
+       const missao_id = await AsyncStorage.getItem('missao_id');
+       const missao_name = await AsyncStorage.getItem('missao_name');         
+       if (missao_id) {
+         setMissaoId(missao_id);
+       }
+       if (missao_name) {
+         setMissaoName(missao_name);
+       }
+     };   
+     fetchMissao();
+   }, []);  
+
+
+
     useEffect(() => {
         const carregarCambios = async () => {
             try {
@@ -40,7 +59,7 @@ export default function CsvScreen() {
 
     const exportarCSV = async () => {
         try {
-            let csvContent = `Missão: ${missao_name}\n\n`;
+            let csvContent = `Missão: ${missaoName}\n\n`;
 
             // ➡️ Adicionando os dados de câmbio
             csvContent += `Dados de Câmbio:\n`;
@@ -49,19 +68,13 @@ export default function CsvScreen() {
                 csvContent += `${item.moeda_origem || ''},${item.moeda_destino || ''},${item.cotacao || ''},${item.total_a_cambiar || ''},${item.total_cambiado || ''},${item.numero_recibo || ''}\n`;
             });
 
-            // ➡️ Adicionando os dados de despesas
             csvContent += `\nDados de Despesas:\n`;
-            csvContent += `Moeda,Valor,Cidade,Descrição,Outro,Data,Numero Recibo\n`;
+            csvContent += `Moeda,Valor,Cidade,Descrição,Data,Numero Recibo\n`;
             despesas.forEach((item) => {
-                const descricao = Array.isArray(item.descricao) && item.descricao.length > 0 
-                    ? item.descricao.join(', ') 
-                    : item.outro || '';
-                csvContent += `${item.moeda || ''},${item.valor || ''},${item.cidade || ''},${descricao},${item.outro || ''},${item.data_padrao || ''},${item.numero_recibo || ''}\n`;
+                csvContent += `${item.moeda || ''},${item.valor || ''},${item.cidade || ''},${item.descricao || ''},${item.data_padrao || ''},${item.numero_recibo || ''}\n`;
             });
 
             const fileUri = `${FileSystem.documentDirectory}relatorio.csv`;
-
-            // ➡️ Salvando o arquivo CSV no dispositivo
             await FileSystem.writeAsStringAsync(fileUri, csvContent, {
                 encoding: FileSystem.EncodingType.UTF8,
             });

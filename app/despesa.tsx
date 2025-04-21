@@ -21,11 +21,31 @@ export default function Despesa() {
     const [data_final_prevista, setData_final_prevista] = useState(new Date());
     const [showInicio, setShowInicio] = useState(false);
     const [showFinal, setShowFinal] = useState(false);
-    const { missao_id, missao_name } = useLocalSearchParams();
     const showdata_inicio_prevista = () => setShowInicio(true);
     const showdata_final_prevista = () => setShowFinal(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [missoes, setMissoes] = useState([]);
+
+
+  const [missaoId, setMissaoId] = useState<string | null>(null);
+    const [missaoName, setMissaoName] = useState('');  
+    useEffect(() => {
+       const fetchMissao = async () => {
+         const missao_id = await AsyncStorage.getItem('missao_id');
+         const missao_name = await AsyncStorage.getItem('missao_name');         
+         if (missao_id) {
+           setMissaoId(missao_id);
+         }
+         if (missao_name) {
+           setMissaoName(missao_name);
+         }
+       };   
+       fetchMissao();
+     }, []);  
+
+
+
+
     useEffect(() => {
         const carregarMissoes = async () => {
           try {
@@ -76,8 +96,8 @@ export default function Despesa() {
                 pais,
                 username: user.name
             }, token)
-            Alert.alert('Sucesso!', 'Missão cadastrada com sucesso!');
-            router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
+            Alert.alert('Sucesso!', 'Missao cadastrada com sucesso!');
+            router.replace(`/home`);
             setCidade('');
             setPais('');
             setEstado('');
@@ -93,8 +113,7 @@ export default function Despesa() {
     }
     const DESPESAS = (missao_id: number, missao_name: string) => {
         router.push({
-            pathname: './despesas',
-            params: { missao_id, missao_name }
+            pathname: './despesas'
         });
     };
     

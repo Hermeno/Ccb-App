@@ -1,5 +1,5 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { createfotos } from '../services/cambio';
@@ -12,8 +12,23 @@ export default function CameraScreen() {
   const cameraRef = useRef(null); // Referência para o CameraView
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { id_post, missao_id, missao_name } = useLocalSearchParams();
-
+  const { id_post } = useLocalSearchParams();
+  const [missaoId, setMissaoId] = useState<string | null>(null);
+  const [missaoName, setMissaoName] = useState('');  
+  useEffect(() => {
+     const fetchMissao = async () => {
+       const missao_id = await AsyncStorage.getItem('missao_id');
+       const missao_name = await AsyncStorage.getItem('missao_name');         
+       if (missao_id) {
+         setMissaoId(missao_id);
+       }
+       if (missao_name) {
+         setMissaoName(missao_name);
+       }
+     };   
+     fetchMissao();
+   }, []);   
+   
   if (!permission) {
     return <View />;
   }
@@ -46,7 +61,7 @@ export default function CameraScreen() {
       const response = await createfotos({ fotos: photos, id_post }, token);
       if (response.status === 200) {
         Alert.alert('Fotos enviadas com sucesso!');
-        router.replace(`/home?missao_id=${missao_id}&missao_name=${missao_name}`);
+        router.replace(`/home`);
       }
     } catch (error) {
       Alert.alert('Erro', 'Falha ao enviar fotos');
