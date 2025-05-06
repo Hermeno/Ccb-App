@@ -21,13 +21,13 @@ export const cadastrarDespesa = async ({ moeda, valor, cidade, descricao, outro,
 
 
 
-export const buscarDespesas = async (token, missaoId) => {
+export const buscarDespesas = async (token, missao_id) => {
     try {
         const response = await api.get('/buscar-despesas', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            params: { missao_id: missaoId }, // Passa o missao_id via parâmetros de consulta
+            params: { missao_id: missao_id }, // Passa o missao_id via parâmetros de consulta
         });
         return response.data.despesas; // Retorna o array de despesas
     } catch (error) {

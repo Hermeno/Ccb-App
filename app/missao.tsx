@@ -60,9 +60,11 @@ export default function Home() {
         };
     
         const carregarDespesas = async () => {
+            const missao_id = await AsyncStorage.getItem('missao_id');
+            const missao_name = await AsyncStorage.getItem('missao_name');
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                const data = await buscarDespesas(token, missaoId); 
+                const data = await buscarDespesas(token,missao_id ); 
                 setDespesas(data || []);
             } catch (error) {
                 console.error('Erro ao buscar despesas:', error);
