@@ -8,6 +8,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 export default function Update() {
   const router = useRouter();
   const { id_despesa } = useLocalSearchParams();
+
+
+  console.log(id_despesa)
   const [valor, setValor] = useState('');
   const [cidade, setCidade] = useState('');
   const [numero_recibo, setNumero_recibo] = useState('');

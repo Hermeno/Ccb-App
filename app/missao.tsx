@@ -228,7 +228,7 @@ export default function Home() {
                 </View>
             <View style={styles.content}>
 
-        <ScrollView>
+        {/* <ScrollView>
         <Text style={styles.titledESPESAS}>DESPESAS
         </Text>
         {despesas.length > 0 ? (
@@ -250,7 +250,7 @@ export default function Home() {
         ) : (
             <Text style={styles.emptyText}>Nenhuma Despesa encontrada</Text>
         )}
-        </ScrollView>
+        </ScrollView> */}
 
             </View>
             

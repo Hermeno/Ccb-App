@@ -111,7 +111,7 @@ export default function HomeScreen() {
   };
 
   const DESPESAVISUALIZATION = () => {
-    if (missaoId) router.push(`/despesas?missao_id=${missaoId}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/despesa?missaoId=${missaoId}&missaoName=${missaoName}`);
   };
   
 
