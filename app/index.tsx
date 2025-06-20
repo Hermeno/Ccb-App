@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert,StatusBar } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginUsuario } from '../services/user'; 
@@ -39,156 +39,170 @@ export default function Home() {
         }
     };
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.TextHeaderLogin}>LOGIN <FontAwesome name="lock" size={30} color="green" /> </Text>
-            <View style={styles.CardLogin}>
-                
-                <Text style={styles.TextInput}>EMAIL</Text>
-                <View style={styles.inputContainer}>
-                    <MaterialIcons name="email" size={20} color="#00835f" style={styles.icon} />
-                    <TextInput 
-                        value={email} 
-                        onChangeText={setEmail} 
-                        style={styles.input} 
-                        placeholder='Email do usuario' 
-                    />
-                </View>
-                
-                <Text style={styles.TextInput}>SENHA</Text>
-                <View style={styles.inputContainer}>
-                    <MaterialIcons name="lock" size={20} color="#00835f" style={styles.icon} />
-                    <TextInput 
-                        value={password} 
-                        onChangeText={setPassword} 
-                        style={styles.input} 
-                        secureTextEntry={true} 
-                        placeholder='******'
-                    />
-                </View>
 
-                <TouchableOpacity style={styles.BotaoLogin} onPress={handleLogin}>
-                    <Text style={styles.TextBotao}>Login</Text>
-                </TouchableOpacity>
 
-                <View style={styles.containerLines}>
-                    <View style={styles.line} />
-                    <Text style={styles.text}>Or</Text>
-                    <View style={styles.line} />
-                </View>
 
-                <View style={styles.TextRecuperarSenha}>
-                    <Text style={{ color: "#24h91d", fontWeight: 'bold' }}>Nao possui uma conta ? 
-                        <Text style={{ color: "#00835f", fontSize: 17 }}><Link href="/signUp"> Sign-Up</Link></Text>
-                    </Text>
-                </View>
-                <View style={styles.TextRecuperarSenha}>
-                    <Text style={{ color: "#24h91d", fontWeight: 'bold' }}>Esqueceu a senha? 
-                        <Text style={{ color: "#00835f", fontSize: 17 }}><Link href="/ForgetPasswordScreen"> Recuperar </Link></Text>
-                    </Text>
-                </View>
-            </View>
-        </View>
-    );
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  return (
+
+    <View style={styles.mainContainer}>
+    
+      <View  style={styles.container}>
+          {/* <Text style={styles.logoText}>Luxe</Text> */}
+      </View>
+      <View  style={styles.containerForm}>
+      <Text style={styles.textWelcome}>Welcome back</Text>
+
+
+        <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            // keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+
+
+
+          <View  style={styles.textsFlexs}>
+            <Text style={styles.rememberText}>
+              Remember me
+            </Text>
+            <Text style={styles.rememberText}>
+              Esqueceu senha ?
+            </Text>
+          </View>
+
+
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Entrar</Text>
+          </TouchableOpacity>
+
+
+
+
+          <Text style={styles.textAllsignUp}>
+            Don't have an account?
+            <TouchableOpacity onPress={() => router.push('/signUp')}>
+              <Text style={styles.signUpLink}> Crie uma conta </Text>
+            </TouchableOpacity>
+          </Text>
+
+
+
+
+
+      </View>
+    </View>
+  );
+};
+
+
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#ffffff",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    TextHeaderLogin: {
-        fontSize: 30,
-        fontWeight: "bold",
-        color: "#00835f",
-        alignItems: "center",
-        textAlign: "left",
-        display: "flex",
-        justifyContent: "center",
-        marginTop: 30,
-        backgroundColor: "#fafafa",
-        padding: 10,
-        borderRadius: 30,
-    },
-    CardLogin: {
-        width: 330,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 10,
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderWidth: 2,
-        borderColor: "#ccc",
-        borderRadius: 20,
-        padding: 10,
-        marginBottom: 10,
-        backgroundColor: "#fafafa",
-        width: "100%",
-    },
-    icon: {
-        marginRight: 10,
-    },
-    input: {
-        // flex: 1,
-        height: 35,
-        fontSize: 16,
-        color: "#121212",
-    },
-    TextInput: {
-        marginBottom: 10,
-        fontSize: 16,
-        color: "#121212",
-        fontWeight: "bold",
-    },
-    BotaoLogin: {
-        width: "100%",
-        height: 50,
-        backgroundColor: "#00835f",
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 10,
-        marginTop: 10,
-        marginBottom: 20,
-    },
-    TextBotao: {
-        color: "#fff",
-        fontSize: 17,
-        fontWeight: "bold",
-    },
-    containerLines: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 20,
-    },
-    line: {
-        height: 1,
-        backgroundColor: '#00835f',
-        flex: 1,
-    },
-    text: {
-        marginHorizontal: 10,
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#000',
-    },
-    TextRecuperarSenha: {
-        color: "#121212",
-        fontSize: 16,
-        fontWeight: "500",
-        borderWidth: 2,
-        borderColor: "#ccc",
-        borderRadius: 20,
-        padding: 5,
-        width: "100%",
-        height: "15%",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 0,
-        marginBottom: 20,
-    },
+  mainContainer: {
+    flex: 1,
+    flexDirection: 'column', // padrão, mas deixamos explícito
+  },
+  container: {
+    // flex: ,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    height: "20%"
+  },
+  containerForm: {
+    flex: 2,
+    // justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    width: "100%",
+  },
+  input: {
+    width: "75%",
+    padding: 12,
+    marginVertical: 10,
+    // borderBottomWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 12,
+    borderWidth:1,
+    backgroundColor: "#fff",
+  },
+  button: {
+    marginTop: 100,
+    padding: 15,
+    backgroundColor: "#00835f",
+    // backgroundColor: "#007bff",
+    borderRadius: 15,
+    width: "75%",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  logoText:{
+    fontSize: 80,
+    fontWeight: "bold",
+    color: "#00835f",
+    // marginBottom: -90,
+  },
+  textWelcome:{
+    marginTop: 50,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#00835f",
+    marginBottom: 30,
+    // alignSelf: "flex-start",
+    // width: "75%",
+  },
+  signUpLink:{
+    fontSize: 15,
+    // fontWeight: "bold",
+    color: "#00835f",
+    textAlign: "center",
+    marginTop:10,
+  },
+  textsFlexs:{
+    // flex: 1,
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginBottom: 20,
+    marginTop: 30,
+    // backgroundColor: "#00835f",
+    width: "75%"
+  },
+  rememberText:{
+    color: "#00835f",
+    fontSize: 15,
+    fontWeight: "bold",
+    // marginLeft: 10,
+  },
+  textAllsignUp:{
+    fontWeight: "bold",
+    marginTop: 10,
+  }
 });
+
+// export default Home;

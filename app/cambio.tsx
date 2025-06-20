@@ -1,5 +1,5 @@
  import React, { useState, useEffect } from 'react';
- import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert ,Button} from 'react-native';
+ import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert ,Button, Platform, Modal, KeyboardAvoidingView, ScrollView} from 'react-native';
  import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
  import { Link, useRouter,useLocalSearchParams  } from 'expo-router';
  import { cadastrarCambio } from '../services/cambio';
@@ -20,6 +20,13 @@
      const [total_cambiado, setTotal_cambiado] = useState('');
      const [numero_recibo, setNumero_recibo] = useState('');
      const [creditos, setCreditos] = useState([]);
+
+const [modalVisible, setModalVisible] = useState(false);
+const [modalDestinoVisible, setModalDestinoVisible] = useState(false);
+const handleSelecionarMoedaOrigem = (moeda) => {
+  setMoeda_origem(moeda);
+  setModalVisible(false); // fecha o modal após selecionar
+};
 
 
 
@@ -114,51 +121,122 @@
 
 
      return(
+
+
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={80} // ajuste conforme o header do seu app
+    >
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="handled"
+    >
+
+
+
+
          <View style={styles.container}>
-             {/* {user ? (
-                 <Text style={styles.TextHeaderLogin}>Ola, {user.name} faca cambio aqui!</Text>
-             ) : (
-                 <Text style={styles.TextHeaderLogin}>Esta carregando...</Text>
-             )}
-              */}
              <View style={styles.CardLogin}>                
              <View style={styles.ViewFlex}>
-             <View style={styles.ViewInput}>
-                 <>
-                 <Text style={styles.TextInputs}>Moeda a debitar:</Text> 
-                 <Picker  selectedValue={moeda_origem}  onValueChange={(itemValue) => setMoeda_origem(itemValue)}  style={styles.picker} >
-                     <Picker.Item label="Selecione uma moeda de origem..." value="" />
-                     {creditos.map((credito) => (
-                     <Picker.Item
-                         key={credito.id}
-                         label={`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`} // Exibe nome e valor
-                         value={credito.moeda} // Usa apenas o nome da moeda como valor
-                     />
-                     ))}
-                 </Picker>
-                 <Text style={styles.result}>Moeda selecionada: {moeda_origem}</Text>
-                 </>
- 
- 
- 
-             </View>
-             <View style={styles.ViewInput}>       
-             <Text style={styles.TextInputs} >Moeda de Destino:</Text>
-             <Picker
-                 selectedValue={moeda_destino}
-                 onValueChange={(itemValue) => setMoeda_destino(itemValue)}
-                 style={styles.picker}
-             > 
-                 <Picker.Item label="Selecione uma moeda_destino..." value="" />
-                 <Picker.Item label="Dólar" value="dolar" />
-                 <Picker.Item label="Real" value="real" />
-                 <Picker.Item label="Metical" value="metical" />
-                 <Picker.Item label="Euro" value="euro" />
-                 <Picker.Item label="Libra" value="libra" />
-                 <Picker.Item label="Iene" value="iene" />
-             </Picker>
-             <Text style={styles.result}>Moeda selecionada: {moeda_destino}</Text>
-             </View>
+
+            <View style={styles.ViewInput}>
+            <Text style={styles.TextInputs}>Moeda a debitar:</Text>
+
+            <TouchableOpacity
+                onPress={() => setModalVisible(true)}
+                style={styles.abrirModalBotao}>
+                <Text style={styles.abrirModalTexto}>
+                {moeda_origem ? `Selecionada: ${moeda_origem}` : 'Selecionar moeda'}
+                </Text>
+            </TouchableOpacity>
+
+            <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.TextInputs}>Escolha a moeda:</Text>
+                    <View style={styles.modalContent}>
+                    {creditos.map((credito) => (
+                        <TouchableOpacity
+                        key={credito.id}
+                        onPress={() => handleSelecionarMoedaOrigem(credito.moeda)}
+                        style={[
+                            styles.botaoMoeda,
+                            moeda_origem === credito.moeda && styles.botaoSelecionado,
+                        ]}
+                        >
+                        <Text style={styles.botaoTexto}>
+                            {`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`}
+                            {moeda_origem === credito.moeda ? ' ✅' : ''}
+                        </Text>
+                        </TouchableOpacity>
+                    ))}
+                    </View>
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.fecharModalBotao}>
+                    <Text style={styles.fecharModalTexto}>Fechar</Text>
+                    </TouchableOpacity>
+                </View>
+                </View>
+            </Modal>
+            </View>
+
+            <View style={styles.ViewInput}>
+            <Text style={styles.TextInputs}>Moeda de Destino:</Text>
+
+            <TouchableOpacity
+                onPress={() => setModalDestinoVisible(true)}
+                style={styles.abrirModalBotao}>
+                <Text style={styles.abrirModalTexto}>
+                {moeda_destino ? `Selecionada: ${moeda_destino}` : 'Selecionar moeda'}
+                </Text>
+            </TouchableOpacity>
+
+
+            <Modal animationType="slide" transparent={true} visible={modalDestinoVisible} onRequestClose={() => setModalDestinoVisible(false)} >
+                <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.TextInputs}>Escolha a moeda de destino:</Text>
+
+                    <View style={styles.modalContent}>
+                    {[
+                        { label: 'Dólar', value: 'dolar' },
+                        { label: 'Real', value: 'real' },
+                        { label: 'Metical', value: 'metical' },
+                        { label: 'Euro', value: 'euro' },
+                        { label: 'Libra', value: 'libra' },
+                        { label: 'Iene', value: 'iene' },
+                    ].map((moeda) => (
+                        <TouchableOpacity
+                        key={moeda.value}
+                        onPress={() => { setMoeda_destino(moeda.value); setModalDestinoVisible(false);
+                        }}
+                        style={[
+                            styles.botaoMoeda,
+                            moeda_destino === moeda.value && styles.botaoSelecionado,
+                        ]}
+                        >
+                        <Text style={styles.botaoTexto}>
+                            {moeda.label}
+                            {moeda_destino === moeda.value ? ' ✅' : ''}
+                        </Text>
+                        </TouchableOpacity>
+                    ))}
+                    </View>
+
+                    <TouchableOpacity onPress={() => setModalDestinoVisible(false)} style={styles.fecharModalBotao}>
+                    <Text style={styles.fecharModalTexto}>Fechar</Text>
+                    </TouchableOpacity>
+                </View>
+                </View>
+            </Modal>
+            </View>
+
+
+
+
+
+
+
              </View>
  
              <View style={styles.ViewFlex}>
@@ -187,6 +265,8 @@
              </View>
 
          </View>
+         </ScrollView>
+         </KeyboardAvoidingView>
      );
  }
  
@@ -198,14 +278,7 @@
          justifyContent: "center",
          alignItems: "center",
      },
-     TextHeaderLogin:{
-         fontSize: 20,
-         fontWeight: "bold",
-         color: "#487d76",
-         // marginBottom: 30,
-         height: 60,
-         paddingTop: 30,
-     },
+
      CardLogin:{
          width: '100%',
          flex:1,
@@ -213,6 +286,7 @@
          padding: 20,
          justifyContent: "center",
          alignItems: "center",
+         marginTop:-100,
      },
      input:{
          marginBottom: 10,
@@ -394,6 +468,127 @@
          alignSelf: 'flex-end',
          alignItems: 'center',
        },
+
+
+
+
+linha: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: 8,
+  marginTop: 8,
+},
+
+
+botaoTexto: {
+  fontSize: 14,
+},
+
+
+
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+modalContainer: {
+  backgroundColor: '#fff',
+//   borderRadius: 18,
+  padding: 20,
+  width: '85%',
+  maxHeight: '80%',
+},
+modalContent: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  marginVertical: 10,
+},
+botaoMoeda: {
+  padding: 10,
+//   borderRadius: 10,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  margin: 5,
+},
+botaoSelecionado: {
+  backgroundColor: '#d0f0c0',
+},
+abrirModalBotao: {
+  backgroundColor: '#007AFF',
+  padding: 15,
+//   borderRadius: 5,
+  marginTop: 10,
+},
+abrirModalTexto: {
+  color: '#fff',
+  textAlign: 'center',
+},
+fecharModalBotao: {
+  marginTop: 20,
+  padding: 10,
+  backgroundColor: '#bc5a66',
+  borderRadius: 0,
+},
+fecharModalTexto: {
+  textAlign: 'center',
+  color: '#fff',
+},
+
+// modalOverlay: {
+//   flex: 1,
+//   backgroundColor: 'rgba(0,0,0,0.5)',
+//   justifyContent: 'center',
+//   alignItems: 'center',
+// },
+// modalContainer: {
+//   backgroundColor: '#fff',
+//   borderRadius: 10,
+//   padding: 20,
+//   width: '85%',
+//   maxHeight: '80%',
+// },
+// modalContent: {
+//   flexDirection: 'row',
+//   flexWrap: 'wrap',
+//   justifyContent: 'center',
+//   marginVertical: 10,
+// },
+// botaoMoeda: {
+//   padding: 10,
+//   borderRadius: 5,
+//   borderWidth: 1,
+//   borderColor: '#ccc',
+//   margin: 5,
+//   minWidth: 80,
+//   alignItems: 'center',
+// },
+// botaoSelecionado: {
+//   backgroundColor: '#d0f0c0',
+// },
+// abrirModalBotao: {
+//   backgroundColor: '#007AFF',
+//   padding: 10,
+//   borderRadius: 5,
+//   marginTop: 10,
+// },
+// abrirModalTexto: {
+//   color: '#fff',
+//   textAlign: 'center',
+// },
+// fecharModalBotao: {
+//   marginTop: 20,
+//   padding: 10,
+//   backgroundColor: '#aaa',
+//   borderRadius: 5,
+// },
+// fecharModalTexto: {
+//   textAlign: 'center',
+//   color: '#fff',
+// },
+
+
  })
   
   

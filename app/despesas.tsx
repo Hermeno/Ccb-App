@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert, Platform, Button, Modal, FlatList, Image  } from 'react-native';
+import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert, Platform, Button, Modal, FlatList, Image, KeyboardAvoidingView, ScrollView  } from 'react-native';
 import { Link, useRouter, useLocalSearchParams   } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { cadastrarDespesa, buscarCreditos } from '../services/despesas';
@@ -27,22 +27,8 @@ export default function Home ()
     const [parsedPhotos, setParsedPhotos] = useState<string[]>([]);
     const [creditos, setCreditos] = useState([]);
 
-    // const [missaoId, setMissaoId] = useState<string | null>(null);
-    // const [missaoName, setMissaoName] = useState('');  
-    // useEffect(() => {
-    //    const fetchMissao = async () => {
-    //      const missao_id = await AsyncStorage.getItem('missao_id');
-    //      const missao_name = await AsyncStorage.getItem('missao_name');         
-    //      if (missao_id) {
-    //        setMissaoId(missao_id);
-    //      }
-    //      if (missao_name) {
-    //        setMissaoName(missao_name);
-    //      }
-    //    };   
-    //    fetchMissao();
-    //  }, []);  
-    
+const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
+
 
     useEffect(() => {
         const carregarCreditos = async () => {
@@ -165,27 +151,72 @@ export default function Home ()
 
 
     return(
-        <View style={styles.container}>
-            
+
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={80} // ajuste conforme o header do seu app
+    >
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="handled"
+    >
+
+        <View style={styles.container}>            
             <View style={styles.CardLogin}> 
-                <>
-                <Picker selectedValue={moeda} onValueChange={(itemValue) => setMoeda(itemValue)} style={styles.picker}>
-                    <Picker.Item label="Selecione uma moeda..." value="" />
+
+          <View style={stylesMoedaContainer.container}>
+            <Text style={stylesMoedaContainer.label}>Moeda</Text>
+
+            <TouchableOpacity onPress={() => setModalMoedaVisible(true)} style={styles.botaoAbrirrrrrr}>
+              <Text style={stylesMoedaContainer.textoAbrir}>
+                {moeda ? `Selecionada: ${moeda}` : 'Selecionar moeda'}
+              </Text>
+            </TouchableOpacity>
+
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalMoedaVisible}
+              onRequestClose={() => setModalMoedaVisible(false)}
+            >
+              <View style={stylesMoedaContainer.modalFundo}>
+                <View style={stylesMoedaContainer.modalBox}>
+                  <Text style={stylesMoedaContainer.label}>Escolha a moeda:</Text>
+
+                  <View style={stylesMoedaContainer.modalLista}>
                     {creditos.map((credito) => (
-                        <Picker.Item
-                            key={credito.id}  // Garantindo que a chave seja única
-                            label={`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`} // Exibe nome e valor
-                            value={credito.moeda} // Usa apenas o nome da moeda como valor
-                        />
+                      <TouchableOpacity
+                        key={credito.id}
+                        onPress={() => {
+                          setMoeda(credito.moeda);
+                          setModalMoedaVisible(false);
+                        }}
+                        style={[
+                          stylesMoedaContainer.itemBotao,
+                          moeda === credito.moeda && stylesMoedaContainer.itemSelecionado,
+                        ]}
+                      >
+                        <Text style={stylesMoedaContainer.itemTexto}>
+                          {`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`}
+                          {moeda === credito.moeda ? ' ✅' : ''}
+                        </Text>
+                      </TouchableOpacity>
                     ))}
-                </Picker>
-                <Text style={styles.result}>Moeda selecionada: {moeda}</Text>
-                </>
+                  </View>
+
+                  <TouchableOpacity onPress={() => setModalMoedaVisible(false)} style={stylesMoedaContainer.botaoFechar} >
+                    <Text style={stylesMoedaContainer.textoFechar}>Fechar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          </View>
 
 
                
             <View style={styles.ViewFlex}>
-                <View style={styles.ViewInputOne}>
+                <View style={styles.ViewInputOne} >
                 <Text style={styles.TextInput}>Selecione a data Padrão</Text>
                     <Button  onPress={showdata_padrao} title="Escolher data padrão" />
                         <Text  style={styles.textoEscolhido}>{data_padrao.toLocaleDateString()}</Text>
@@ -334,6 +365,11 @@ export default function Home ()
 
             </View>
         </View>
+
+
+
+            </ScrollView>
+          </KeyboardAvoidingView>
     );
 }
 
@@ -406,11 +442,11 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: "bold",
     },
-    picker: {
-        height: 50,
-        width: '100%',
-        backgroundColor: '#f0f0f0',
-    },
+    // picker: {
+    //     height: 50,
+    //     width: '100%',
+    //     backgroundColor: '#f0f0f0',
+    // },
     result: {
         marginTop: 20,
         fontSize: 16,
@@ -423,6 +459,7 @@ const styles = StyleSheet.create({
         // marginBottom: 20,
         width: '100%',
         columnGap: '10',
+        marginTop:10,
     },
     ViewInput:{
         width: '48%',
@@ -534,5 +571,119 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: '#ccc',
-    }
-})
+    },
+    pickerContainer: {
+  marginBottom: 20,
+  width: '100%',
+},
+
+pickerWrapper: {
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 5,
+  overflow: 'hidden',
+  backgroundColor: '#fff',
+  height: Platform.OS === 'ios' ? 200 : 50, // aumenta altura no iOS
+  justifyContent: 'center',
+},
+
+item: {
+  padding: 7,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 8,
+  marginVertical: 4,
+  backgroundColor: '#fff',
+},
+
+itemSelecionado: {
+  backgroundColor: '#cce5ff',
+  borderColor: '#007bff',
+},
+
+itemTexto: {
+  fontSize: 16,
+},
+
+
+
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+botaoAbrirrrrrr:{
+    backgroundColor: '#3498db',
+  padding: 10,
+  borderRadius: 5,
+  width: '100%',           // ocupa 100% da largura disponível do container
+  // alignSelf: 'stretch',
+  borderWidth:0,
+}
+});
+
+
+
+
+const stylesMoedaContainer = StyleSheet.create({
+  container: {
+    marginVertical: 10,
+    width:'100%',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+botaoAbrir: {
+  backgroundColor: '#3498db',
+  padding: 10,
+  borderRadius: 5,
+  width: '100%',           // ocupa 100% da largura disponível do container
+  alignSelf: 'stretch',    // garante que ele se estique (pode ser opcional)
+},
+
+  textoAbrir: {
+    color: '#fff',
+    textAlign: 'center',
+  },
+  modalFundo: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: '85%',
+    maxHeight: '80%',
+  },
+  modalLista: {
+    marginTop: 10,
+  },
+  itemBotao: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  itemSelecionado: {
+    backgroundColor: '#d0f0c0',
+  },
+  itemTexto: {
+    fontSize: 16,
+  },
+  botaoFechar: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: '#777',
+    borderRadius: 5,
+  },
+  textoFechar: {
+    textAlign: 'center',
+    color: '#fff',
+  },
+});

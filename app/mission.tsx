@@ -161,7 +161,7 @@ export default function Mission() {
                 <Text style={styles.TextHeaderLogin}>Carregando...</Text>
             )} */}
             
-            <View style={{ width: '100%' , marginBottom:100 }}>
+            <View style={{ width: '100%' , marginBottom:60 }}>
                 {missoes.length > 0 ? (
                     <FlatList
                         data={missoes}
@@ -182,6 +182,7 @@ export default function Mission() {
                                     <FontAwesome name="arrow-right" size={20} color="#00835f" style={styles.icon} />
                                 </TouchableOpacity>
                             </View>
+
                         )}
                     />
                 ) : (
@@ -189,7 +190,8 @@ export default function Mission() {
                         <Text style={styles.registerButtonText}>CADASTRAR MISSÃO</Text>
                     </TouchableOpacity>
                 )}
-            </View>
+                </View>
+
             
             {/* Modal para Cadastro */}
             <Modal
@@ -207,7 +209,7 @@ export default function Mission() {
                     <View style={styles.inputsButtons}>
                         <View>
                         <Text style={styles.TextInput}>Data de início</Text>
-                            <Button   onPress={showdata_inicio_prevista} title="Escolher data inicio" />
+                            <Button  onPress={showdata_inicio_prevista} title="Escolher data inicio" />
                             <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
                             {showInicio && (
                                 <DateTimePicker value={data_inicio_prevista} mode="date" display="default" onChange={onChangedata_inicio_prevista}/>
@@ -215,7 +217,7 @@ export default function Mission() {
                         </View>
                         <View>
                             <Text style={styles.TextInput}>Data final</Text>
-                            <Button  onPress={showdata_final_prevista} title="Escolher data final" />
+                            <Button   onPress={showdata_final_prevista} title="Escolher data final" />
                             <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
                             {showFinal && (
                                 <DateTimePicker
@@ -260,11 +262,12 @@ export default function Mission() {
                     </View>
                 </View>
             </Modal>
+
             
             {/* Footer fixo com botão */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.registerButton} onPress={() => setModalVisible(true)} >
-                <FontAwesome name="plus" size={20} color="#000" style={styles.icon} />
+                {/* <FontAwesome name="plus" size={20} color="#000" style={styles.icon} /> */}
                     <Text style={styles.registerButtonText}>CADASTRAR MISSÃO</Text>
                 </TouchableOpacity>
             </View>
@@ -285,19 +288,23 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         textAlign: 'center',
     },
+    viewSpaces:{
+        width:'100%',
+        height:60
+    },
     cardItem: {
         backgroundColor: "#ffffff",
-        borderRadius: 25,
+        borderRadius: 0,
         padding: 15,
         margin: 10,
-        borderWidth: 2,
+        borderWidth: 0.5,
         borderColor: "#ccc",
     },
     cardItemTitle: {
         fontSize: 18,
         fontWeight: "bold",
         color: "#333",
-        margin: 5,
+        margin: 0,
     },
     cardItemText: {
         fontSize: 16,
@@ -314,9 +321,9 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: 'transparent',
         // padding: 10,
-        borderTopWidth: 1,
+        borderTopWidth: 0.5,
         borderColor: '#ccc',
-        height:100,
+        height:60,
     },
     registerButton: {
         backgroundColor: "#fff",
@@ -324,12 +331,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: "center",
         width: '100%',
-        height: '100%',
+        // height: '100%',
 
 
-        display: 'flex',
-        justifyContent: "space-around",
-        flexDirection: "row",
+        // display: 'flex',
+        // justifyContent: "space-around",
+        // flexDirection: "row",
 
     },
     registerButtonUI: {
@@ -362,7 +369,7 @@ const styles = StyleSheet.create({
         width: '80%',
         backgroundColor: "#fff",
         padding: 20,
-        borderRadius: 10,
+        // borderRadius: 10,
         alignItems: "center",
     },
     modalTitle: {
@@ -374,7 +381,7 @@ const styles = StyleSheet.create({
         // marginTop: 15,
         backgroundColor: "#ff4444",
         padding: 10,
-        borderRadius: 15,
+        // borderRadius: 15,
         alignItems: "center",
         width: '20%',
         height: 40,
@@ -402,7 +409,7 @@ const styles = StyleSheet.create({
     BotaoLogin:{
         backgroundColor: '#4ac578',
         padding: 10,
-        borderRadius: 15,
+        // borderRadius: 15,
         alignItems: "center",
         width: '70%',
         height: 40,
@@ -414,7 +421,7 @@ const styles = StyleSheet.create({
         borderColor: "#ccc",
         width: "100%",
         color:"#121212",
-        borderRadius:10,
+        // borderRadius:10,
     },
     inputsButtons:{
         flexDirection: 'row',
@@ -451,7 +458,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
-        borderWidth:2,
+        borderWidth:0.5,
         borderColor: '#ccc',
         marginBottom:5
     },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Button, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Button, Modal, FlatList, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { buscarDespesaOne, atualizarDespesa, buscarImagens } from '../services/despesas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -118,6 +118,16 @@ export default function Update() {
   };
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={80} // ajuste conforme o header do seu app
+    >
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="handled"
+    >
+
     <View style={styles.container}>
       <View style={styles.content}>
         {/* Data */}
@@ -192,6 +202,8 @@ export default function Update() {
 
       </View>
     </View>
+             </ScrollView>
+             </KeyboardAvoidingView>
   );
 }
 
