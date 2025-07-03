@@ -4,10 +4,17 @@ import * as FileSystem from 'expo-file-system';
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as MediaLibrary from 'expo-media-library';
+import { buscarMissaoPorId } from '../services/missao';
 
 const Imagens = () => {
   const { id_post } = useLocalSearchParams();
   const [images, setImages] = useState<string[]>([]);
+    const [missao, setMissao] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+  
+    const missao_id = useLocalSearchParams().missao_id;
+    const missao_name = useLocalSearchParams().missao_name;
 
   const getPermission = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -15,6 +22,32 @@ const Imagens = () => {
       Alert.alert('Permissão Negada', 'Permissão para acessar arquivos foi negada');
     }
   };
+
+useEffect(() => {
+  const carregarMissao = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token && missao_id) {
+        const dados = await buscarMissaoPorId(missao_id, token);
+        let missaoObj = Array.isArray(dados) ? dados[0] : dados;
+        setMissao(missaoObj);
+        if (missaoObj) {
+          const missaofoto = missaoObj.missao;
+          const datafoto = missaoObj.data_inicio_prevista;
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar missão:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  carregarMissao();
+}, []);
+
+
+
+
 
   const fetchImages = async () => {
     try {
@@ -53,30 +86,39 @@ const Imagens = () => {
     }
   };
 
-  const downloadImage = async (url: string) => {
-    try {
-      const filename = url.split('/').pop();
-      const downloadUri = `${FileSystem.documentDirectory}${filename}`;
+const downloadImage = async (url: string) => {
+  try {
+    // Pegue os valores do objeto missao
+    const missaofoto = missao?.missao || 'missao';
+    const datafoto = missao?.data_inicio_prevista
+      ? String(missao.data_inicio_prevista).replace(/[:\s]/g, '_') 
+      : 'data';
 
-      const { uri } = await FileSystem.downloadAsync(url, downloadUri);
-      console.log('Imagem baixada para:', uri);
+    const originalFilename = url.split('/').pop();
+    // Monta o novo nome do arquivo
+    const filename = `${missaofoto}.${datafoto}.${originalFilename}`;
+    const downloadUri = `${FileSystem.documentDirectory}${filename}`;
 
-      const asset = await MediaLibrary.createAssetAsync(uri);
-      const album = await MediaLibrary.getAlbumAsync('Camera');
+    const { uri } = await FileSystem.downloadAsync(url, downloadUri);
+    console.log('Imagem baixada para:', uri);
 
-      if (album) {
-        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-      } else {
-        await MediaLibrary.createAlbumAsync('Camera', asset, false);
-      }
+    const asset = await MediaLibrary.createAssetAsync(uri);
+    const album = await MediaLibrary.getAlbumAsync('Camera');
 
-      console.log('Imagem salva na galeria!');
-      Alert.alert('Sucesso', 'Imagem salva na galeria!');
-    } catch (error) {
-      console.error('Erro ao baixar imagem:', error);
-      Alert.alert('Erro ao baixar imagem.');
+    if (album) {
+      await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+    } else {
+      await MediaLibrary.createAlbumAsync('Camera', asset, false);
     }
-  };
+
+    console.log('Imagem salva na galeria!');
+    Alert.alert('Sucesso', 'Imagem salva na galeria!');
+  } catch (error) {
+    console.error('Erro ao baixar imagem:', error);
+    Alert.alert('Erro ao baixar imagem.');
+  }
+};
+
 
   useEffect(() => {
     getPermission();

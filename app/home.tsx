@@ -10,27 +10,6 @@ import { buscarMissaoPorId } from '../services/missao';
 export default function HomeScreen() {
   const router = useRouter();
   const user = useJwt();
-  // const [creditos, setCreditos] = useState([]);
-  // const [missoes, setMissoes] = useState([]);
-  // const [atualizar, setAtualizar] = useState(false);
-
-
-  // const [missaoId, setMissaoId] = useState<string | null>(null);
-  // const [missaoName, setMissaoName] = useState('');  
-  // useEffect(() => {
-  //    const fetchMissao = async () => {
-  //      const missao_id = await AsyncStorage.getItem('missao_id');
-  //      const missao_name = await AsyncStorage.getItem('missao_name');         
-  //      if (missao_id) {
-  //        setMissaoId(missao_id);
-  //      }
-  //      if (missao_name) {
-  //        setMissaoName(missao_name);
-  //      }
-  //    };   
-  //    fetchMissao();
-  //  }, []);  
-  
 
    const [token, setToken] = useState(null);
    const [missaoId, setMissaoId] = useState(null);
@@ -128,7 +107,7 @@ export default function HomeScreen() {
           <TouchableOpacity key={credito.id} style={styles.card}>
             <Text style={styles.title}>Saldo Disponível</Text>
             <Text style={styles.title}>Em {credito.moeda}</Text>
-            <Text style={styles.title}>R$ {credito.valor}</Text>
+            <Text style={styles.title}> {Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
           </TouchableOpacity>
         ))
       ) : (

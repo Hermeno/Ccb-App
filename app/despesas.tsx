@@ -198,7 +198,7 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
                         ]}
                       >
                         <Text style={stylesMoedaContainer.itemTexto}>
-                          {`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`}
+                          {`${credito.moeda} - ${(Number(credito.valor) || 0).toFixed(2)}`}
                           {moeda === credito.moeda ? ' ✅' : ''}
                         </Text>
                       </TouchableOpacity>
@@ -217,8 +217,8 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
                
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInputOne} >
-                <Text style={styles.TextInput}>Selecione a data Padrão</Text>
-                    <Button  onPress={showdata_padrao} title="Escolher data padrão" />
+                <Text style={styles.TextInput}>Selecione a data</Text>
+                    <Button  onPress={showdata_padrao} title="Escolher data" />
                         <Text  style={styles.textoEscolhido}>{data_padrao.toLocaleDateString()}</Text>
                         {showInicio && (
                             <DateTimePicker value={data_padrao} mode="date" display="default" onChange={onChangedata_padrao} />
@@ -297,7 +297,11 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
 
                         </View>
                     </View>
+                     <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                        <Text style={styles.closeButtonText}>Fechar</Text>
+                      </TouchableOpacity>
                 </View>
+                
             </Modal>   
 
 

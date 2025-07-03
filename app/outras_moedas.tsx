@@ -70,7 +70,7 @@ export default function App() {
           <TouchableOpacity key={credito.id} style={styles.cardTop}>
             <Text style={styles.titleTop}>Saldo Disponível</Text>
             <Text style={styles.titleTop}>Em {credito.moeda}</Text>
-            <Text style={styles.titleTop}>R$ {credito.valor}</Text>
+            <Text style={styles.titleTop}>{Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
           </TouchableOpacity>
         ))
       ) : (
@@ -82,7 +82,7 @@ export default function App() {
           creditos.map((credito) => (
             <TouchableOpacity key={credito.id} style={styles.Top}>
               <Text style={styles.TopTitle}>Saldo em {credito.moeda}</Text>
-              <Text style={styles.cardAmount}>R$ {credito.valor}</Text>
+              <Text style={styles.cardAmount}>{Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
             </TouchableOpacity>
           ))
         ) : (

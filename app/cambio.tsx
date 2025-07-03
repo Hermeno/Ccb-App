@@ -20,6 +20,8 @@
      const [total_cambiado, setTotal_cambiado] = useState('');
      const [numero_recibo, setNumero_recibo] = useState('');
      const [creditos, setCreditos] = useState([]);
+     const [outraMoeda, setOutraMoeda] = useState('');
+const [mostrarCampoOutra, setMostrarCampoOutra] = useState(false);
 
 const [modalVisible, setModalVisible] = useState(false);
 const [modalDestinoVisible, setModalDestinoVisible] = useState(false);
@@ -166,7 +168,7 @@ const handleSelecionarMoedaOrigem = (moeda) => {
                         ]}
                         >
                         <Text style={styles.botaoTexto}>
-                            {`${credito.moeda} - R$ ${(Number(credito.valor) || 0).toFixed(2)}`}
+                            {`${credito.moeda} - ${(Number(credito.valor) || 0).toFixed(2)}`}
                             {moeda_origem === credito.moeda ? ' ✅' : ''}
                         </Text>
                         </TouchableOpacity>
@@ -180,56 +182,103 @@ const handleSelecionarMoedaOrigem = (moeda) => {
             </Modal>
             </View>
 
-            <View style={styles.ViewInput}>
-            <Text style={styles.TextInputs}>Moeda de Destino:</Text>
+        <View style={styles.ViewInput}>
+  <Text style={styles.TextInputs}>Moeda de Destino:</Text>
 
+  <TouchableOpacity
+    onPress={() => setModalDestinoVisible(true)}
+    style={styles.abrirModalBotao}>
+    <Text style={styles.abrirModalTexto}>
+      {moeda_destino
+        ? `Selecionada: ${moeda_destino === 'outra' ? outraMoeda : moeda_destino}`
+        : 'Selecionar moeda'}
+    </Text>
+  </TouchableOpacity>
+
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalDestinoVisible}
+    onRequestClose={() => setModalDestinoVisible(false)}
+  >
+    <View style={styles.modalOverlay}>
+      <View style={styles.modalContainer}>
+        <Text style={styles.TextInputs}>Escolha a moeda de destino:</Text>
+
+        <View style={styles.modalContent}>
+          {[
+            { label: 'Dólar', value: 'dolar' },
+            { label: 'Real', value: 'real' },
+            { label: 'Metical', value: 'metical' },
+            { label: 'Euro', value: 'euro' },
+            { label: 'Libra', value: 'libra' },
+            { label: 'Iene', value: 'iene' },
+            { label: 'Outra', value: 'outra' }, // Adiciona opção "Outra"
+          ].map((moeda) => (
             <TouchableOpacity
-                onPress={() => setModalDestinoVisible(true)}
-                style={styles.abrirModalBotao}>
-                <Text style={styles.abrirModalTexto}>
-                {moeda_destino ? `Selecionada: ${moeda_destino}` : 'Selecionar moeda'}
-                </Text>
+              key={moeda.value}
+              onPress={() => {
+                if (moeda.value === 'outra') {
+                  setMostrarCampoOutra(true);
+                } else {
+                  setMoeda_destino(moeda.value);
+                  setMostrarCampoOutra(false);
+                  setModalDestinoVisible(false);
+                }
+              }}
+              style={[
+                styles.botaoMoeda,
+                moeda_destino === moeda.value && styles.botaoSelecionado,
+              ]}
+            >
+              <Text style={styles.botaoTexto}>
+                {moeda.label}
+                {moeda_destino === moeda.value ? ' ✅' : ''}
+              </Text>
             </TouchableOpacity>
+          ))}
+        </View>
 
+        {mostrarCampoOutra && (
+          <View style={{ marginTop: 10 }}>
+            <Text style={styles.TextInputs}>Digite a moeda:</Text>
+            <TextInput
+              style={styles.input}
+              value={outraMoeda}
+              onChangeText={setOutraMoeda}
+              placeholder="Digite a moeda"
+                onSubmitEditing={() => {
+                setMoeda_destino(outraMoeda);
+                setModalDestinoVisible(false);
+                setMostrarCampoOutra(false);
+                }}
+            />
+            <TouchableOpacity
+              style={styles.fecharModalBotao}
+              onPress={() => {
+                setMoeda_destino(outraMoeda);
+                setModalDestinoVisible(false);
+                setMostrarCampoOutra(false);
+                }}
+            >
+              <Text style={styles.fecharModalTexto}>Confirmar</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
-            <Modal animationType="slide" transparent={true} visible={modalDestinoVisible} onRequestClose={() => setModalDestinoVisible(false)} >
-                <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}>
-                    <Text style={styles.TextInputs}>Escolha a moeda de destino:</Text>
-
-                    <View style={styles.modalContent}>
-                    {[
-                        { label: 'Dólar', value: 'dolar' },
-                        { label: 'Real', value: 'real' },
-                        { label: 'Metical', value: 'metical' },
-                        { label: 'Euro', value: 'euro' },
-                        { label: 'Libra', value: 'libra' },
-                        { label: 'Iene', value: 'iene' },
-                    ].map((moeda) => (
-                        <TouchableOpacity
-                        key={moeda.value}
-                        onPress={() => { setMoeda_destino(moeda.value); setModalDestinoVisible(false);
-                        }}
-                        style={[
-                            styles.botaoMoeda,
-                            moeda_destino === moeda.value && styles.botaoSelecionado,
-                        ]}
-                        >
-                        <Text style={styles.botaoTexto}>
-                            {moeda.label}
-                            {moeda_destino === moeda.value ? ' ✅' : ''}
-                        </Text>
-                        </TouchableOpacity>
-                    ))}
-                    </View>
-
-                    <TouchableOpacity onPress={() => setModalDestinoVisible(false)} style={styles.fecharModalBotao}>
-                    <Text style={styles.fecharModalTexto}>Fechar</Text>
-                    </TouchableOpacity>
-                </View>
-                </View>
-            </Modal>
-            </View>
+        <TouchableOpacity
+          onPress={() => {
+            setModalDestinoVisible(false);
+            setMostrarCampoOutra(false);
+          }}
+          style={styles.fecharModalBotao}
+        >
+          <Text style={styles.fecharModalTexto}>Fechar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+</View>
 
 
 

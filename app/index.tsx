@@ -67,11 +67,12 @@ export default function Home() {
       <Text style={styles.textWelcome}>Welcome back</Text>
 
 
-        <TextInput
+          <TextInput
             style={styles.input}
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
+            autoCapitalize="sentences" // ou "words" para cada palavra
             // keyboardType="email-address"
           />
           <TextInput

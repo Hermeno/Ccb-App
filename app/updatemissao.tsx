@@ -90,7 +90,7 @@ const { missao_id, missao_name } = useLocalSearchParams();
         }, token);
 
         Alert.alert('Sucesso!', 'Missão atualizada com sucesso!');
-        router.replace(`/mission`);
+        router.replace(`/home`);
     } catch (error) {
         console.error('Erro ao atualizar missão', error);
         Alert.alert('Erro ao atualizar missão');

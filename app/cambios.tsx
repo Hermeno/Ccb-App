@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Button } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { buscarCabiosOneByOne } from '../services/cambio';
+import { buscarMissaoPorId } from '../services/missao';
 import { useJwt } from './jwt';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Home() {
+export default function Home() { 
     const router = useRouter();
     const user = useJwt();
     const [cambios, setCambios] = useState([]);
+     const [missao, setMissao] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const params = useLocalSearchParams();
@@ -57,36 +59,37 @@ export default function Home() {
 
 
 
+//   useEffect(() => {
+//         const carregarMissao = async () => {
+//         try {
+//             const token = await AsyncStorage.getItem('userToken');
+//             if (token && missaoId) {
+//             const dados = await buscarMissaoPorId(missaoId, token);
+//             console.log('Missão da API:', dados);
+//             setMissao(Array.isArray(dados) ? dados[0] : dados);
+//             }
+//         } catch (error) {
+//             console.error('Erro ao carregar missão:', error);
+//         } finally {
+//             setLoading(false);
+//         }
+//         };
+//     carregarMissao();
 
+
+//   }, []);
 
 
 
 
     const baixarFotos = (idCambio: string) => {
-        console.log(`Baixando fotos para o câmbio ID: ${idCambio}`);
-        router.push(`./imagecambio?id_post=${idCambio}`)
+        // console.log(`Baixando fotos para o câmbio ID: ${idCambio}`);
+        router.push(`./imagecambio?id_post=${idCambio}&missao_id=${missaoId}&missao_name=${missaoName}`);
     };
-
-    // Função para atualizar câmbio
-    // const atualizarCambio = (idCambio: string) => {
-    //     console.log(`Atualizando câmbio ID: ${idCambio}`);
-    //     // Lógica para atualizar as informações do câmbio
-    // };
-
-
-
-
-
-
 
 
     return (
         <View style={styles.container}>
-            {/* {user ? (
-                <Text style={styles.TextHeaderLogin}>Olá, {user.name}!</Text>
-            ) : (
-                <Text style={styles.TextHeaderLogin}>Carregando...</Text>
-            )} */}
 
             <View style={styles.CardLogin}>
                 {loading ? (

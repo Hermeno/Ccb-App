@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity , Alert} from 'react-native';
 import { useRouter,useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { buscarDespesas } from '@/services/despesas';
+import * as Sharing from 'expo-sharing';
 import { useJwt } from './jwt';
 
 export default function App() {
@@ -28,7 +30,7 @@ export default function App() {
 
 
     const DOWNLOD = (id_despesa: string) => {
-        router.push(`/image?id_post=${id_despesa}`)
+        router.push(`/image?id_post=${id_despesa}&missao_id=${missaoId}&missao_name=${missaoName}`);
     }
       
     const goTo = (id_despesa: string) => {
@@ -38,18 +40,81 @@ export default function App() {
         });
     }
 
+function capitalizeFirstLetter(str: string) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+
+
+const exportarCSV = async () => {
+  if (!despesas.length) {
+    Alert.alert('Nenhuma despesa para exportar.');
+    return;
+  }
+
+  // Cabeçalho CSV
+  const header = [
+    'missao',
+    'moeda',
+    'valor',
+    'cidade',
+    'descricao',
+    'outro',
+    'data_padrao',
+    'numero_recibo',
+  ];
+
+  // Linhas CSV
+  const rows = despesas.map(d => [
+    missaoName,
+    d.moeda,
+    d.valor,
+    d.cidade,
+    d.descricao,
+    d.outro,
+    d.data_padrao,
+    d.numero_recibo,
+  ]);
+
+  // Monta CSV
+  const csv = [
+    header.join(','),
+    ...rows.map(r => r.map(item => `"${item ?? ''}"`).join(','))
+  ].join('\n');
+
+  // Salva arquivo
+  const fileUri = FileSystem.documentDirectory + 'despesas.csv';
+  await FileSystem.writeAsStringAsync(fileUri, csv, { encoding: FileSystem.EncodingType.UTF8 });
+
+  // Compartilha arquivo
+  if (await Sharing.isAvailableAsync()) {
+    await Sharing.shareAsync(fileUri, {
+      mimeType: 'text/csv',
+      dialogTitle: 'Compartilhar arquivo CSV',
+      UTI: 'public.comma-separated-values-text'
+    });
+  } else {
+    Alert.alert('Arquivo salvo', `Arquivo CSV salvo em:\n${fileUri}\nMas não foi possível compartilhar diretamente.`);
+  }
+};
 
 
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.exportButton} onPress={exportarCSV}>
+  <Text style={styles.exportButtonText}>Exportar CSV</Text>
+</TouchableOpacity>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
         {despesas.length > 0 ? (
           despesas.map((despesa) => (
             <TouchableOpacity key={despesa.id} style={styles.Top}>
               <Text style={styles.TopTitle}>{despesa.descricao}</Text>
-              <Text style={styles.cardAmount}>R$ {despesa.valor}</Text>
-
+              {/* <Text style={styles.cardAmount}>   {despesa.moeda}-{despesa.valor}</Text> */}
+                <Text style={styles.cardAmount}>
+                  {capitalizeFirstLetter(despesa.moeda)}-{despesa.valor}
+                </Text>
 
                 <View>
                     <View style={styles.flexSonData}>
@@ -67,8 +132,13 @@ export default function App() {
           <Text style={styles.emptyText}>Nenhuma despesa encontrada</Text>
         )}
       </ScrollView>
+
+
+
+
+
     </View>
-  );
+ );
 }
 
 
@@ -97,23 +167,12 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     marginBottom: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: '#ccc',
+    // borderBottomWidth: 2,
+    // borderBottomColor: '#ccc',
     paddingBottom: 10,
   },
   Top: {
     backgroundColor: '#fff',
-    // borderRadius: 12,
-    // paddingVertical: 20,
-    // paddingHorizontal: 16,
-    // marginBottom: 12,
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 6,
-    // elevation: 3,
-    // borderWidth: 1,
-    // borderColor: '#ddd',
     borderBottomColor: '#ddd',
     borderBottomWidth: 1,
     padding: 10,
@@ -161,7 +220,24 @@ titleTop: {
 
 
 
-
+exportButton: {
+  // backgroundColor: '#4CAF50',
+  backgroundColor: 'transparent',
+  paddingVertical: 12,
+  paddingHorizontal: 15,
+  borderRadius: 8,
+  alignItems: 'center',
+  marginBottom: 20,
+  marginHorizontal: 40,
+  borderWidth: 1,
+  borderColor: '#fff',
+},
+exportButtonText: {
+  color: '#fff',
+  fontSize: 18,
+  fontWeight: 'bold',
+  letterSpacing: 1,
+},
 
 
 

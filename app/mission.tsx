@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, FlatList, ScrollView, Button, TextInput, Platform, Alert } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, FlatList, ScrollView, Button, TextInput, Platform, Alert, KeyboardAvoidingView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { buscarMissoesAll, cadastrarMissao } from '../services/missao';
@@ -75,27 +75,7 @@ export default function Mission() {
         carregarMissoes();
     }, []);
 
-    // useEffect(() => {
-    //     carregarMissoes(); // Carregar inicialmente
-    
-    //     const interval = setInterval(() => {
-    //         carregarMissoes();
-    //     }, 1000); // Atualiza a cada 5 segundos
-    
-    //     return () => clearInterval(interval); // Limpa o intervalo ao desmontar
-    // }, []);
-    
-
-
-
-
-
-
-
-
-
-
-
+ 
     const cadastrar = async () => {
         const token = await AsyncStorage.getItem('userToken');
     
@@ -128,8 +108,6 @@ export default function Mission() {
             setPais('');
             setEstado('');
             setMissao('');
-    
-            // Atualizar a lista de missões
             await carregarMissoes();  // <--- Adiciona essa linha para atualizar a lista
             setModalVisible(false);   // Fechar o modal após cadastrar
         } catch (error) {
@@ -153,121 +131,86 @@ export default function Mission() {
     };
     
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     return (
         <View style={styles.container}>
-            {/* {user ? (
-                <Text style={styles.TextHeaderLogin}>Olá, {user.name}!</Text>
-            ) : (
-                <Text style={styles.TextHeaderLogin}>Carregando...</Text>
-            )} */}
-            
+           
             <View style={{ width: '100%' , marginBottom:60 }}>
                 {missoes.length > 0 ? (
-                    <FlatList
-                        data={missoes}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
+                    <FlatList data={missoes} keyExtractor={(item) => item.id.toString()} renderItem={({ item }) => (
                             <View style={styles.cardItem}>
-                                <Text style={styles.cardItemTitle}>{item.missao}</Text>
-                                <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Estado:</Text> {item.estado}</Text>
-                                <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Cidade:</Text> {item.cidade}</Text>
-                                <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>País:</Text> {item.pais}</Text>
-                                <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Início:</Text> {item.data_inicio_prevista}</Text>
-                                <Text style={styles.cardItemText}><Text style={styles.cardItemLabel}>Final:</Text> {item.data_final_prevista}</Text>
-                                <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => Update(item.id, item.missao)}>
-                                <Text style={styles.titleBTN}>EDITAR</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.registerButtonUI} onPress={() => move(item.id, item.missao) }>
-                                    <Text style={styles.registerButtonText}>Entrar </Text>
-                                    <FontAwesome name="arrow-right" size={20} color="#00835f" style={styles.icon} />
-                                </TouchableOpacity>
+                            <Text style={styles.easy}><Text style={styles.cardItemTitle}>Missao: </Text>{item.missao}</Text>
+                            <TouchableOpacity style={styles.butonsMissaosVisualizar} onPress={() => move(item.id, item.missao)}>
+                            <Text>Entrar </Text>
+                            </TouchableOpacity>
                             </View>
-
-                        )}
+                    )}
                     />
                 ) : (
                     <TouchableOpacity style={styles.registerButton} onPress={() => setModalVisible(true)}>
                         <Text style={styles.registerButtonText}>CADASTRAR MISSÃO</Text>
                     </TouchableOpacity>
                 )}
-                </View>
+            </View>
 
-            
-            {/* Modal para Cadastro */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
+            <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Cadastrar Missão</Text>
-                    <Text style={styles.TextInput}>Missao</Text>
-                    <TextInput value={missao} onChangeText={setMissao} style={styles.input} placeholder='Nome da Missao'
-                    />
+                        <Text style={styles.TextInput}>Missao</Text>
+                    <TextInput value={missao} onChangeText={setMissao} style={styles.input} placeholder='Nome da Missao'/>
                     <View style={styles.inputsButtons}>
                         <View>
                         <Text style={styles.TextInput}>Data de início</Text>
                             <Button  onPress={showdata_inicio_prevista} title="Escolher data inicio" />
                             <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
-                            {showInicio && (
-                                <DateTimePicker value={data_inicio_prevista} mode="date" display="default" onChange={onChangedata_inicio_prevista}/>
-                            )}                            
+                            {showInicio && ( <DateTimePicker value={data_inicio_prevista} mode="date" display="default" onChange={onChangedata_inicio_prevista}/>)}                            
                         </View>
                         <View>
                             <Text style={styles.TextInput}>Data final</Text>
                             <Button   onPress={showdata_final_prevista} title="Escolher data final" />
                             <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
-                            {showFinal && (
-                                <DateTimePicker
-                                    value={data_final_prevista}
-                                    mode="date"
-                                    display="default"
-                                    onChange={onChangedata_final_prevista}
-                                />
-                            )}
+                            {showFinal && (<DateTimePicker value={data_final_prevista} mode="date" display="default" onChange={onChangedata_final_prevista} /> )}
                         </View>
                     </View>
-                    <Text style={styles.TextInput}>Pais</Text>
-                    <TextInput
-                        value={pais}
-                        onChangeText={setPais}
-                        style={styles.input}
-                        placeholder='Pais'
-                    />
-                    <Text style={styles.TextInput}>Estado / estado</Text>
-                    <TextInput
-                        value={estado}
-                        onChangeText={setEstado}
-                        style={styles.input}
-                        placeholder='Estado / estado'
-                    />
-                    <Text style={styles.TextInput}>Cidade</Text>
-                    <TextInput
-                        value={cidade}
-                        onChangeText={setCidade}
-                        style={styles.input}
-                        placeholder='Cidade'
-                    />
+                        <Text style={styles.TextInput}>Pais</Text>
+                        <TextInput value={pais} onChangeText={setPais} style={styles.input} placeholder='Pais'/>
+                        <Text style={styles.TextInput}>Estado / estado</Text>
+                        <TextInput value={estado} onChangeText={setEstado} style={styles.input} placeholder='Estado / estado'/>
+                        <Text style={styles.TextInput}>Cidade</Text>
+                        <TextInput value={cidade} onChangeText={setCidade} style={styles.input} placeholder='Cidade'/>
                         <View style={styles.btnModalFLEX}>
                         <TouchableOpacity style={styles.BotaoLogin} onPress={cadastrar}>
                         <Text style={styles.modalCloseText}>SALVAR</Text>
                         </TouchableOpacity>
-
                         <TouchableOpacity  style={styles.modalCloseButton}  onPress={() => setModalVisible(false)}>
                             <Text style={styles.modalCloseText}>Fechar</Text>
                         </TouchableOpacity>                        
                         </View>
                     </View>
                 </View>
+                </ScrollView>
+                </KeyboardAvoidingView>
             </Modal>
 
-            
-            {/* Footer fixo com botão */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.registerButton} onPress={() => setModalVisible(true)} >
-                {/* <FontAwesome name="plus" size={20} color="#000" style={styles.icon} /> */}
                     <Text style={styles.registerButtonText}>CADASTRAR MISSÃO</Text>
                 </TouchableOpacity>
             </View>
@@ -457,10 +400,14 @@ const styles = StyleSheet.create({
 
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10,
+        marginTop: 15,
         borderWidth:0.5,
         borderColor: '#ccc',
-        marginBottom:5
+        marginBottom:5,
+        width:100,
     },
+    easy:{
+        
+    }
 
 });

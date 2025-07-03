@@ -36,11 +36,14 @@ export default function Home() {
   const handleSelecionar = (value) => {
     setMoeda(prev => prev === value ? '' : value);
   };
-  const [referencia, setReferencia] = useState('');
-  const handleSelecionarR = (valor) => {
-    setReferencia(prev => prev === valor ? '' : valor);
-  };
-
+  const [referencia, setReferencia] = useState<string[]>([]);
+ const handleSelecionarR = (valor: string) => {
+  setReferencia(prev =>
+    prev.includes(valor)
+      ? prev.filter(item => item !== valor)
+      : [...prev, valor]
+  );
+};
 
 
   const [valor, setValor] = useState('');
@@ -143,27 +146,17 @@ return (
           </View>
 
           <Text style={styles.label}>Valor creditado:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite o valor"
-            value={valor}
-            onChangeText={setValor}
-            keyboardType="numeric"
-          />
-
+          <TextInput  style={styles.input}  placeholder="Digite o valor"  value={valor}  onChangeText={setValor}  keyboardType="numeric"/>
           <Text style={styles.label}>Referência:</Text>
           <View style={styles.listaContainer}>
-            {referencias.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.item, referencia === item && styles.itemSelecionado]}
-                onPress={() => handleSelecionarR(item)}
-              >
-                <Text style={styles.itemTexto}>
-                  {item} {referencia === item ? '✅' : ''}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          {referencias.map((item) => (
+            <TouchableOpacity key={item} style={[   styles.item,   referencia.includes(item) && styles.itemSelecionado ]}
+              onPress={() => handleSelecionarR(item)}>
+              <Text style={styles.itemTexto}>
+                {item} {referencia.includes(item) ? '✅' : ''}
+              </Text>
+            </TouchableOpacity>
+          ))}
           </View>
 
           <TouchableOpacity style={styles.button} onPress={cadastrar}>

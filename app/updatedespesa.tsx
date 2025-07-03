@@ -121,87 +121,57 @@ export default function Update() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={80} // ajuste conforme o header do seu app
-    >
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={80} >
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
 
     <View style={styles.container}>
       <View style={styles.content}>
-        {/* Data */}
         <Text style={styles.label}>Data</Text>
         <Button onPress={() => setShowInicio(true)} title="Escolher data" />
-        {showInicio && (
-          <DateTimePicker value={data_padrao} mode="date" display="default" onChange={onChangedata_padrao} />
-        )}
+        {showInicio && ( <DateTimePicker value={data_padrao} mode="date" display="default" onChange={onChangedata_padrao} /> )}
 
-        {/* Cidade */}
         <Text style={styles.label}>Cidade</Text>
-        <TextInput 
-          value={cidade} 
-          onChangeText={setCidade} 
-          style={styles.input} 
-          placeholder="Digite a cidade" 
-        />
+        <TextInput  value={cidade}  onChangeText={setCidade}  style={styles.input}  placeholder="Digite a cidade"  />
 
         {/* Valor */}
         <Text style={styles.label}>Valor</Text>
-        <TextInput 
-          value={valor} 
-          onChangeText={setValor} 
-          style={styles.input} 
-          placeholder="Digite o valor" 
-          keyboardType="numeric" 
-        />
+        <TextInput  value={valor}  onChangeText={setValor}  style={styles.input}  placeholder="Digite o valor"  keyboardType="numeric" />
 
         {/* Número de recibo */}
         <Text style={styles.label}>Nº do Recibo</Text>
-        <TextInput 
-          value={numero_recibo} 
-          onChangeText={setNumero_recibo} 
-          style={styles.input} 
-          placeholder="Digite o número do recibo" 
-        />
+        <TextInput   value={numero_recibo}   onChangeText={setNumero_recibo}   style={styles.input}   placeholder="Digite o número do recibo" />
 
-<Text style={styles.label}>Descrição</Text>
-    <TouchableOpacity style={styles.input} onPress={() => setModalVisible(true)}>
-      <Text>
-        {descricao.length > 0 ? descricao : 'Selecione uma opção'} {/* Exibe a descrição selecionada ou o texto padrão */}
-      </Text>
-    </TouchableOpacity>
+          <Text style={styles.label}>Descrição</Text>
+              <TouchableOpacity style={styles.input} onPress={() => setModalVisible(true)}>
+                <Text>
+                  {descricao.length > 0 ? descricao : 'Selecione uma opção'} 
+                </Text>
+              </TouchableOpacity>
 
-    {/* Modal para opções */}
-    <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-      <View style={styles.modalContainer}>
-        <FlatList
-          data={opcoes}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[styles.optionItem, descricao === item.label && styles.optionSelected]} // Seleção única
-              onPress={() => handleSelectItem(item.label)} 
-            >
-              <Text>{item.label}</Text>
-            </TouchableOpacity>
-          )}
-        />
-        <Button title="Fechar" onPress={() => setModalVisible(false)} />
-      </View>
-    </Modal>
+              {/* Modal para opções */}
+              <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                <View style={styles.modalContainer}>
+                  <FlatList
+                    data={opcoes}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={[styles.optionItem, descricao === item.label && styles.optionSelected]} 
+                        onPress={() => handleSelectItem(item.label)} 
+                      >
+                        <Text>{item.label}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                  <Button title="Fechar" onPress={() => setModalVisible(false)} />
+                </View>
+              </Modal>
 
 
         {/* Botão para atualizar */}
         <TouchableOpacity style={styles.button} onPress={handleUpdate}>
           <Text style={styles.buttonText}>Atualizar Despesa</Text>
         </TouchableOpacity>
-
-9
-
 
       </View>
     </View>
