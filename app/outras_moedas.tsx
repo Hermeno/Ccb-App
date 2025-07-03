@@ -63,6 +63,31 @@ export default function App() {
     carregarCreditoLimit();
   }, []);
 
+
+function moedaEmPortugues(moeda: string) {
+  switch (moeda?.toLowerCase()) {
+    case 'dolar':
+      return 'Dólar';
+    case 'real':
+      return 'Real';
+    case 'metical':
+      return 'Metical';
+    case 'euro':
+      return 'Euro';
+    case 'libra':
+      return 'Libra';
+    case 'iene':
+      return 'Iene';
+    default:
+      return capitalizeFirstLetter(moeda);
+  }
+}
+function capitalizeFirstLetter(str: string) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+
   return (
     <View style={styles.container}>
       {creditosLimit.length > 0 ? (
@@ -81,7 +106,7 @@ export default function App() {
         {creditos.length > 0 ? (
           creditos.map((credito) => (
             <TouchableOpacity key={credito.id} style={styles.Top}>
-              <Text style={styles.TopTitle}>Saldo em {credito.moeda}</Text>
+              <Text style={styles.TopTitle}>Saldo em {moedaEmPortugues(credito.moeda)}</Text>
               <Text style={styles.cardAmount}>{Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
             </TouchableOpacity>
           ))

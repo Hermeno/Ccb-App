@@ -97,7 +97,7 @@ export default function Home() {
           user_id: user.id,
           moeda: moeda,
           valor,
-          referencia,
+          referencia: referencia.join(', '),
           missao_id: missaoId,
         },
         token

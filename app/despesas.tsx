@@ -146,6 +146,28 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
         setData_padrao(currentDate);
     };
 
+function moedaEmPortugues(moeda: string) {
+  switch (moeda?.toLowerCase()) {
+    case 'dolar':
+      return 'Dólar';
+    case 'real':
+      return 'Real';
+    case 'metical':
+      return 'Metical';
+    case 'euro':
+      return 'Euro';
+    case 'libra':
+      return 'Libra';
+    case 'iene':
+      return 'Iene';
+    default:
+      return capitalizeFirstLetter(moeda);
+  }
+}
+function capitalizeFirstLetter(str: string) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 
 
@@ -198,7 +220,7 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
                         ]}
                       >
                         <Text style={stylesMoedaContainer.itemTexto}>
-                          {`${credito.moeda} - ${(Number(credito.valor) || 0).toFixed(2)}`}
+                          {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)}`})
                           {moeda === credito.moeda ? ' ✅' : ''}
                         </Text>
                       </TouchableOpacity>
@@ -272,23 +294,24 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
                             )}
                         />
                             <View>
-                            {showOutro && (
-                                    <View style={styles.ViewInputOne}>
-                                        <Text style={styles.TextInputs}>Outro</Text>
-                                        <TextInput
-                                            value={outro}
-                                            onChangeText={(text) => {
-                                                setOutro(text);
-                                                setDescricao(text); // Atualiza descricao com o valor do "Outro"
-                                            }}
-                                            style={styles.inputOne}
-                                            placeholder="Digite outra descrição"
-                                        />
-                                    </View>
-                                )}
-                                <TouchableOpacity style={styles.Outro} onPress={() => setShowOutro(!showOutro)}>
-                                    <Text>{showOutro ? 'Fechar Outro' : 'Outro'}</Text>
-                                </TouchableOpacity>
+                              {showOutro ? (
+                                  <View style={styles.ViewInputOne}>
+                                      <Text style={styles.TextInputs}>Outro</Text>
+                                      <TextInput
+                                          value={outro}
+                                          onChangeText={(text) => {
+                                              setOutro(text);
+                                              setDescricao(text);
+                                          }}
+                                          style={styles.inputOne}
+                                          placeholder="Digite outra descrição"
+                                      />
+                                  </View>
+                              ) : (
+                                  <TouchableOpacity style={styles.Outro} onPress={() => setShowOutro(true)}>
+                                      <Text>Outro</Text>
+                                  </TouchableOpacity>
+                              )}
                             </View>
                         <View>
                             {/* <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>

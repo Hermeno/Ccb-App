@@ -118,6 +118,28 @@ const handleSelecionarMoedaOrigem = (moeda) => {
 
 
 
+function moedaEmPortugues(moeda: string) {
+  switch (moeda?.toLowerCase()) {
+    case 'dolar':
+      return 'Dólar';
+    case 'real':
+      return 'Real';
+    case 'metical':
+      return 'Metical';
+    case 'euro':
+      return 'Euro';
+    case 'libra':
+      return 'Libra';
+    case 'iene':
+      return 'Iene';
+    default:
+      return capitalizeFirstLetter(moeda);
+  }
+}
+function capitalizeFirstLetter(str: string) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 
 
@@ -142,33 +164,24 @@ const handleSelecionarMoedaOrigem = (moeda) => {
              <View style={styles.CardLogin}>                
              <View style={styles.ViewFlex}>
 
+
+
             <View style={styles.ViewInput}>
             <Text style={styles.TextInputs}>Moeda a debitar:</Text>
-
-            <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-                style={styles.abrirModalBotao}>
-                <Text style={styles.abrirModalTexto}>
-                {moeda_origem ? `Selecionada: ${moeda_origem}` : 'Selecionar moeda'}
-                </Text>
+            <TouchableOpacity  onPress={() => setModalVisible(true)}  style={styles.abrirModalBotao}>  
+              <Text style={styles.abrirModalTexto}>  {moeda_origem ? `Selecionada: ${moeda_origem}` : 'Selecionar moeda'}  </Text>
             </TouchableOpacity>
-
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalOverlay}>
                 <View style={styles.modalContainer}>
                     <Text style={styles.TextInputs}>Escolha a moeda:</Text>
                     <View style={styles.modalContent}>
                     {creditos.map((credito) => (
-                        <TouchableOpacity
-                        key={credito.id}
-                        onPress={() => handleSelecionarMoedaOrigem(credito.moeda)}
-                        style={[
-                            styles.botaoMoeda,
-                            moeda_origem === credito.moeda && styles.botaoSelecionado,
-                        ]}
-                        >
+                        <TouchableOpacity key={credito.id} onPress={() => handleSelecionarMoedaOrigem(credito.moeda)} 
+                        style={[styles.botaoMoeda, moeda_origem === credito.moeda && styles.botaoSelecionado, ]}>
                         <Text style={styles.botaoTexto}>
-                            {`${credito.moeda} - ${(Number(credito.valor) || 0).toFixed(2)}`}
+                            {/* {`${credito.moeda} - ${(Number(credito.valor) || 0).toFixed(2)}`} */}
+                            {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)}`})
                             {moeda_origem === credito.moeda ? ' ✅' : ''}
                         </Text>
                         </TouchableOpacity>
@@ -181,6 +194,9 @@ const handleSelecionarMoedaOrigem = (moeda) => {
                 </View>
             </Modal>
             </View>
+
+
+
 
         <View style={styles.ViewInput}>
   <Text style={styles.TextInputs}>Moeda de Destino:</Text>
@@ -556,7 +572,7 @@ modalContent: {
 },
 botaoMoeda: {
   padding: 10,
-//   borderRadius: 10,
+  borderRadius: 10,
   borderWidth: 1,
   borderColor: '#ccc',
   margin: 5,
@@ -585,57 +601,6 @@ fecharModalTexto: {
   color: '#fff',
 },
 
-// modalOverlay: {
-//   flex: 1,
-//   backgroundColor: 'rgba(0,0,0,0.5)',
-//   justifyContent: 'center',
-//   alignItems: 'center',
-// },
-// modalContainer: {
-//   backgroundColor: '#fff',
-//   borderRadius: 10,
-//   padding: 20,
-//   width: '85%',
-//   maxHeight: '80%',
-// },
-// modalContent: {
-//   flexDirection: 'row',
-//   flexWrap: 'wrap',
-//   justifyContent: 'center',
-//   marginVertical: 10,
-// },
-// botaoMoeda: {
-//   padding: 10,
-//   borderRadius: 5,
-//   borderWidth: 1,
-//   borderColor: '#ccc',
-//   margin: 5,
-//   minWidth: 80,
-//   alignItems: 'center',
-// },
-// botaoSelecionado: {
-//   backgroundColor: '#d0f0c0',
-// },
-// abrirModalBotao: {
-//   backgroundColor: '#007AFF',
-//   padding: 10,
-//   borderRadius: 5,
-//   marginTop: 10,
-// },
-// abrirModalTexto: {
-//   color: '#fff',
-//   textAlign: 'center',
-// },
-// fecharModalBotao: {
-//   marginTop: 20,
-//   padding: 10,
-//   backgroundColor: '#aaa',
-//   borderRadius: 5,
-// },
-// fecharModalTexto: {
-//   textAlign: 'center',
-//   color: '#fff',
-// },
 
 
  })

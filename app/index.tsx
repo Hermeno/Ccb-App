@@ -89,8 +89,8 @@ export default function Home() {
             <Text style={styles.rememberText}>
               Remember me
             </Text>
-            <Text style={styles.rememberText}>
-              Esqueceu senha ?
+            <Text style={styles.rememberText}>             
+              <Text style={{ color: "#00835f",}}><Link href="/ForgetPasswordScreen"> Esqueceu senha ? </Link></Text>
             </Text>
           </View>
 

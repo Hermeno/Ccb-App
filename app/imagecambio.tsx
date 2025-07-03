@@ -87,17 +87,19 @@ useEffect(() => {
     }
   };
 
-const downloadImage = async (url: string) => {
+const downloadImage = async (url: string, numero: number) => {
   try {
-    // Pegue os valores do objeto missao
     const missaofoto = missao?.missao || 'missao';
     const datafoto = missao?.data_inicio_prevista
-      ? String(missao.data_inicio_prevista).replace(/[:\s]/g, '_') 
+      ? String(missao.data_inicio_prevista).replace(/[:\s]/g, '_')
       : 'data';
 
+    // Pega a extensão do arquivo original
     const originalFilename = url.split('/').pop();
-    // Monta o novo nome do arquivo
-    const filename = `${missaofoto}.${datafoto}.${originalFilename}`;
+    const ext = originalFilename?.split('.').pop() || 'jpg';
+
+    // Monta o nome: missaofoto.datafotoNUMERO.ext
+    const filename = `${missaofoto}.${datafoto}${numero}.${ext}`;
     const downloadUri = `${FileSystem.documentDirectory}${filename}`;
 
     const { uri } = await FileSystem.downloadAsync(url, downloadUri);
@@ -131,12 +133,12 @@ const downloadImage = async (url: string) => {
       {images.map((image, index) => (
         <View key={index} style={styles.imageContainer}>
           <Image source={{ uri: image }} style={styles.image} />
-          <TouchableOpacity
-            style={styles.downloadButton}
-            onPress={() => downloadImage(image)}
-          >
-            <Text style={styles.downloadButtonText}>Baixar Imagem</Text>
-          </TouchableOpacity>
+<TouchableOpacity
+  style={styles.downloadButton}
+  onPress={() => downloadImage(image, index + 1)} // index + 1 para começar do 1
+>
+  <Text style={styles.downloadButtonText}>Baixar Imagem</Text>
+</TouchableOpacity>
         </View>
       ))}
     </ScrollView>

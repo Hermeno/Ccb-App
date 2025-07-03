@@ -101,6 +101,32 @@ const exportarCSV = async () => {
 
 
 
+
+function moedaEmPortugues(moeda: string) {
+  switch (moeda?.toLowerCase()) {
+    case 'dolar':
+      return 'Dólar';
+    case 'real':
+      return 'Real';
+    case 'metical':
+      return 'Metical';
+    case 'euro':
+      return 'Euro';
+    case 'libra':
+      return 'Libra';
+    case 'iene':
+      return 'Iene';
+    default:
+      return capitalizeFirstLetter(moeda);
+  }
+}
+
+
+
+
+
+
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.exportButton} onPress={exportarCSV}>
@@ -113,7 +139,7 @@ const exportarCSV = async () => {
               <Text style={styles.TopTitle}>{despesa.descricao}</Text>
               {/* <Text style={styles.cardAmount}>   {despesa.moeda}-{despesa.valor}</Text> */}
                 <Text style={styles.cardAmount}>
-                  {capitalizeFirstLetter(despesa.moeda)}-{despesa.valor}
+                 {Number(despesa.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ({moedaEmPortugues(despesa.moeda)})
                 </Text>
 
                 <View>
