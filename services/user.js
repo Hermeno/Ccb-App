@@ -24,7 +24,6 @@ export const loginUsuario = async ({ email, password }) => {
         });
         if (response.status === 200) { // Confirme se o token está aqui
             return response.data;
-            console.log('confirmado', response.data);
         } else {
             throw new Error('Falha no login');
         }

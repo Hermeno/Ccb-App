@@ -152,7 +152,7 @@ export const buscarImagens = async ({ id_post, token }) => {
             }
         });
 
-        console.log(response.data);  // Verifique o que está sendo retornado no response
+        
 
         return response.data.imagens;  // Se 'imagens' não existir, ajuste conforme a resposta
     } catch (error) {

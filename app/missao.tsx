@@ -18,7 +18,7 @@ export default function MissaoPage() {
             const token = await AsyncStorage.getItem('userToken');
             if (token && missao_id) {
             const dados = await buscarMissaoPorId(missao_id, token);
-            console.log('Missão da API:', dados);
+           
             setMissao(Array.isArray(dados) ? dados[0] : dados);
             }
         } catch (error) {

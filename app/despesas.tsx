@@ -207,9 +207,9 @@ function capitalizeFirstLetter(str: string) {
                   <Text style={stylesMoedaContainer.label}>Escolha a moeda:</Text>
 
                   <View style={stylesMoedaContainer.modalLista}>
-                    {creditos.map((credito) => (
+                    {creditos.map((credito, idx) => (
                       <TouchableOpacity
-                        key={credito.id}
+                        key={credito.id ? credito.id : idx}
                         onPress={() => {
                           setMoeda(credito.moeda);
                           setModalMoedaVisible(false);
@@ -220,7 +220,7 @@ function capitalizeFirstLetter(str: string) {
                         ]}
                       >
                         <Text style={stylesMoedaContainer.itemTexto}>
-                          {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)}`})
+                          {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)})`}
                           {moeda === credito.moeda ? ' ✅' : ''}
                         </Text>
                       </TouchableOpacity>

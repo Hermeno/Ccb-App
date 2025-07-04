@@ -1,8 +1,5 @@
 import api from './api';
 export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, total_a_cambiar, total_cambiado, numero_recibo,  missao_id}, token) => {
-    console.log( moeda_origem, moeda_destino,
-        cotacao, total_a_cambiar, total_cambiado, numero_recibo
-    )
     try {
         const response = await api.post('/cadastrar-cambio', {
             moeda_origem, 
@@ -33,7 +30,6 @@ export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, t
 
 
 export const createfotos = async ({ fotos, id_post }, token) => {
-    console.log(fotos, id_post);
     try {
         const formData = new FormData();
         

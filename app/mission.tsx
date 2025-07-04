@@ -147,7 +147,7 @@ export default function Mission() {
 
     return (
         <View style={styles.container}>
-           
+
             <View style={{ width: '100%' , marginBottom:60 }}>
                 {missoes.length > 0 ? (
                     <FlatList data={missoes} keyExtractor={(item) => item.id.toString()} renderItem={({ item }) => (
@@ -165,6 +165,7 @@ export default function Mission() {
                     </TouchableOpacity>
                 )}
             </View>
+
 
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

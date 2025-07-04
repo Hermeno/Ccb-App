@@ -64,7 +64,7 @@ export default function Home() {
           {/* <Text style={styles.logoText}>Luxe</Text> */}
       </View>
       <View  style={styles.containerForm}>
-      <Text style={styles.textWelcome}>Welcome back</Text>
+      <Text style={styles.textWelcome}>Bem vindo de volta</Text>
 
 
           <TextInput
@@ -72,7 +72,7 @@ export default function Home() {
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
-            autoCapitalize="sentences" // ou "words" para cada palavra
+            autoCapitalize="none"
             // keyboardType="email-address"
           />
           <TextInput

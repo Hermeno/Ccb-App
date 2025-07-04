@@ -9,7 +9,7 @@
  import { useJwt } from './jwt'
  import AsyncStorage from '@react-native-async-storage/async-storage';
  
- export default function Home () 
+ export default function Cambio () 
  {
      const router = useRouter();
      const user = useJwt();
@@ -147,15 +147,8 @@ function capitalizeFirstLetter(str: string) {
      return(
 
 
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={80} // ajuste conforme o header do seu app
-    >
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={80} >
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" >
 
 
 
@@ -176,16 +169,17 @@ function capitalizeFirstLetter(str: string) {
                 <View style={styles.modalContainer}>
                     <Text style={styles.TextInputs}>Escolha a moeda:</Text>
                     <View style={styles.modalContent}>
-                    {creditos.map((credito) => (
-                        <TouchableOpacity key={credito.id} onPress={() => handleSelecionarMoedaOrigem(credito.moeda)} 
-                        style={[styles.botaoMoeda, moeda_origem === credito.moeda && styles.botaoSelecionado, ]}>
-                        <Text style={styles.botaoTexto}>
-                            {/* {`${credito.moeda} - ${(Number(credito.valor) || 0).toFixed(2)}`} */}
-                            {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)}`})
+                      {creditos.map((credito, idx) => (
+                        <TouchableOpacity
+                          key={credito.id ? credito.id : idx}
+                          onPress={() => handleSelecionarMoedaOrigem(credito.moeda)}
+                          style={[styles.botaoMoeda, moeda_origem === credito.moeda && styles.botaoSelecionado]}>
+                          <Text style={styles.botaoTexto}>
+                            {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)})`}
                             {moeda_origem === credito.moeda ? ' ✅' : ''}
-                        </Text>
+                          </Text>
                         </TouchableOpacity>
-                    ))}
+                      ))}
                     </View>
                     <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.fecharModalBotao}>
                     <Text style={styles.fecharModalTexto}>Fechar</Text>
@@ -211,12 +205,7 @@ function capitalizeFirstLetter(str: string) {
     </Text>
   </TouchableOpacity>
 
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={modalDestinoVisible}
-    onRequestClose={() => setModalDestinoVisible(false)}
-  >
+  <Modal animationType="slide" transparent={true} visible={modalDestinoVisible} onRequestClose={() => setModalDestinoVisible(false)}>
     <View style={styles.modalOverlay}>
       <View style={styles.modalContainer}>
         <Text style={styles.TextInputs}>Escolha a moeda de destino:</Text>
@@ -231,26 +220,15 @@ function capitalizeFirstLetter(str: string) {
             { label: 'Iene', value: 'iene' },
             { label: 'Outra', value: 'outra' }, // Adiciona opção "Outra"
           ].map((moeda) => (
-            <TouchableOpacity
-              key={moeda.value}
-              onPress={() => {
+            <TouchableOpacity key={moeda.value} onPress={() => {
                 if (moeda.value === 'outra') {
                   setMostrarCampoOutra(true);
-                } else {
-                  setMoeda_destino(moeda.value);
-                  setMostrarCampoOutra(false);
-                  setModalDestinoVisible(false);
+                } else { setMoeda_destino(moeda.value); setMostrarCampoOutra(false); setModalDestinoVisible(false);
                 }
               }}
-              style={[
-                styles.botaoMoeda,
-                moeda_destino === moeda.value && styles.botaoSelecionado,
-              ]}
+              style={[ styles.botaoMoeda, moeda_destino === moeda.value && styles.botaoSelecionado,]}
             >
-              <Text style={styles.botaoTexto}>
-                {moeda.label}
-                {moeda_destino === moeda.value ? ' ✅' : ''}
-              </Text>
+              <Text style={styles.botaoTexto}> {moeda.label} {moeda_destino === moeda.value ? ' ✅' : ''}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -258,35 +236,18 @@ function capitalizeFirstLetter(str: string) {
         {mostrarCampoOutra && (
           <View style={{ marginTop: 10 }}>
             <Text style={styles.TextInputs}>Digite a moeda:</Text>
-            <TextInput
-              style={styles.input}
-              value={outraMoeda}
-              onChangeText={setOutraMoeda}
-              placeholder="Digite a moeda"
-                onSubmitEditing={() => {
-                setMoeda_destino(outraMoeda);
-                setModalDestinoVisible(false);
-                setMostrarCampoOutra(false);
-                }}
+            <TextInput style={styles.input} value={outraMoeda} onChangeText={setOutraMoeda} placeholder="Digite a moeda"
+                onSubmitEditing={() => {setMoeda_destino(outraMoeda);setModalDestinoVisible(false);setMostrarCampoOutra(false); }}
             />
-            <TouchableOpacity
-              style={styles.fecharModalBotao}
-              onPress={() => {
-                setMoeda_destino(outraMoeda);
-                setModalDestinoVisible(false);
-                setMostrarCampoOutra(false);
-                }}
-            >
+            <TouchableOpacity  style={styles.fecharModalBotao}
+              onPress={() => { setMoeda_destino(outraMoeda); setModalDestinoVisible(false); setMostrarCampoOutra(false);}}>
               <Text style={styles.fecharModalTexto}>Confirmar</Text>
             </TouchableOpacity>
           </View>
         )}
 
         <TouchableOpacity
-          onPress={() => {
-            setModalDestinoVisible(false);
-            setMostrarCampoOutra(false);
-          }}
+          onPress={() => { setModalDestinoVisible(false); setMostrarCampoOutra(false);}}
           style={styles.fecharModalBotao}
         >
           <Text style={styles.fecharModalTexto}>Fechar</Text>

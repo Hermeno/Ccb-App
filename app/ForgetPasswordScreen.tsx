@@ -34,6 +34,7 @@ export default function ForgetPasswordScreen() {
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
+                autoCapitalize="none"
             />
             <TouchableOpacity style={styles.button} onPress={handleForgotPassword}>
                 <Text style={styles.buttonText}>Enviar</Text>
@@ -44,10 +45,24 @@ export default function ForgetPasswordScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1, 
         padding: 20,
         justifyContent: 'center',
+        alignItems: "center",
     },
+
+
+
+
+  containerForm: {
+    flex: 2,
+    // justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    width: "100%",
+  },
+
+
     title: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -58,6 +73,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         padding: 10,
         marginBottom: 20,
+        width: "75%",
         borderRadius: 8,
     },
     button: {
@@ -65,6 +81,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
+        width: "75%",
     },
     buttonText: {
         color: '#fff',

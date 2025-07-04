@@ -80,7 +80,6 @@ export const buscarDespesas = async (token, missao_id) => {
 
 
 export const buscarDespesasAll = async (token, missao_id) => {
-    console.log(token, missao_id)
     try {
         const response = await api.get('/buscar-despesas-All', {
             headers: {
