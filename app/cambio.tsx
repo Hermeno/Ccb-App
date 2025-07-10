@@ -344,7 +344,7 @@ function capitalizeFirstLetter(str: string) {
          // width: "100%",
          color:"#121212",
          backgroundColor: '#f0f0f0',
-         height:45,
+         height:40,
      },
      TextInputs:{
          marginBottom: 10,
