@@ -26,6 +26,7 @@ export default function Home ()
     const [modalVisible, setModalVisible] = useState(false);
     const [parsedPhotos, setParsedPhotos] = useState<string[]>([]);
     const [creditos, setCreditos] = useState([]);
+    const [loading, setLoading] = useState(false);
 
 const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
 
@@ -74,6 +75,9 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
       };
       
       const handleDespesa = async () => {
+        if (loading) return; // Evita múltiplos envios
+        setLoading(true);
+
         const token = await AsyncStorage.getItem('userToken');
       
         if (!user) {
@@ -131,6 +135,9 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
             } else {
                 Alert.alert('Erro ao cadastrar despesa', 'Erro desconhecido ao cadastrar despesa.');
             }
+        }
+        finally {
+            setLoading(false);
         }
     };
     
@@ -386,9 +393,15 @@ function capitalizeFirstLetter(str: string) {
 
 
 
-                <TouchableOpacity style={styles.BotaoLogin} onPress={handleDespesa}>
-                    <Text style={styles.TextBotao}>CADASTRAR DESPESA</Text>
-                </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.BotaoLogin, loading && { opacity: 0.6 }]}
+              onPress={handleDespesa}
+              disabled={loading}
+            >
+              <Text style={styles.TextBotao}>
+                {loading ? 'Cadastrando...' : 'CADASTRAR DESPESA'}
+              </Text>
+            </TouchableOpacity>
 
             </View>
         </View>

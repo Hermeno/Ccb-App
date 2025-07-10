@@ -21,6 +21,7 @@
      const [numero_recibo, setNumero_recibo] = useState('');
      const [creditos, setCreditos] = useState([]);
      const [outraMoeda, setOutraMoeda] = useState('');
+     const [loading, setLoading] = useState(false);
 const [mostrarCampoOutra, setMostrarCampoOutra] = useState(false);
 
 const [modalVisible, setModalVisible] = useState(false);
@@ -52,23 +53,25 @@ const handleSelecionarMoedaOrigem = (moeda) => {
       
 
 
+useEffect(() => {
+  const carregarCreditos = async () => {
+    if (!missaoId) return; 
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const data = await buscarCreditos(token, missaoId);
+      setCreditos(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar créditos:', error);
+      setCreditos([]);
+    }
+  };
 
-     useEffect(() => {
-        const carregarCreditos = async () => {
-            try {
-                const token = await AsyncStorage.getItem('userToken');
-                const data = await buscarCreditos(token, missaoId);
-                setCreditos(data || []); // Garante que setCreditos não receba undefined
-            } catch (error) {
-                console.error('Erro ao carregar créditos:', error);
-                setCreditos([]); // Define como array vazio em caso de erro
-            }
-        };
-    
-        carregarCreditos();
-    }, [missaoId]);
+  carregarCreditos();
+}, [missaoId]);
  
      const handleCambio = async () =>{
+      if (loading) return; // Evita múltiplos envios
+          setLoading(true);
          const token = await AsyncStorage.getItem('userToken'); 
          if (!user) {
              Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
@@ -114,6 +117,9 @@ const handleSelecionarMoedaOrigem = (moeda) => {
                 Alert.alert('Erro ao cadastrar câmbio', 'Erro desconhecido ao cadastrar câmbio.');
             }
         }
+          finally {
+            setLoading(false);
+          }
     };
 
 
@@ -285,9 +291,25 @@ function capitalizeFirstLetter(str: string) {
                  <TextInput  value={numero_recibo} onChangeText={setNumero_recibo} style={styles.input} placeholder='N do Recibo' />
                  </View>
              </View>
-                 <TouchableOpacity style={styles.BotaoLogin} onPress={handleCambio}>
+                 {/* <TouchableOpacity style={styles.BotaoLogin} onPress={handleCambio}>
                      <Text style={styles.TextBotao}>ADICIONAR VALOR CAMBIADO</Text>
-                 </TouchableOpacity>
+                 </TouchableOpacity> */}
+
+                  <TouchableOpacity
+                    style={[styles.BotaoLogin, loading && { opacity: 0.6 }]}
+                    onPress={handleCambio}
+                    disabled={loading}
+                  >
+                    <Text style={styles.TextBotao}>
+                      {loading ? 'Cadastrando...' : 'ADICIONAR VALOR CAMBIADO'}
+                    </Text>
+                  </TouchableOpacity>
+
+
+
+
+
+
              </View>
 
          </View>

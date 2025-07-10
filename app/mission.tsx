@@ -179,13 +179,13 @@ export default function Mission() {
                     <View style={styles.inputsButtons}>
                         <View>
                         <Text style={styles.TextInput}>Data de início</Text>
-                            <Button  onPress={showdata_inicio_prevista} title="Escolher data inicio" />
+                            <Button  onPress={showdata_inicio_prevista} title="Data inicio" />
                             <Text  style={styles.textoEscolhido}>{data_inicio_prevista.toLocaleDateString()}</Text>
                             {showInicio && ( <DateTimePicker value={data_inicio_prevista} mode="date" display="default" onChange={onChangedata_inicio_prevista}/>)}                            
                         </View>
                         <View>
                             <Text style={styles.TextInput}>Data final</Text>
-                            <Button   onPress={showdata_final_prevista} title="Escolher data final" />
+                            <Button   onPress={showdata_final_prevista} title="Data final" />
                             <Text style={styles.textoEscolhido}>{data_final_prevista.toLocaleDateString()}</Text>
                             {showFinal && (<DateTimePicker value={data_final_prevista} mode="date" display="default" onChange={onChangedata_final_prevista} /> )}
                         </View>
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     },
     input:{
         marginBottom: 10,
-        padding: 10,
+        padding: 6,
         borderWidth: 1,
         borderColor: "#ccc",
         width: "100%",

@@ -55,28 +55,40 @@ export default function CameraScreen() {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <CameraView style={styles.camera} type={facing} ref={cameraRef}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={takePicture}>
-            <Text style={styles.text}>Take Picture</Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
-
-      <View style={styles.photosContainer}>
-        {photos.map((photoUri, index) => (
-          <Image key={index} source={{ uri: photoUri }} style={styles.photo} />
-        ))}
+return (
+  <View style={{ flex: 1 }}>
+    <CameraView
+      style={StyleSheet.absoluteFill}
+      type={facing}
+      ref={cameraRef}
+    >
+      <View style={styles.buttonContainer}>
+        {/* <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+          <Text style={styles.text}>Flip Camera</Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.button} onPress={takePicture}>
+          <Text style={styles.text}>Tirar foto</Text>
+        </TouchableOpacity>
       </View>
+    </CameraView>
 
-      <Button title={loading ? 'Enviando...' : 'Done'} onPress={handleDone} disabled={loading} />
+    <View style={styles.photosContainer}>
+      {photos.map((photoUri, index) => (
+        <Image key={index} source={{ uri: photoUri }} style={styles.photo} />
+      ))}
     </View>
-  );
+
+    {/* Botão por cima, fixo na parte inferior */}
+    <View style={styles.doneButtonContainer}>
+      <Button
+        title={loading ? 'Enviando...' : 'Done'}
+        onPress={handleDone}
+        disabled={loading}
+      />
+    </View>
+  </View>
+);
+
 }
 
 const styles = StyleSheet.create({
@@ -101,6 +113,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'flex-end',
     alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#00835f',
+    padding: 10,
+    borderRadius: 20,
   },
   text: {
     fontSize: 24,
@@ -119,4 +135,12 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 10,
   },
+  doneButtonContainer: {
+  position: 'absolute',
+  bottom: 40,
+  left: 0,
+  right: 0,
+  alignItems: 'center',
+  zIndex: 10,
+},
 });
