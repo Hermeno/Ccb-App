@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, StatusBar } from 'react-native';
 import { Link, router } from 'expo-router';
 import axios from 'axios';
 import { cadastrarUsuario } from '../services/user'; 
@@ -10,6 +10,10 @@ export default function SignUp() {
     const [user, setUser] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [cargo, setCargo] = useState('');
+    const [comum, setComum] = useState('');
+    const [celular, setCelular] = useState('');
+
 
 const handleSignUp = async () => {
     try {
@@ -17,6 +21,9 @@ const handleSignUp = async () => {
             user,
             name,
             email,
+            cargo,
+            comum,
+            celular,
             password
         });
         if (response.status === 201) {
@@ -36,8 +43,9 @@ const handleSignUp = async () => {
 
   return (
     <View style={styles.mainContainer}>
+      {/* <StatusBar backgroundColor="#fff" barStyle="dark-content" /> */}
       <View  style={styles.containerForm}>
-      <Text style={styles.textWelcome}>Welcome back</Text>
+      <Text style={styles.textWelcome}>Bem vindo de volta</Text>
 
 
 
@@ -57,13 +65,36 @@ const handleSignUp = async () => {
                     />
 
                     <TextInput 
+                        value={cargo}
+                        onChangeText={setCargo}
+                        style={styles.input}
+                        placeholder="Cargo/Ministério"
+                    />
+
+                    <TextInput 
+                        value={comum}
+                        onChangeText={setComum}
+                        style={styles.input}
+                        placeholder="Comum Congregação"
+                    />
+
+                    <TextInput 
+                        value={celular}
+                        onChangeText={setCelular}
+                        style={styles.input}
+                        placeholder="Celular"
+                    />
+
+
+                  <Text style={styles.passText}>Senha</Text>
+                    
+                    <TextInput 
                         value={password} 
                         onChangeText={setPassword} 
                         style={styles.input} 
                         secureTextEntry 
                         placeholder="******"
                     />
-
 
           <View  style={styles.textsFlexs}>
             <Text style={styles.rememberText}>
@@ -183,5 +214,12 @@ const styles = StyleSheet.create({
   textAllsignUp:{
     fontWeight: "bold",
     marginTop: 10,
+  },
+  passText:{
+    fontWeight:500,
+    alignItems:'flex-start',
+    textAlign:'left',
+    justifyContent:'flex-start',
+    marginTop:10  
   }
 });

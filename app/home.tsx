@@ -15,6 +15,7 @@ export default function HomeScreen() {
    const [missaoId, setMissaoId] = useState(null);
    const [missaoName, setMissaoName] = useState('');
    const [creditos, setCreditos] = useState([]);
+
  
    // Buscar dados do AsyncStorage
    useEffect(() => {
@@ -39,6 +40,7 @@ export default function HomeScreen() {
    // Buscar créditos periodicamente
    useEffect(() => {
      if (!token || !missaoId) return;
+     
  
      const carregarCredito = async () => {
        try {
@@ -93,7 +95,11 @@ export default function HomeScreen() {
     if (missaoId) router.push(`/despesa?missaoId=${missaoId}&missaoName=${missaoName}`);
   };
   
-
+  const DESPESAVISUALIZATIONPDF = () => {
+    console.log('indo na page page', missaoId)
+    if (missaoId) router.push(`/pdf?missaoId=${missaoId}&missaoName=${missaoName}`);
+  };
+  
   return (
     <View style={styles.container}>
           <View>
@@ -143,7 +149,16 @@ export default function HomeScreen() {
         <TouchableOpacity style={styles.cardInfo} onPress={DESPESAVISUALIZATION}>
           <Text style={styles.Textshow}>Visualizar despesas </Text>
           <MaterialIcons name="arrow-forward" size={30} color="black" />
-        </TouchableOpacity>        
+        </TouchableOpacity> 
+
+
+        <TouchableOpacity style={styles.cardInfo} onPress={DESPESAVISUALIZATIONPDF}>
+          <Text style={styles.Textshow}>Pdf de relatorio </Text>
+          <MaterialIcons name="arrow-forward" size={30} color="black" />
+        </TouchableOpacity> 
+
+
+
         <TouchableOpacity style={styles.cardInfoOut} onPress={Logout}>
           <Text style={styles.Textshow}>Sair</Text>
           <MaterialIcons name="logout" size={30} color="red" />

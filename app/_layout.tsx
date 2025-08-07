@@ -54,16 +54,7 @@ export default function RootLayout() {
                         headerTitle: "MISSÃO",
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
-                        headerTintColor: '#fff',
-                            header: () => (
-                                <View style={styles.navbar}>
-                                    {/* <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                                    <MaterialIcons name="arrow-back-ios" size={20} color="blue" />
-                                    </TouchableOpacity>                                     */}
-                                    <Text style={styles.text}>MISSÃO</Text>
-                                </View>
-                            ),
-
+                        headerTintColor: '#FFF',
                     }}
                 />                
                 <Stack.Screen
@@ -82,14 +73,6 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
-                            // header: () => (
-                            //     <View style={styles.navbar}>
-                            //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                            //         <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
-                            //         </TouchableOpacity>                                    
-                            //         <Text style={styles.text}>MOEDAS</Text>
-                            //     </View>
-                            // ),
 
                     }}
                 />
@@ -99,14 +82,6 @@ export default function RootLayout() {
                         headerTitle: "CRÉDITO",
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
-                            // header: () => (
-                            //     <View style={styles.navbar}>
-                            //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                            //         <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
-                            //         </TouchableOpacity>                                    
-                            //         <Text style={styles.text}>CRÉDITO</Text>
-                            //     </View>
-                            // ),
 
                     }}
                 />
@@ -117,15 +92,6 @@ export default function RootLayout() {
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerTintColor: '#fff',
-                            // header: () => (
-                            //     <View style={styles.navbar}>
-                            //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                            //         <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
-                            //         </TouchableOpacity>                                    
-                            //         <Text style={styles.text}>CAMBIO</Text>
-                            //     </View>
-                            // ),
-
                     }}
                 />
                 <Stack.Screen
@@ -135,15 +101,6 @@ export default function RootLayout() {
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerTintColor: '#fff',
-                            // header: () => (
-                            //     <View style={styles.navbar}>
-                            //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                            //         <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
-                            //         </TouchableOpacity>                                    
-                            //         <Text style={styles.text}>CAMBIO</Text>
-                            //     </View>
-                            // ),
-
                     }}
                 />
 
@@ -154,14 +111,6 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
-                            // header: () => (
-                            //     <View style={styles.navbar}>
-                            //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                            //         <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
-                            //         </TouchableOpacity>                                    
-                            //         <Text style={styles.text}>MISSOES</Text>
-                            //     </View>
-                            // ),
 
                     }}
                 />
@@ -172,14 +121,6 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
-                            // header: () => (
-                            //     <View style={styles.navbar}>
-                            //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                            //         <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
-                            //         </TouchableOpacity>                                    
-                            //         <Text style={styles.text}>DESPESAS</Text>
-                            //     </View>
-                            // ),
 
                     }}
                 />
@@ -190,14 +131,26 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
-                            // header: () => (
-                            //     <View style={styles.navbar}>
-                            //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
-                            //         <MaterialIcons name="arrow-back-ios" size={20} color="blue" style={styles.icon} />
-                            //         </TouchableOpacity>                                    
-                            //         <Text style={styles.text}>DESPESAS</Text>
-                            //     </View>
-                            // ),
+
+                    }}
+                />
+                <Stack.Screen
+                    name="document"
+                    options={{
+                        headerTitle: "document",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#fff',
+
+                    }}
+                />
+                <Stack.Screen
+                    name="pdf"
+                    options={{
+                        headerTitle: "pdf",
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#fff',
 
                     }}
                 />

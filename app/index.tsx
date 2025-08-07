@@ -59,6 +59,8 @@ export default function Home() {
   return (
 
     <View style={styles.mainContainer}>
+      {/* <StatusBar hidden /> */}
+    {/* <StatusBar backgroundColor="#fff" barStyle="dark-content" /> */}
     
       <View  style={styles.container}>
           {/* <Text style={styles.logoText}>Luxe</Text> */}

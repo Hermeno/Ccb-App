@@ -1,11 +1,14 @@
 import api from './api'; // api.js terá a configuração do axios com baseURL
 
-export const  cadastrarUsuario = async ({ name, user, email, password }) => {
+export const  cadastrarUsuario = async ({ name, user, email, cargo, comum, celular, password }) => {
     try {
         const response = await api.post('/cadastro', {
             name: name,
             username: user,
             email: email,
+            cargo: cargo,
+            comum: comum,
+            celular: celular,
             password: password,
         });
 
