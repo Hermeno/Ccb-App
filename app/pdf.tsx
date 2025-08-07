@@ -64,6 +64,7 @@ const PdfGenerator = () => {
 export default PdfGenerator;
 
 function gerarHtml(grupos) {
+  const dataAtual = new Date().toLocaleDateString();
   let html = `
     <html>
       <head>
@@ -112,7 +113,8 @@ function gerarHtml(grupos) {
         </style>
       </head>
       <body>
-        <h1>Relatório de Câmbios</h1>
+        <h1>CONGREGAÇÃO  CRISTÃ  NO  BRASIL</h1>
+         <h1>Relatório de Câmbios e Despesas de viagem missionária</h1>
   `;
 
   if (grupos.length > 0) {
@@ -126,14 +128,15 @@ function gerarHtml(grupos) {
 
     html += `
       <div class="user-info">
+        <p><strong>Data:</strong> ${dataAtual}</p>
         <p><strong>Nome:</strong> ${usuario.name || '-'}</p>
         <p><strong>Email:</strong> ${usuario.email || '-'}</p>
         <p><strong>Celular:</strong> ${usuario.celular || '-'}</p>
-        <p><strong>Cargo:</strong> ${usuario.cargo || '-'}</p>
-        <p><strong>Comum:</strong> ${usuario.comum || '-'}</p>
-        <p><strong>Missão para:</strong> ${usuario.pais || '-'}</p>
-        <p><strong>Data de início da viagem:</strong> ${formatarData(usuario.data_inicio_prevista)} &nbsp;&nbsp;
-          <strong>Data final prevista:</strong> ${formatarData(usuario.data_final_prevista)}</p>
+        <p><strong>Ministério/Cargo:</strong> ${usuario.cargo || '-'}</p>
+        <p><strong>Comum Congregação:</strong> ${usuario.comum || '-'}</p>
+        <p><strong>Destino:</strong> ${usuario.pais || '-'}</p>
+        <p><strong>Partida:</strong> ${formatarData(usuario.data_inicio_prevista)} &nbsp;&nbsp;
+          <strong>Retorno:</strong> ${formatarData(usuario.data_final_prevista)}</p>
         <p><strong>Quantidade de dias:</strong> ${diasViagem}</p>
       </div>
     `;
@@ -144,17 +147,19 @@ function gerarHtml(grupos) {
       <h2>Moeda: ${grupo.moeda}</h2>
       <table>
         <tr>
-          <th>Data</th>
-          <th>Descrição</th>
-          <th>Nº Recibo</th>
-          <th>Cidade</th>
-          <th>País</th>
-          <th>Valor</th>
+          <th>DATA</th>
+          <th>HISTÓRICO DAS DESPESAS</th>
+          <th>Nº REIBO</th>
+          <th>IMAGENS</th>
+          <th>CIDADE</th>
+          <th>PAÍS</th>
+          <th>VALOR</th>
         </tr>
         <tr>
           <td>${formatarData(grupo.data_cambio)}</td>
-          <td><strong>Câmbio</strong></td>
+          <td><strong>Recurso para Despesas</strong></td>
           <td>${grupo.numero_recibo || '-'}</td>
+          <td>-</td>
           <td>-</td>
           <td>${grupo.pais}</td>
           <td><strong>${grupo.valorOriginal.toFixed(2)} ${grupo.moeda}</strong></td>
@@ -190,6 +195,7 @@ if (despesas.length > 0) {
         <td>${formatarData(dataDespesa)}</td>
         <td>${d.descricao || '-'}</td>
         <td>${d.numero_recibo || '-'}</td>
+        <td>abcdefgh.png</td>
         <td>${d.cidade || '-'}</td>
         <td>${grupo.pais}</td>
         <td>${sinal}${vFinal.toFixed(2)} ${grupo.moeda}</td>
@@ -206,7 +212,7 @@ if (despesas.length > 0) {
 
 html += `
   <tr>
-    <td colspan="5"><strong>Total Descontado</strong></td>
+    <td colspan="5"><strong>Total gasto em despesas</strong></td>
     <td><strong>-${totalDescontos.toFixed(2)} ${grupo.moeda}</strong></td>
   </tr>
   <tr>
@@ -214,7 +220,7 @@ html += `
     <td><strong>+${totalAcrescentado.toFixed(2)} ${grupo.moeda}</strong></td>
   </tr>
   <tr>
-    <td colspan="5"><strong>Sobra</strong></td>
+    <td colspan="5"><strong>Saldo</strong></td>
     <td><strong>${(grupo.valorOriginal + totalAcrescentado - totalDescontos).toFixed(2)} ${grupo.moeda}</strong></td>
   </tr>
 </table>
