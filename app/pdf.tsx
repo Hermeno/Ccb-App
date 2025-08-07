@@ -127,7 +127,6 @@ function gerarHtml(grupos) {
     html += `
       <div class="user-info">
         <p><strong>Nome:</strong> ${usuario.name || '-'}</p>
-        <p><strong>Username:</strong> ${usuario.username || '-'}</p>
         <p><strong>Email:</strong> ${usuario.email || '-'}</p>
         <p><strong>Celular:</strong> ${usuario.celular || '-'}</p>
         <p><strong>Cargo:</strong> ${usuario.cargo || '-'}</p>
@@ -162,50 +161,69 @@ function gerarHtml(grupos) {
         </tr>
     `;
 
-    let totalDespesas = 0;
+let totalDescontos = 0;
+let totalAcrescentado = 0;
 
-    const despesas = (grupo.despesas || []);
+const despesas = (grupo.despesas || []);
 
-    if (despesas.length > 0) {
-      despesas.forEach((d) => {
-        const valor = parseFloat(d.valor);
-        const vFinal = isNaN(valor) ? 0 : valor;
-        totalDespesas += vFinal;
-        html += `
-          <tr>
-            <td>${formatarData(d.data_padrao)}</td>
-            <td>${d.descricao || '-'}</td>
-            <td>${d.numero_recibo || '-'}</td>
-            <td>${d.cidade || '-'}</td>
-            <td>${grupo.pais}</td>
-            <td>${vFinal.toFixed(2)} ${grupo.moeda}</td>
-          </tr>
-        `;
-      });
+if (despesas.length > 0) {
+  despesas.forEach((d) => {
+    const valor = parseFloat(d.valor);
+    const vFinal = isNaN(valor) ? 0 : valor;
+
+    // Verifica se é uma entrada de moeda (acréscimo)
+      const isCambio = d.tipo === 'cambio';
+  const dataDespesa = isCambio ? d.createdAt : d.data_padrao;
+    const isAcrescimo = d.moeda_destino === grupo.moeda;
+    const isDesconto = !isAcrescimo; // tudo o que não é acréscimo é desconto
+
+    if (isAcrescimo) {
+      totalAcrescentado += vFinal;
     } else {
-      html += `
-        <tr>
-          <td colspan="6" class="sem-despesas">Sem despesas registradas.</td>
-        </tr>
-      `;
+      totalDescontos += vFinal;
     }
 
+    const sinal = isAcrescimo ? '+' : '-';
+
     html += `
-        <tr>
-          <td colspan="5"><strong>Total Despesas</strong></td>
-          <td><strong>${totalDespesas.toFixed(2)} ${grupo.moeda}</strong></td>
-        </tr>
-        <tr>
-          <td colspan="5"><strong>Sobra</strong></td>
-          <td><strong>${(grupo.valorOriginal - totalDespesas).toFixed(2)} ${grupo.moeda}</strong></td>
-        </tr>
-      </table>
+      <tr>
+        <td>${formatarData(dataDespesa)}</td>
+        <td>${d.descricao || '-'}</td>
+        <td>${d.numero_recibo || '-'}</td>
+        <td>${d.cidade || '-'}</td>
+        <td>${grupo.pais}</td>
+        <td>${sinal}${vFinal.toFixed(2)} ${grupo.moeda}</td>
+      </tr>
     `;
   });
+} else {
+  html += `
+    <tr>
+      <td colspan="6" class="sem-despesas">Sem despesas registradas.</td>
+    </tr>
+  `;
+}
 
-  html += `</body></html>`;
+html += `
+  <tr>
+    <td colspan="5"><strong>Total Descontado</strong></td>
+    <td><strong>-${totalDescontos.toFixed(2)} ${grupo.moeda}</strong></td>
+  </tr>
+  <tr>
+    <td colspan="5"><strong>Total Acrescentado</strong></td>
+    <td><strong>+${totalAcrescentado.toFixed(2)} ${grupo.moeda}</strong></td>
+  </tr>
+  <tr>
+    <td colspan="5"><strong>Sobra</strong></td>
+    <td><strong>${(grupo.valorOriginal + totalAcrescentado - totalDescontos).toFixed(2)} ${grupo.moeda}</strong></td>
+  </tr>
+</table>
+`;});
+
+  html += `</body></html>`; 
   return html;
 }
+
 
 function formatarData(data) {
   if (!data) return '-';
