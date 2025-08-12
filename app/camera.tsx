@@ -4,6 +4,7 @@ import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from '
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { createfotos } from '../services/cambio';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { buscarMissaoPorId } from '../services/missao';
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -15,6 +16,40 @@ export default function CameraScreen() {
   const { id_post } = useLocalSearchParams();
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState('');  
+  const [missao, setMissao] = useState<any>(null);
+  const [missaofoto, setMissaoFoto] = useState('');
+  const [datafoto, setDataFoto] = useState('');
+
+  
+    const missao_id = useLocalSearchParams().missao_id;
+    const missao_name = useLocalSearchParams().missao_name;
+
+
+useEffect(() => {
+  const carregarMissao = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token && missao_id) {
+        const dados = await buscarMissaoPorId(missao_id, token);
+        let missaoObj = Array.isArray(dados) ? dados[0] : dados;
+        setMissao(missaoObj);
+
+        if (missaoObj) {
+          setMissaoFoto(missaoObj.missao);
+          setDataFoto(missaoObj.data_inicio_prevista);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar missão:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  carregarMissao();
+}, []);
+
+
   useEffect(() => {
      const fetchMissao = async () => {
        const missao_id = await AsyncStorage.getItem('missao_id');
@@ -58,7 +93,8 @@ export default function CameraScreen() {
     const token = await AsyncStorage.getItem('userToken');
 
     try {
-      const response = await createfotos({ fotos: photos, id_post }, token);
+      const response = await createfotos({ fotos: photos, id_post, missaofoto:missaofoto, datafoto:datafoto, missaoId  }, token);
+
       if (response.status === 200) {
         Alert.alert('Fotos enviadas com sucesso!');
         router.replace(`/home`);

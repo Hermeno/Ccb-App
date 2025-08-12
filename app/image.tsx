@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Alert, ScrollView, StyleSheet,TouchableOpacity  } from 'react-native';
+import { View, Text, Image, Alert, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,13 +9,12 @@ import { buscarMissaoPorId } from '../services/missao';
 const Imagens = () => {
   const { id_post } = useLocalSearchParams();
   const [images, setImages] = useState<string[]>([]);
-    const [missao, setMissao] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+  const [missao, setMissao] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  
-    const missao_id = useLocalSearchParams().missao_id;
-    const missao_name = useLocalSearchParams().missao_name;
 
+  const missao_id = useLocalSearchParams().missao_id;
+  const missao_d = useLocalSearchParams().missao_name;
   const getPermission = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== 'granted') {
@@ -23,12 +22,17 @@ const Imagens = () => {
     }
   };
 
+
+
+  
 useEffect(() => {
   const carregarMissao = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token && missao_id) {
         const dados = await buscarMissaoPorId(missao_id, token);
+        console.log('Missão da API:', dados);
+
         let missaoObj = Array.isArray(dados) ? dados[0] : dados;
         setMissao(missaoObj);
         if (missaoObj) {
@@ -45,10 +49,6 @@ useEffect(() => {
   carregarMissao();
 }, []);
 
-
-
-
-
   const fetchImages = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -57,15 +57,14 @@ useEffect(() => {
         return;
       }
 
-      const response = await fetch(`https://api-com-nodejs-express-mongodb-prisma.onrender.com/fotos-despesas/${id_post}`, {
-        // const response = await fetch(`http://192.168.43.226:3000/fotos-despesas/${id_post}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        
+      // const response = await fetch(`https://api-com-nodejs-express-mongodb-prisma.onrender.com/fotos-despesas/${id_post}`, {
+      const response = await fetch(`http://192.168.43.226:3000/fotos-despesas/${id_post}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`Erro ao buscar imagens: ${response.status} - ${response.statusText}`);
@@ -74,53 +73,48 @@ useEffect(() => {
       const data = await response.json();
       console.log('Dados recebidos:', data);
 
-      // ✅ Extrair caminhos das imagens
       const paths = data.flatMap((item) =>
-        item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
+        item.fotos.map((foto) => `http://192.168.43.226:3000/uploads/${foto}`)
+        // item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
       );
 
       setImages(paths);
     } catch (error) {
-      // console.error('Erro ao buscar imagens:', error);
       Alert.alert('Sem imagens.');
     }
   };
 
-const downloadImage = async (url: string, numero: number) => {
-  try {
-    const missaofoto = missao?.missao || 'missao';
-    const datafoto = missao?.data_inicio_prevista
+  const downloadImage = async (url: string, numero: number) => {
+    try {
+          const missaofoto = missao?.missao || 'missao';
+        const datafoto = missao?.data_inicio_prevista
       ? String(missao.data_inicio_prevista).replace(/[:\s]/g, '_')
       : 'data';
+      const originalFilename = url.split('/').pop();
+      const ext = originalFilename?.split('.').pop() || 'jpg';
 
-    // Pega a extensão do arquivo original
-    const originalFilename = url.split('/').pop();
-    const ext = originalFilename?.split('.').pop() || 'jpg';
 
-    // Monta o nome: missaofoto.datafotoNUMERO.ext
-    const filename = `${missaofoto}.${datafoto}${numero}.${ext}`;
-    const downloadUri = `${FileSystem.documentDirectory}${filename}`;
+          const filename = `${missaofoto}.${datafoto}${numero}.${ext}`;
+          const downloadUri = `${FileSystem.documentDirectory}${filename}`;
 
-    const { uri } = await FileSystem.downloadAsync(url, downloadUri);
-    console.log('Imagem baixada para:', uri);
+      const { uri } = await FileSystem.downloadAsync(url, downloadUri);
+      console.log('Imagem baixada para:', uri);
 
-    const asset = await MediaLibrary.createAssetAsync(uri);
-    const album = await MediaLibrary.getAlbumAsync('Camera');
+      const asset = await MediaLibrary.createAssetAsync(uri);
+      const album = await MediaLibrary.getAlbumAsync('Camera');
 
-    if (album) {
-      await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-    } else {
-      await MediaLibrary.createAlbumAsync('Camera', asset, false);
+      if (album) {
+        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+      } else {
+        await MediaLibrary.createAlbumAsync('Camera', asset, false);
+      }
+
+      Alert.alert('Sucesso', 'Imagem salva na galeria!');
+    } catch (error) {
+      console.error('Erro ao baixar imagem:', error);
+      Alert.alert('Erro ao baixar imagem.');
     }
-
-    console.log('Imagem salva na galeria!');
-    Alert.alert('Sucesso', 'Imagem salva na galeria!');
-  } catch (error) {
-    console.error('Erro ao baixar imagem:', error);
-    Alert.alert('Erro ao baixar imagem.');
-  }
-};
-
+  };
 
   useEffect(() => {
     getPermission();
@@ -128,24 +122,22 @@ const downloadImage = async (url: string, numero: number) => {
   }, []);
 
   return (
-<ScrollView style={styles.container}>
-  <Text style={styles.title}>Imagens da Despesa</Text>
-  {images.map((image, index) => (
-    <View key={index} style={styles.imageContainer}>
-      {/* <Text style={styles.imageLabel}>Imagem {index + 1}</Text> */}
-      <Image source={{ uri: image }} style={styles.image} />
-<TouchableOpacity
-  style={styles.downloadButton}
-  onPress={() => downloadImage(image, index + 1)} // index + 1 para começar do 1
->
-  <Text style={styles.downloadButtonText}>Baixar Imagem</Text>
-</TouchableOpacity>
-    </View>
-  ))}
-</ScrollView>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Imagens da Despesa</Text>
+      {images.map((image, index) => (
+        <View key={index} style={styles.imageContainer}>
+          <Image source={{ uri: image }} style={styles.image} />
+          <TouchableOpacity
+            style={styles.downloadButton}
+            onPress={() => downloadImage(image, index + 1)}
+          >
+            <Text style={styles.downloadButtonText}>Baixar Imagem</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -164,22 +156,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderRadius: 12,
     overflow: 'hidden',
-    // elevation: 3, // sombra para Android
-    // shadowColor: '#000', // sombra para iOS
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
   },
   image: {
     width: '100%',
     height: 200,
     borderRadius: 12,
-  },
-  imageLabel: {
-    fontSize: 16,
-    color: '#555',
-    marginVertical: 8,
-    textAlign: 'center',
   },
   downloadButton: {
     paddingVertical: 10,
@@ -194,6 +175,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
 
 export default Imagens;

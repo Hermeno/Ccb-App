@@ -1,7 +1,8 @@
 import { Stack, useRouter } from 'expo-router';
 import { Platform, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RootLayout() {
     
@@ -31,6 +32,15 @@ export default function RootLayout() {
                     }}
                 />
                 <Stack.Screen
+                    name="mission"
+                    options={{
+                        headerTitle: "MISSÃO",
+                        // headerTitleStyle: { fontWeight: 'bold' },
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#FFF',
+                    }}
+                />  
+                <Stack.Screen
                     name="home"
                     options={{
                         headerTitle: "INICIO",
@@ -48,15 +58,7 @@ export default function RootLayout() {
 
                     }}
                 />
-                 <Stack.Screen
-                    name="mission"
-                    options={{
-                        headerTitle: "MISSÃO",
-                        headerTitleStyle: { fontWeight: 'bold' },
-                        headerStyle: { backgroundColor: '#487d76' },
-                        headerTintColor: '#FFF',
-                    }}
-                />                
+              
                 <Stack.Screen
                     name="lost_password"
                     options={{

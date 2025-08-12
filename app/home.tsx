@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons , Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useJwt } from './jwt';
 import { buscarCreditoLimit } from '@/services/credito';
-import { buscarMissaoPorId } from '../services/missao';
 
 export default function HomeScreen() {
   const router = useRouter();
   const user = useJwt();
 
    const [token, setToken] = useState(null);
+  //  console.log(token)
    const [missaoId, setMissaoId] = useState(null);
    const [missaoName, setMissaoName] = useState('');
    const [creditos, setCreditos] = useState([]);
@@ -21,6 +21,7 @@ export default function HomeScreen() {
    useEffect(() => {
      const fetchStorageData = async () => {
        const storedToken = await AsyncStorage.getItem('userToken');
+       
        const storedMissaoId = await AsyncStorage.getItem('missao_id');
        const storedMissaoName = await AsyncStorage.getItem('missao_name');
  
@@ -159,10 +160,14 @@ export default function HomeScreen() {
 
 
 
-        <TouchableOpacity style={styles.cardInfoOut} onPress={Logout}>
+        {/* <TouchableOpacity style={styles.cardInfoOut} onPress={Logout}>
           <Text style={styles.Textshow}>Sair</Text>
           <MaterialIcons name="logout" size={30} color="red" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
+          <TouchableOpacity style={styles.floatingButton} onPress={Logout}>
+            <Ionicons name="log-out-outline" size={24} color="#FFF" />
+          </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -239,6 +244,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'space-between',
     marginBottom: 10,
-    borderRadius:10
+    borderRadius:20
 },
+      floatingButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 10,
+    backgroundColor: '#48694fff', // vermelho para logout
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5, // sombra Android
+    shadowColor: '#000', // sombra iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
 });

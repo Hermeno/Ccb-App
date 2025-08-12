@@ -1,9 +1,11 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { createfotos } from '../services/despesas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { buscarMissaoPorId } from '../services/missao';
+
 
 export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -13,6 +15,46 @@ export default function CameraScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { id_post } = useLocalSearchParams();
+  const [missaofoto, setMissaoFoto] = useState('');
+  const [datafoto, setDataFoto] = useState('');
+  const [missaoId, setMissaoId] = useState<string | null>(null);
+  const [missaoName, setMissaoName] = useState('');  
+  const [missao, setMissao] = useState<any>(null);
+
+    const missao_id = useLocalSearchParams().missao_id;
+    const missao_name = useLocalSearchParams().missao_name;
+
+
+
+
+
+useEffect(() => {
+  const carregarMissao = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token && missao_id) {
+        const dados = await buscarMissaoPorId(missao_id, token);
+        let missaoObj = Array.isArray(dados) ? dados[0] : dados;
+        setMissao(missaoObj);
+
+        if (missaoObj) {
+          setMissaoFoto(missaoObj.missao);
+          setDataFoto(missaoObj.data_inicio_prevista);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar missão:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  carregarMissao();
+}, []);
+
+
+
+
 
   if (!permission) {
     return <View />;
@@ -43,7 +85,7 @@ export default function CameraScreen() {
     const token = await AsyncStorage.getItem('userToken');
 
     try {
-      const response = await createfotos({ fotos: photos, id_post }, token);
+      const response = await createfotos({ fotos: photos, id_post, missaofoto:missaofoto, datafoto:datafoto, missaoId:missao_id  }, token);
       if (response.status === 200) {
         Alert.alert('Fotos enviadas com sucesso!');
         router.replace(`/home`);

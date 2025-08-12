@@ -149,7 +149,7 @@ function gerarHtml(grupos) {
         <tr>
           <th>DATA</th>
           <th>HISTÓRICO DAS DESPESAS</th>
-          <th>Nº REIBO</th>
+          <th>Nº RECIBO</th>
           <th>IMAGENS</th>
           <th>CIDADE</th>
           <th>PAÍS</th>
@@ -172,36 +172,56 @@ let totalAcrescentado = 0;
 const despesas = (grupo.despesas || []);
 
 if (despesas.length > 0) {
-  despesas.forEach((d) => {
-    const valor = parseFloat(d.valor);
-    const vFinal = isNaN(valor) ? 0 : valor;
-
-    // Verifica se é uma entrada de moeda (acréscimo)
-      const isCambio = d.tipo === 'cambio';
+despesas.forEach((d) => {
+  // Verifica se é uma entrada de moeda (acréscimo)
+  const isCambio = d.tipo === 'cambio';
   const dataDespesa = isCambio ? d.createdAt : d.data_padrao;
-    const isAcrescimo = d.moeda_destino === grupo.moeda;
-    const isDesconto = !isAcrescimo; // tudo o que não é acréscimo é desconto
+  const isAcrescimo = d.moeda_destino === grupo.moeda;
 
+  // IGNORA o registro se for o valor inicial do crédito
+  const isValorInicial =
+    isCambio &&
+    parseFloat(d.total_cambiado) === grupo.valorOriginal &&
+    formatarData(dataDespesa) === formatarData(grupo.data_cambio);
+
+  if (isValorInicial) return; // pula esse registro
+
+  let vFinal = 0;
+  if (isCambio) {
     if (isAcrescimo) {
-      totalAcrescentado += vFinal;
+      vFinal = parseFloat(d.total_cambiado);
     } else {
-      totalDescontos += vFinal;
+      vFinal = parseFloat(d.total_a_cambiar);
     }
+  } else {
+    vFinal = parseFloat(d.valor);
+  }
+  if (isNaN(vFinal)) vFinal = 0;
 
-    const sinal = isAcrescimo ? '+' : '-';
+  if (isAcrescimo) {
+    totalAcrescentado += vFinal;
+  } else {
+    totalDescontos += vFinal;
+  }
 
-    html += `
-      <tr>
-        <td>${formatarData(dataDespesa)}</td>
-        <td>${d.descricao || '-'}</td>
-        <td>${d.numero_recibo || '-'}</td>
-        <td>abcdefgh.png</td>
-        <td>${d.cidade || '-'}</td>
-        <td>${grupo.pais}</td>
-        <td>${sinal}${vFinal.toFixed(2)} ${grupo.moeda}</td>
-      </tr>
-    `;
-  });
+  const sinal = isAcrescimo ? '+' : '-';
+  const nomesImagens = (d.imagens || [])
+  .flatMap(img => img.fotos)
+  .join(', ');
+
+
+  html += `
+    <tr>
+      <td>${formatarData(dataDespesa)}</td>
+      <td>${d.descricao || '-'}</td>
+      <td>${d.numero_recibo || '-'}</td>
+      <td>${nomesImagens || '-'}</td>
+      <td>${d.cidade || '-'}</td>
+      <td>${grupo.pais}</td>
+      <td>${sinal}${vFinal.toFixed(2)} ${grupo.moeda}</td>
+    </tr>
+  `;
+});
 } else {
   html += `
     <tr>
@@ -226,9 +246,48 @@ html += `
 </table>
 `;});
 
+
+
+html += `<h2>Imagens das Despesas</h2>`;
+grupos.forEach(grupo => {
+  const todasImagens = (grupo.despesas || [])
+    .flatMap(d => (d.imagens || []).flatMap(img => img.fotos))
+    .filter(Boolean); // remove null/undefined
+
+  if (todasImagens.length > 0) {
+    html += `<h3>Imagens do grupo ${grupo.moeda || '-'}</h3>`;
+    html += `<div style="display:flex; flex-wrap:wrap; gap:10px;">`; // container flexível
+
+    todasImagens.forEach(nomeImagem => {
+      html += `
+        <div style="width:200px; text-align:center; margin-bottom:15px;">
+          <p style="margin-bottom:5px; font-size:10px; word-wrap:break-word;">${nomeImagem}</p>
+          <img src="http://192.168.43.226:3000/uploads/${nomeImagem}" 
+               alt="Imagem da despesa" 
+               style="max-width:100%; height:auto; display:block; margin:0 auto;" />
+        </div>
+      `;
+    });
+
+    html += `</div>`; // fecha o container flex
+  } else {
+    html += `<p>Sem imagens para este grupo.</p>`;
+  }
+});
+
+
   html += `</body></html>`; 
   return html;
 }
+
+
+// despesas.forEach((d) => {
+//   (d.imagens || []).forEach(img => {
+//     img.fotos.forEach(nomeArquivo => {
+//       html += `<img src="/uploads/${nomeArquivo}" alt="Imagem da despesa" style="max-width:150px; margin:5px;" />`;
+//     });
+//   });
+// });
 
 
 function formatarData(data) {

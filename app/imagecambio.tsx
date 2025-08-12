@@ -58,9 +58,10 @@ useEffect(() => {
       if (!token) {
         console.error('Token não encontrado');
         return;
-      }
+      } 
 
-      const response = await fetch(`https://api-com-nodejs-express-mongodb-prisma.onrender.com/fotos-cambios/${id_post}`, {
+      const response = await fetch(`http://192.168.43.226:3000/fotos-cambios/${id_post}`, {
+      // const response = await fetch(`https://api-com-nodejs-express-mongodb-prisma.onrender.com/fotos-cambios/${id_post}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -77,7 +78,8 @@ useEffect(() => {
 
       // ✅ Extrair caminhos das imagens
       const paths = data.flatMap((item) =>
-        item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
+        item.fotos.map((foto) => `http://192.168.43.226:3000/uploads/${foto}`)
+        // item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
       );
 
       setImages(paths);

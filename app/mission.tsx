@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { buscarMissoesAll, cadastrarMissao } from '../services/missao';
 import { useJwt } from './jwt';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Mission() {
@@ -75,7 +75,12 @@ export default function Mission() {
         carregarMissoes();
     }, []);
 
- 
+    const Logout = async () => {
+     await AsyncStorage.removeItem('userToken');
+     await AsyncStorage.removeItem('missao_id');
+     await AsyncStorage.removeItem('missao_name');
+     router.replace('/'); // redireciona para o login
+   };
     const cadastrar = async () => {
         const token = await AsyncStorage.getItem('userToken');
     
@@ -146,7 +151,7 @@ export default function Mission() {
 
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container}> 
 
             <View style={{ width: '100%' , marginBottom:60 }}>
                 {missoes.length > 0 ? (
@@ -209,6 +214,9 @@ export default function Mission() {
                 </ScrollView>
                 </KeyboardAvoidingView>
             </Modal>
+                  <TouchableOpacity style={styles.floatingButton} onPress={Logout}>
+                        <Ionicons name="log-out-outline" size={28} color="#FFF" />
+                    </TouchableOpacity>
 
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.registerButton} onPress={() => setModalVisible(true)} >
@@ -409,6 +417,22 @@ const styles = StyleSheet.create({
     },
     easy:{
         
-    }
+    },
+      floatingButton: {
+    position: 'absolute',
+    bottom: 80,
+    right: 20,
+    backgroundColor: '#48694fff', // vermelho para logout
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5, // sombra Android
+    shadowColor: '#000', // sombra iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
 
 });

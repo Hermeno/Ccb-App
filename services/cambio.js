@@ -26,23 +26,24 @@ export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, t
 }
 
 
-
-
-
-export const createfotos = async ({ fotos, id_post }, token) => {
+export const createfotos = async ({ fotos, id_post, missaofoto, datafoto, missaoId }, token) => {
     try {
         const formData = new FormData();
-        
+
         // Adicionando as fotos ao FormData
-        fotos.forEach(foto => {
+        fotos.forEach((foto, index) => {
             formData.append('file', {
                 uri: foto, 
-                type: 'image/jpeg',  // Altere o tipo de acordo com a foto
-                name: 'foto.jpg' // Nome para o arquivo
+                type: 'image/jpeg', // ou detecte o tipo real
+                name: `foto_${index}.jpg` // nome único para cada
             });
         });
 
+        // Adicionando os outros campos de texto
         formData.append('id_post', id_post);
+        formData.append('missaofoto', missaofoto);
+        formData.append('datafoto', datafoto);
+        formData.append('missaoId', missaoId);
 
         const response = await api.post('/fotos-cambio', formData, {
             headers: {
@@ -56,8 +57,6 @@ export const createfotos = async ({ fotos, id_post }, token) => {
         throw error;
     }
 };
-
-
 
 
 
@@ -90,6 +89,7 @@ export const buscarCabiosOneByOne = async (token, missao_id) => {
                 missao_id: missao_id,
             }
         });
+        console.log('Response from buscarCabiosOneByOne:', response.data);
         return response.data.cambios; // Certifique-se de que a chave é 'cambios' no retorno da API
     } catch (error) {
         throw error;

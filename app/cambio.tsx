@@ -95,13 +95,14 @@ useEffect(() => {
                  Alert.alert('Cambio realizado com sucesso!');
                  setCotacao('');
                  setMoeda_destino('');
-                 setMoeda_origem('');
+                 setMoeda_origem(''); 
                  setTotal_a_cambiar('');
                  setTotal_cambiado('');
                  setNumero_recibo('');
 
-                 const cambioId = response.data.cambio.id; // Acesse o campo 'id' dentro de 'cambio'
-                 router.push(`/camera?id_post=${cambioId}`);
+                 router.push(
+                    `/camera?id_post=${response.data.despesaId}&missao_id=${missaoId}&missao_name=${missaoName}`
+                  );
 
 
              }

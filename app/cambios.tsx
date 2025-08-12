@@ -100,13 +100,13 @@ export default function Home() {
                             <View style={styles.cardSection}>
                                 
                                 {Array.isArray(cambios) && cambios.length > 0 ? (
-                                    <ScrollView>
+                                    <ScrollView showsVerticalScrollIndicator={false}>
                                         {cambios.map((cambio, index) => (
                                             // <Text style={styles.TextSectionTitle}>Câmbios Realizados</Text>
                                             <View key={index} style={styles.cardItem}>
                                                 <Text style={styles.cardItemText}>
-                                                    <Text style={styles.cardItemLabel}>Moeda: </Text>
-                                                    {cambio.moeda_origem} para {cambio.moeda_destino}
+                                                    <Text style={styles.cardItemLabel}>Moeda: </Text>({cambio.moeda_destino})   
+                                                    
                                                 </Text>
                                                 <Text style={styles.cardItemText}>
                                                     <Text style={styles.cardItemLabel}>Cotação: </Text>
@@ -167,61 +167,34 @@ export default function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f8f8f8",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-    },
-    TextHeaderLogin: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "#487d76",
-        marginBottom: 20,
+        backgroundColor: "#f0f2f5",
+        padding: 16,
     },
     CardLogin: {
         width: '100%',
-        // flex: 1,
-        // backgroundColor: "#FFF",
-        // borderRadius: 10,
         padding: 10,
-        // shadowColor: "#000",
-        // shadowOffset: { width: 0, height: 4 },
-        // shadowOpacity: 0.1,
-        // shadowRadius: 4,
-        // elevation: 3,
     },
     cardSection: {
         marginBottom: 20,
         width: '100%',
     },
-    TextSectionTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#121212",
-        marginBottom: 15,
-    },
     cardItem: {
         backgroundColor: "#ffffff",
-        borderRadius: 10,
-        padding: 15,
+        borderRadius: 12,
+        padding: 20,
         marginBottom: 15,
         borderWidth: 1,
-        borderColor: "#ccc",
-        // shadowColor: "#000",
-        // shadowOpacity: 0.1,
-        // shadowRadius: 5,
-        // elevation: 3,
-    },
-    cardItemTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "#333",
-        marginBottom: 10,
+        borderColor: "#e0e0e0",
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+        elevation: 3, // para Android
     },
     cardItemText: {
-        fontSize: 16,
-        color: "#666",
-        marginBottom: 5,
+        fontSize: 15,
+        color: "#444",
+        marginBottom: 8,
     },
     cardItemLabel: {
         fontWeight: "bold",
@@ -229,17 +202,25 @@ const styles = StyleSheet.create({
     },
     noDataText: {
         fontSize: 16,
-        color: "#666",
+        color: "#999",
         textAlign: "center",
+        marginTop: 20,
     },
     buttonContainer: {
-        marginTop: 15,
+        marginTop: 10,
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
+        gap: 10,
     },
-    // noDataText: {
-    //     fontSize: 16,
-    //     color: "#666",
-    //     textAlign: "center",
-    // },
+    ButtonStyle: {
+        backgroundColor: "#487d76",
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 8,
+    },
+    ButtonText: {
+        color: "#fff",
+        fontWeight: "600",
+    }
 });
+

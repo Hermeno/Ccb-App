@@ -113,7 +113,7 @@ export const atualizarDespesa = async ({ id_despesa,  valor,  cidade, descricao,
 
 
 
-export const createfotos = async ({ fotos, id_post }, token) => {
+export const createfotos = async ({ fotos, id_post, missaofoto, datafoto, missaoId }, token) => {
     try {
         const formData = new FormData();
         
@@ -127,6 +127,9 @@ export const createfotos = async ({ fotos, id_post }, token) => {
         });
 
         formData.append('id_post', id_post);
+        formData.append('missaofoto', missaofoto);
+        formData.append('datafoto', datafoto);
+        formData.append('missaoId', missaoId);
 
         const response = await api.post('/fotos-despesas-cadastrar', formData, {
             headers: {

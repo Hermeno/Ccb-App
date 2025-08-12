@@ -36,7 +36,6 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
           try {
             const token = await AsyncStorage.getItem('userToken');
             const data = await buscarCreditos(token, missao_id);
-            console.log(missao_id)
             setCreditos(data);
           } catch (error) {
             console.error('Erro ao carregar créditos:', error);
@@ -109,10 +108,10 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
     
             if (response && response.dispesas) {
                 const despesaId = response.dispesas.id;
-                console.log('Despesa ID:', despesaId);
     
                 if (despesaId) {
-                    router.replace(`/cameradespesas?id_post=${despesaId}`);
+                    router.replace(
+                     `/cameradespesas?id_post=${despesaId}&missao_id=${missao_id}&missao_name=${missao_name}`)
                 }
     
                 Alert.alert('Sucesso!', 'Despesa cadastrada com sucesso!');
