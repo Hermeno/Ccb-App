@@ -57,8 +57,8 @@ useEffect(() => {
         return;
       }
 
-      // const response = await fetch(`https://api-com-nodejs-express-mongodb-prisma.onrender.com/fotos-despesas/${id_post}`, {
-      const response = await fetch(`http://192.168.43.226:3000/fotos-despesas/${id_post}`, {
+      const response = await fetch(`https://api-com-nodejs-express-mongodb-prisma.onrender.com/fotos-despesas/${id_post}`, {
+      // const response = await fetch(`http://192.168.43.226:3000/fotos-despesas/${id_post}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -74,8 +74,8 @@ useEffect(() => {
       console.log('Dados recebidos:', data);
 
       const paths = data.flatMap((item) =>
-        item.fotos.map((foto) => `http://192.168.43.226:3000/uploads/${foto}`)
-        // item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
+        // item.fotos.map((foto) => `http://192.168.43.226:3000/uploads/${foto}`)
+        item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
       );
 
       setImages(paths);

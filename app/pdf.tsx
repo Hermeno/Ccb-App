@@ -262,7 +262,7 @@ grupos.forEach(grupo => {
       html += `
         <div style="width:200px; text-align:center; margin-bottom:15px;">
           <p style="margin-bottom:5px; font-size:10px; word-wrap:break-word;">${nomeImagem}</p>
-          <img src="http://192.168.43.226:3000/uploads/${nomeImagem}" 
+          <img src="https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${nomeImagem}" 
                alt="Imagem da despesa" 
                style="max-width:100%; height:auto; display:block; margin:0 auto;" />
         </div>

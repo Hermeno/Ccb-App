@@ -7,7 +7,7 @@ import { FontAwesome, MaterialIcons } from '@expo/vector-icons';  // Importa os 
 
 export default function SignUp() {
     const [name, setName] = useState('');
-    const [user, setUser] = useState('');
+    // const [user, setUser] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [cargo, setCargo] = useState('');
@@ -18,7 +18,7 @@ export default function SignUp() {
 const handleSignUp = async () => {
     try {
         const response = await cadastrarUsuario({
-            user,
+            // user,
             name,
             email,
             cargo,

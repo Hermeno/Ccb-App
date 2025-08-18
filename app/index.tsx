@@ -60,7 +60,7 @@ export default function Home() {
 
     <View style={styles.mainContainer}>
       {/* <StatusBar hidden /> */}
-    {/* <StatusBar backgroundColor="#fff" barStyle="dark-content" /> */}
+    {/* <StatusBar backgroundColor="#fff" /> */}
     
       <View  style={styles.container}>
           {/* <Text style={styles.logoText}>Luxe</Text> */}

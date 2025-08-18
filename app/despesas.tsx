@@ -75,7 +75,7 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
       
       const handleDespesa = async () => {
         if (loading) return; // Evita múltiplos envios
-        setLoading(true);
+       
 
         const token = await AsyncStorage.getItem('userToken');
       
@@ -93,7 +93,7 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
             Alert.alert('Pelo menos uma categoria ou outro campo precisa ser preenchido.');
             return;
         }
-    
+         setLoading(true);
         try {
             const response = await cadastrarDespesa({
                 moeda,

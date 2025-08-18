@@ -50,7 +50,7 @@ export default function Home() {
   // const [referencia, setReferencia] = useState('');
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState('');
-
+  const [loading, setLoading] = useState(false);
 
 
 
@@ -75,43 +75,52 @@ export default function Home() {
     fetchMissao();
   }, []);
 
-  const cadastrar = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!moeda  || !valor || !referencia) {
-      Alert.alert('Preencha todos os campos obrigatórios.');
-      return;
-    }
-    if (!user) {
-      Alert.alert('Usuário não identificado.');
-      return;
-    }
 
-    try {
-      if (!token) {
-        Alert.alert('Token não encontrado. Faça login novamente.');
-        return;
-      }
+const cadastrar = async () => {
+  if (loading) return; // evita duplo clique
 
-      await cadastrarCredito(
-        {
-          user_id: user.id,
-          moeda: moeda,
-          valor,
-          referencia: referencia.join(', '),
-          missao_id: missaoId,
-        },
-        token
-      );
+  const token = await AsyncStorage.getItem('userToken');
 
-      Alert.alert('Sucesso!', 'Cadastrado com sucesso!');
-      setMoeda('');
-      setValor('');
-      setReferencia('');
-      router.replace('/home');
-    } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro ao cadastrar seu crédito. Tente novamente.');
-    }
-  };
+  // 🔹 Validações ANTES de setLoading(true)
+  if (!moeda || !valor || !referencia.length) {
+    Alert.alert('Preencha todos os campos obrigatórios.');
+    return;
+  }
+  if (!user) {
+    Alert.alert('Usuário não identificado.');
+    return;
+  }
+  if (!token) {
+    Alert.alert('Token não encontrado. Faça login novamente.');
+    return;
+  }
+
+  // 🔹 Só aqui ativa o loading
+  setLoading(true);
+
+  try {
+    await cadastrarCredito(
+      {
+        user_id: user.id,
+        moeda,
+        valor,
+        referencia: referencia.join(', '),
+        missao_id: missaoId,
+      },
+      token
+    );
+
+    Alert.alert('Sucesso!', 'Cadastrado com sucesso!');
+    setMoeda('');
+    setValor('');
+    setReferencia([]);
+    router.replace('/home');
+  } catch (error) {
+    Alert.alert('Erro', 'Ocorreu um erro ao cadastrar seu crédito. Tente novamente.');
+  } finally {
+    setLoading(false); // 🔹 libera o botão novamente
+  }
+};
 
 
 
@@ -158,10 +167,15 @@ return (
             </TouchableOpacity>
           ))}
           </View>
-
-          <TouchableOpacity style={styles.button} onPress={cadastrar}>
-            <Text style={styles.buttonText}>Cadastrar</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, loading && { opacity: 0.5 }]}
+              onPress={cadastrar}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? 'Cadastrando...' : 'Cadastrar'}
+              </Text>
+            </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

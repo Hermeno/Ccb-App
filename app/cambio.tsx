@@ -71,7 +71,7 @@ useEffect(() => {
  
      const handleCambio = async () =>{
       if (loading) return; // Evita múltiplos envios
-          setLoading(true);
+          
          const token = await AsyncStorage.getItem('userToken'); 
          if (!user) {
              Alert.alert('Erro', 'Usuário não identificado. Faça login novamente.');
@@ -81,6 +81,7 @@ useEffect(() => {
              Alert.alert('Erro', 'Todos os campos precisam ser preenchidos.');
              return;
          }
+         setLoading(true);
          try{
              const response = await cadastrarCambio ({
                  moeda_origem,
