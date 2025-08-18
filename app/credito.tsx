@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Platform ,KeyboardAvoidingView, ScrollView} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Platform ,KeyboardAvoidingView, ScrollView, Button} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { cadastrarCredito } from '../services/credito';
 import { useRouter } from 'expo-router';
@@ -51,6 +51,17 @@ export default function Home() {
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [data_padrao, setData_padrao] = useState(new Date());
+  const [showInicio, setShowInicio] = useState(false);
+  const showdata_padrao = () => {
+    setShowInicio(true);
+  };
+
+  const onChangedata_padrao = (event: any, selectedDate?: Date) => {
+    const currentDate = selectedDate || data_padrao;
+    setShowInicio(Platform.OS === 'ios' ? true : false);
+    setData_padrao(currentDate);
+  };
 
 
 
@@ -83,7 +94,7 @@ const cadastrar = async () => {
 
   // 🔹 Validações ANTES de setLoading(true)
   if (!moeda || !valor || !referencia.length) {
-    Alert.alert('Preencha todos os campos obrigatórios.');
+    Alert.alert('Preencha todos os campos obrigatórios.'); 
     return;
   }
   if (!user) {
@@ -104,6 +115,7 @@ const cadastrar = async () => {
         user_id: user.id,
         moeda,
         valor,
+        data_padrao: data_padrao,
         referencia: referencia.join(', '),
         missao_id: missaoId,
       },
@@ -167,6 +179,22 @@ return (
             </TouchableOpacity>
           ))}
           </View>
+
+            <View style={styles.ViewFlex}>
+                <View style={styles.ViewInputOne} >
+                <Text style={styles.TextInputs}>Selecione a data</Text>
+                    <Button  onPress={showdata_padrao} title="Escolher data" />
+                        <Text  style={styles.textoEscolhido}>{data_padrao.toLocaleDateString()}</Text>
+                        {showInicio && (
+                            <DateTimePicker value={data_padrao} mode="date" display="default" onChange={onChangedata_padrao} />
+                        )}
+                </View>
+            </View>
+
+
+
+
+
             <TouchableOpacity
               style={[styles.button, loading && { opacity: 0.5 }]}
               onPress={cadastrar}
@@ -248,21 +276,30 @@ const styles = StyleSheet.create({
 
 
 
-  listaContainer: {
-    flexDirection: 'column',
-    gap: 10,
-    backgroundColor: '#f9f9f9',
-        borderWidth: 1,
-    borderColor: '#ccc',
-    padding:10,
-    borderRadius:15
-  },
-  item: {
-    padding: 7,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 12,
-  },
+listaContainer: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  backgroundColor: '#f9f9f9',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  padding: 10,
+  borderRadius: 15,
+
+  marginBottom: 20,
+},
+
+item: {
+  padding: 7,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 12,
+  minWidth: '30%',   // ocupa pelo menos 30% da largura
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 10,   // espaço entre os itens horizontal
+  marginBottom: 10,  // espaço entre linhas
+},
+
   itemSelecionado: {
     backgroundColor: '#d1e7dd',
     borderColor: '#0f5132',
@@ -270,6 +307,31 @@ const styles = StyleSheet.create({
   itemTexto: {
     fontSize: 16,
   },
+  ViewFlex: {
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // marginBottom: 10,
+  },
+  ViewInput: {
+    width: '48%',
+    marginBottom: 10,
+  },
+  ViewInputOne: {
+    width: '100%',
+    marginBottom: 1,
+  },
+  TextInputs: {
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  textoEscolhido: {
+    fontSize: 16,
+    color: '#555',
+    marginTop: 5,
+  },
+
 
 
 });

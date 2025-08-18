@@ -48,15 +48,17 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
 
 
     const opcoes = [
-        { id: '1', label: 'Almoço' },
-        { id: '3', label: 'Atendimento' },
-        { id: '2', label: 'Bilhete Aerea' },
-        { id: '4', label: 'Cafe de Manhá' },
-        { id: '5', label: 'Hospedagem' },
-        { id: '6', label: 'Janta' },
-        { id: '7', label: 'Lanche' },
-        { id: '8', label: 'Medicamentos' },
-        { id: '9', label: 'Taxi / Uber' }
+
+      { id: '1', label: 'Almoço' },
+      { id: '4', label: 'Café da Manhã' },
+      { id: '2', label: 'Bilhete Aéreo' },
+      { id: '7', label: 'Lanche' },
+      { id: '6', label: 'Janta' },
+      { id: '5', label: 'Hospedagem' },
+      { id: '3', label: 'Atendimento' },
+      { id: '8', label: 'Medicamentos' },
+      { id: '9', label: 'Táxi / Uber' },
+          
     ];
     const handleSelectItem = (item: string) => {
         setOutro(''); // Limpa o campo "Outro"

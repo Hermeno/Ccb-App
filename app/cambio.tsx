@@ -3,6 +3,7 @@
  import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
  import { Link, useRouter,useLocalSearchParams  } from 'expo-router';
  import { cadastrarCambio } from '../services/cambio';
+  import DateTimePicker from '@react-native-community/datetimepicker';
  import { Picker } from '@react-native-picker/picker';
  import { buscarCreditos } from '../services/despesas';
  import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
@@ -22,6 +23,7 @@
      const [creditos, setCreditos] = useState([]);
      const [outraMoeda, setOutraMoeda] = useState('');
      const [loading, setLoading] = useState(false);
+      const [data_padrao, setData_padrao] = useState(new Date());
 const [mostrarCampoOutra, setMostrarCampoOutra] = useState(false);
 
 const [modalVisible, setModalVisible] = useState(false);
@@ -32,6 +34,16 @@ const handleSelecionarMoedaOrigem = (moeda) => {
 };
 
 
+const [showInicio, setShowInicio] = useState(false);
+const showdata_padrao = () => {
+  setShowInicio(true);
+};
+
+    const onChangedata_padrao = (event: any, selectedDate?:Date) => {
+        const currentDate = selectedDate || data_padrao;
+        setShowInicio(Platform.OS === 'ios' ? true : false);
+        setData_padrao(currentDate);
+    };
 
 
      const [missaoId, setMissaoId] = useState<string | null>(null);
@@ -88,6 +100,7 @@ useEffect(() => {
                  moeda_destino,
                  cotacao,
                  total_a_cambiar,
+                 data_padrao,
                  total_cambiado,
                  numero_recibo,
                  missao_id:missaoId
@@ -100,6 +113,7 @@ useEffect(() => {
                  setTotal_a_cambiar('');
                  setTotal_cambiado('');
                  setNumero_recibo('');
+                  setData_padrao(new Date());
 
                  router.push(
                     `/camera?id_post=${response.data.despesaId}&missao_id=${missaoId}&missao_name=${missaoName}`
@@ -272,6 +286,16 @@ function capitalizeFirstLetter(str: string) {
 
 
              </View>
+            <View style={styles.ViewFlex}>
+                <View style={styles.ViewInputOne} >
+                <Text style={styles.TextInputs}>Selecione a data</Text>
+                    <Button  onPress={showdata_padrao} title="Escolher data" />
+                        <Text  style={styles.textoEscolhido}>{data_padrao.toLocaleDateString()}</Text>
+                        {showInicio && (
+                            <DateTimePicker value={data_padrao} mode="date" display="default" onChange={onChangedata_padrao} />
+                        )}
+                </View>
+            </View>
  
              <View style={styles.ViewFlex}>
                  <View style={styles.ViewInput}>
@@ -280,13 +304,13 @@ function capitalizeFirstLetter(str: string) {
                  </View>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>Total a Cambiar</Text>
-                 <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar' keyboardType="numeric" />
+                 <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar (Origem)' keyboardType="numeric" />
                  </View>
              </View>
              <View style={styles.ViewFlex}>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>Total Cambiado</Text>
-                 <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado' keyboardType="numeric"  />
+                 <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado (Destino)' keyboardType="numeric"  />
                  </View>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>N do Recibo</Text>
@@ -522,12 +546,6 @@ function capitalizeFirstLetter(str: string) {
 
 
 
-linha: {
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  gap: 8,
-  marginTop: 8,
-},
 
 
 botaoTexto: {
@@ -586,6 +604,17 @@ fecharModalTexto: {
   color: '#fff',
 },
 
+textoEscolhido: {
+  marginTop: 10,
+  fontSize: 16,
+  color: '#333',
+  textAlign: 'center',
+},
+    ViewInputOne:{
+        width: '99%',
+        marginBottom: 1,
+        marginHorizontal: 10,
+    },
 
 
  })

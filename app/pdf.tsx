@@ -116,6 +116,14 @@ function gerarHtml(grupos) {
         <h1>CONGREGAÇÃO  CRISTÃ  NO  BRASIL</h1>
          <h1>Relatório de Câmbios e Despesas de viagem missionária</h1>
   `;
+function formatarValor(valor) {
+  if (!valor || isNaN(valor)) return '0,00';
+  return new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(valor);
+}
+
 
   if (grupos.length > 0) {
     const usuario = grupos[0];
@@ -123,7 +131,6 @@ function gerarHtml(grupos) {
     const fim = new Date(usuario.data_final_prevista);
     const diffEmMs = fim - inicio;
     const diasViagem = isNaN(diffEmMs) ? '-' : Math.ceil(diffEmMs / (1000 * 60 * 60 * 24)) + 1;
-
 
 
     html += `
@@ -162,7 +169,7 @@ function gerarHtml(grupos) {
           <td>-</td>
           <td>-</td>
           <td>${grupo.pais}</td>
-          <td><strong>${grupo.valorOriginal.toFixed(2)} ${grupo.moeda}</strong></td>
+          <td><strong>${formatarValor(grupo.valorOriginal, grupo.moeda)}</strong></td>
         </tr>
     `;
 
@@ -175,16 +182,18 @@ if (despesas.length > 0) {
 despesas.forEach((d) => {
   // Verifica se é uma entrada de moeda (acréscimo)
   const isCambio = d.tipo === 'cambio';
-  const dataDespesa = isCambio ? d.createdAt : d.data_padrao;
+  const dataDespesa = d.data_padrao;
   const isAcrescimo = d.moeda_destino === grupo.moeda;
 
-  // IGNORA o registro se for o valor inicial do crédito
-  const isValorInicial =
-    isCambio &&
-    parseFloat(d.total_cambiado) === grupo.valorOriginal &&
-    formatarData(dataDespesa) === formatarData(grupo.data_cambio);
 
-  if (isValorInicial) return; // pula esse registro
+
+
+const isValorInicial =
+  isCambio &&
+  Math.abs(parseFloat(d.total_cambiado) - grupo.valorOriginal) < 0.01 // tolerância para float
+  new Date(dataDespesa).toDateString() === new Date(grupo.data_cambio).toDateString();
+
+if (isValorInicial) return; 
 
   let vFinal = 0;
   if (isCambio) {
@@ -204,6 +213,12 @@ despesas.forEach((d) => {
     totalDescontos += vFinal;
   }
 
+
+
+
+
+
+
   const sinal = isAcrescimo ? '+' : '-';
   const nomesImagens = (d.imagens || [])
   .flatMap(img => img.fotos)
@@ -218,7 +233,7 @@ despesas.forEach((d) => {
       <td>${nomesImagens || '-'}</td>
       <td>${d.cidade || '-'}</td>
       <td>${grupo.pais}</td>
-      <td>${sinal}${vFinal.toFixed(2)} ${grupo.moeda}</td>
+      <td>${sinal}${formatarValor(vFinal, grupo.moeda)}</td>
     </tr>
   `;
 });
@@ -232,16 +247,12 @@ despesas.forEach((d) => {
 
 html += `
   <tr>
-    <td colspan="5"><strong>Total gasto em despesas</strong></td>
-    <td><strong>-${totalDescontos.toFixed(2)} ${grupo.moeda}</strong></td>
-  </tr>
-  <tr>
     <td colspan="5"><strong>Total Acrescentado</strong></td>
-    <td><strong>+${totalAcrescentado.toFixed(2)} ${grupo.moeda}</strong></td>
+    <td><strong>+${formatarValor(totalAcrescentado, grupo.moeda)}</strong></td>
   </tr>
   <tr>
     <td colspan="5"><strong>Saldo</strong></td>
-    <td><strong>${(grupo.valorOriginal + totalAcrescentado - totalDescontos).toFixed(2)} ${grupo.moeda}</strong></td>
+    <td><strong>${formatarValor(grupo.valorOriginal + totalAcrescentado - totalDescontos, grupo.moeda)}</strong></td>
   </tr>
 </table>
 `;});

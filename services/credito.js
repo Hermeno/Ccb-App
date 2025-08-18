@@ -4,11 +4,11 @@ import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Buffer } from 'buffer';
 
-export const cadastrarCredito = async ({ user_id, moeda, valor, referencia, missao_id }, token) => {
+export const cadastrarCredito = async ({ user_id, moeda, valor, data_padrao, referencia, missao_id }, token) => {
     try {
         const response = await api.post(
             '/cadastrar-credito',
-            { user_id, moeda, valor, referencia, missao_id },
+            { user_id, moeda, valor, data_padrao, referencia, missao_id },
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -62,8 +62,6 @@ export const buscarCreditoLimit = async (token, missao_id) => {
 
 export const buscarRelatorioTable = async (missaoId) => {
     const token = await AsyncStorage.getItem('userToken');
-    console.log("token e ", token)
-    console.log("id e ", missaoId)
   try {
     const response = await api.get('/relatorioTable', {
       headers: {
@@ -73,7 +71,6 @@ export const buscarRelatorioTable = async (missaoId) => {
         missao_id: missaoId
       }
     });
-    console.log(response.data.resultado)
     return response.data.resultado;
   } catch (error) {
     console.error('Erro ao buscar relatório:', error);
@@ -130,7 +127,6 @@ export const baixarRelatorioPdf = async (missao_id) => {
     });
 
     // Converter ArrayBuffer para base64
-    console.log(response.data)
     const base64 = Buffer.from(response.data).toString('base64');
 
     const caminho = FileSystem.documentDirectory + 'relatorio.pdf';
@@ -153,7 +149,6 @@ export const baixarRelatorioPdf = async (missao_id) => {
 
 
 export const baixarRelatorioPdfs = async (missaoId) => {
-    console.log('este e id_daMissao', missaoId)
   if (!missaoId) {
     throw new Error('ID da missão é obrigatório');
   }

@@ -154,7 +154,7 @@ export default function HomeScreen() {
 
 
         <TouchableOpacity style={styles.cardInfo} onPress={DESPESAVISUALIZATIONPDF}>
-          <Text style={styles.Textshow}>Pdf de relatorio </Text>
+          <Text style={styles.Textshow}>Pdf de Relatório </Text>
           <MaterialIcons name="arrow-forward" size={30} color="black" />
         </TouchableOpacity> 
 

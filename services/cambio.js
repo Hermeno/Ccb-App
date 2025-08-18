@@ -1,11 +1,12 @@
 import api from './api';
-export const cadastrarCambio = async ({  moeda_origem, moeda_destino, cotacao, total_a_cambiar, total_cambiado, numero_recibo,  missao_id}, token) => {
+export const cadastrarCambio = async ({  moeda_origem, moeda_destino, data_padrao,  cotacao, total_a_cambiar, total_cambiado, numero_recibo,  missao_id}, token) => {
     try {
         const response = await api.post('/cadastrar-cambio', {
             moeda_origem, 
             moeda_destino,
             cotacao,
             total_a_cambiar,
+            data_padrao,
             total_cambiado,
             numero_recibo,
             missao_id
