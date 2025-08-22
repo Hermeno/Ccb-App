@@ -108,13 +108,17 @@ const cadastrar = async () => {
 
   // 🔹 Só aqui ativa o loading
   setLoading(true);
-
+  // const valorNumerico = Number(valor.replace(',', '.'));
+const valorNumerico = Number(
+  valor.replace(/\./g, '').replace(',', '.')
+);
+console.log('Valor numérico:', valorNumerico);
   try {
     await cadastrarCredito(
       {
         user_id: user.id,
         moeda,
-        valor,
+        valor: valorNumerico,
         data_padrao: data_padrao,
         referencia: referencia.join(', '),
         missao_id: missaoId,
@@ -167,7 +171,7 @@ return (
           </View>
 
           <Text style={styles.label}>Valor creditado:</Text>
-          <TextInput  style={styles.input}  placeholder="Digite o valor"  value={valor}  onChangeText={setValor}  keyboardType="numeric"/>
+          <TextInput  style={styles.input}  placeholder="Digite o valor"  value={valor}  onChangeText={setValor} keyboardType="default" />
           <Text style={styles.label}>Referência:</Text>
           <View style={styles.listaContainer}>
           {referencias.map((item) => (

@@ -13,26 +13,6 @@ export default function App() {
   const [creditosLimit, setCreditosLimit] = useState([]);
 
   const { missao_id, missao_name } = useLocalSearchParams();
-  // const [missaoId, setMissaoId] = useState<string | null>(null);
-  // const [missaoName, setMissaoName] = useState('');  
-  // useEffect(() => {
-  //    const fetchMissao = async () => {
-  //      const missao_id = await AsyncStorage.getItem('missao_id');
-  //      const missao_name = await AsyncStorage.getItem('missao_name');         
-  //      if (missao_id) {
-  //        setMissaoId(missao_id);
-  //      }
-  //      if (missao_name) {
-  //        setMissaoName(missao_name);
-  //      }
-  //    };   
-  //    fetchMissao();
-  //  }, []);  
-
-
-
-
-
   // UseEffect para buscar créditos
   useEffect(() => {
     const carregarCredito = async () => {
@@ -95,7 +75,13 @@ function capitalizeFirstLetter(str: string) {
           <TouchableOpacity key={credito.id} style={styles.cardTop}>
             <Text style={styles.titleTop}>Saldo Disponível</Text>
             <Text style={styles.titleTop}>Em {credito.moeda}</Text>
-            <Text style={styles.titleTop}>{Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
+              
+<Text style={styles.titleTop}>
+  {(credito.valor / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+</Text>
+
+
+
           </TouchableOpacity>
         ))
       ) : (
@@ -107,7 +93,7 @@ function capitalizeFirstLetter(str: string) {
           creditos.map((credito) => (
             <TouchableOpacity key={credito.id} style={styles.Top}>
               <Text style={styles.TopTitle}>Saldo em {moedaEmPortugues(credito.moeda)}</Text>
-              <Text style={styles.cardAmount}>{Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
+              <Text style={styles.cardAmount}>{Number(credito.valor / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
             </TouchableOpacity>
           ))
         ) : (

@@ -114,7 +114,10 @@ export default function HomeScreen() {
           <TouchableOpacity key={credito.id} style={styles.card}>
             <Text style={styles.title}>Saldo Disponível</Text>
             <Text style={styles.title}>Em {credito.moeda}</Text>
-            <Text style={styles.title}> {Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
+            {/* <Text style={styles.title}> {Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text> */}
+            <Text style={styles.title}>
+              {(credito.valor / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </Text>
           </TouchableOpacity>
         ))
       ) : (

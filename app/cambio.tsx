@@ -94,14 +94,32 @@ useEffect(() => {
              return;
          }
          setLoading(true);
+        //  const valorCotacao = Number(cotacao.replace(/\./g, '').replace(',', '.'));
+        //  const valorTotal_a_cambiar = Number(total_a_cambiar.replace(/\./g, '').replace(',', '.'));
+        //   const valorTotal_cambiado =  Number(total_cambiado.replace(/\./g, '').replace(',', '.'));
+          function parseValor(valor: string) {
+            // Se tem vírgula, troca por ponto e remove pontos de milhares
+            if (valor.includes(',')) {
+              return Number(valor.replace(/\./g, '').replace(',', '.'));
+            }
+            // Se não tem vírgula, assume ponto como decimal
+            return Number(valor);
+          }
+          const valorCotacao = parseValor(cotacao);
+          const valorTotal_a_cambiar = parseValor(total_a_cambiar);
+          const valorTotal_cambiado = parseValor(total_cambiado);
+          console.log('Valor Cotação:', valorCotacao);
+          console.log('Valor Total a Cambiar:', valorTotal_a_cambiar);  
+          console.log('Valor Total Cambiado:', valorTotal_cambiado);
+
          try{
              const response = await cadastrarCambio ({
                  moeda_origem,
                  moeda_destino,
-                 cotacao,
-                 total_a_cambiar,
+                 cotacao: valorCotacao,
+                 total_a_cambiar: valorTotal_a_cambiar,
                  data_padrao,
-                 total_cambiado,
+                 total_cambiado: valorTotal_cambiado,
                  numero_recibo,
                  missao_id:missaoId
              }, token)
@@ -197,7 +215,7 @@ function capitalizeFirstLetter(str: string) {
                           onPress={() => handleSelecionarMoedaOrigem(credito.moeda)}
                           style={[styles.botaoMoeda, moeda_origem === credito.moeda && styles.botaoSelecionado]}>
                           <Text style={styles.botaoTexto}>
-                            {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)})`}
+                            {`${Number(credito.valor / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)})`}
                             {moeda_origem === credito.moeda ? ' ✅' : ''}
                           </Text>
                         </TouchableOpacity>
@@ -300,17 +318,17 @@ function capitalizeFirstLetter(str: string) {
              <View style={styles.ViewFlex}>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>Cotação</Text>
-                 <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotação' keyboardType="numeric"  />
+                 <TextInput  value={cotacao} onChangeText={setCotacao} style={styles.input} placeholder='Cotação' keyboardType="default"  />
                  </View>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>Total a Cambiar</Text>
-                 <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar (Origem)' keyboardType="numeric" />
+                 <TextInput  value={total_a_cambiar} onChangeText={setTotal_a_cambiar} style={styles.input} placeholder='Total a Cambiar (Origem)' keyboardType="default" />
                  </View>
              </View>
              <View style={styles.ViewFlex}>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>Total Cambiado</Text>
-                 <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado (Destino)' keyboardType="numeric"  />
+                 <TextInput  value={total_cambiado} onChangeText={setTotal_cambiado} style={styles.input} placeholder='Total Cambiado (Destino)' keyboardType="default"  />
                  </View>
                  <View style={styles.ViewInput}>
                  <Text style={styles.TextInputs}>N do Recibo</Text>

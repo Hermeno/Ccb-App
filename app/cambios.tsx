@@ -110,15 +110,15 @@ export default function Home() {
                                                 </Text>
                                                 <Text style={styles.cardItemText}>
                                                     <Text style={styles.cardItemLabel}>Cotação: </Text>
-                                                    {cambio.cotacao}
+                                                    {cambio.cotacao / 100}
                                                 </Text>
                                                 <Text style={styles.cardItemText}>
                                                     <Text style={styles.cardItemLabel}>Total a Cambiar: </Text>
-                                                    {cambio.total_a_cambiar}
+                                                    {(cambio.total_a_cambiar / 100) }
                                                 </Text>
                                                 <Text style={styles.cardItemText}>
                                                     <Text style={styles.cardItemLabel}>Total Cambiado: </Text>
-                                                    {cambio.total_cambiado}
+                                                    {(cambio.total_cambiado / 100) }
                                                 </Text>
                                                 <Text style={styles.cardItemText}>
                                                     <Text style={styles.cardItemLabel}>Número do Recibo: </Text>

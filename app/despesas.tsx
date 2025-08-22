@@ -96,10 +96,11 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
             return;
         }
          setLoading(true);
+           const valorCotacao = Number(valor.replace(/\./g, '').replace(',', '.'));
         try {
             const response = await cadastrarDespesa({
                 moeda,
-                valor,
+                valor: valorCotacao, // Convertendo para centavos
                 cidade,
                 descricao,
                 outro,
@@ -228,7 +229,7 @@ function capitalizeFirstLetter(str: string) {
                         ]}
                       >
                         <Text style={stylesMoedaContainer.itemTexto}>
-                          {`${Number(credito.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)})`}
+                          {`${Number(credito.valor / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${moedaEmPortugues(credito.moeda)})`}
                           {moeda === credito.moeda ? ' ✅' : ''}
                         </Text>
                       </TouchableOpacity>
@@ -366,7 +367,7 @@ function capitalizeFirstLetter(str: string) {
             <View style={styles.ViewFlex}>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>Valor</Text>
-                <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor' keyboardType="numeric"  />
+                <TextInput  value={valor} onChangeText={setValor} style={styles.input} placeholder='Valor' keyboardType="default"  />
                 </View>
                 <View style={styles.ViewInput}>
                 <Text style={styles.TextInputs}>N do Recibo</Text>

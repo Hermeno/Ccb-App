@@ -69,7 +69,7 @@ const exportarCSV = async () => {
   const rows = despesas.map(d => [
     missaoName,
     d.moeda,
-    d.valor,
+    d.valor / 100,
     d.cidade,
     d.descricao,
     d.outro,
@@ -139,7 +139,7 @@ function moedaEmPortugues(moeda: string) {
               <Text style={styles.TopTitle}>{despesa.descricao}</Text>
               {/* <Text style={styles.cardAmount}>   {despesa.moeda}-{despesa.valor}</Text> */}
                 <Text style={styles.cardAmount}>
-                 {Number(despesa.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ({moedaEmPortugues(despesa.moeda)})
+                 {Number(despesa.valor  / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ({moedaEmPortugues(despesa.moeda)})
                 </Text>
 
                 <View>

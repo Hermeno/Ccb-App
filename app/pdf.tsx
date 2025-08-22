@@ -110,6 +110,13 @@ function gerarHtml(grupos) {
             color: gray;
             margin-bottom: 20px;
           }
+          .cabecalho {
+            background-color: #f2f2f2;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top:50px;
+          }
         </style>
       </head>
       <body>
@@ -151,7 +158,7 @@ function formatarValor(valor) {
 
   grupos.forEach((grupo) => {
     html += `
-      <h2>Moeda: ${grupo.moeda}</h2>
+      <h2 class="cabecalho">Moeda: ${grupo.moeda}</h2>
       <table>
         <tr>
           <th>DATA</th>
@@ -163,13 +170,13 @@ function formatarValor(valor) {
           <th>VALOR</th>
         </tr>
         <tr>
-          <td>${formatarData(grupo.data_cambio)}</td>
+          <td>${formatarData(grupo.data_padrao)}</td>
           <td><strong>Recurso para Despesas</strong></td>
           <td>${grupo.numero_recibo || '-'}</td>
           <td>-</td>
           <td>-</td>
           <td>${grupo.pais}</td>
-          <td><strong>${formatarValor(grupo.valorOriginal, grupo.moeda)}</strong></td>
+          <td><strong>${formatarValor(grupo.valorOriginal / 100, grupo.moeda)}</strong></td>
         </tr>
     `;
 
@@ -233,7 +240,7 @@ if (isValorInicial) return;
       <td>${nomesImagens || '-'}</td>
       <td>${d.cidade || '-'}</td>
       <td>${grupo.pais}</td>
-      <td>${sinal}${formatarValor(vFinal, grupo.moeda)}</td>
+      <td>${sinal}${formatarValor((vFinal / 100), grupo.moeda)}</td>
     </tr>
   `;
 });
@@ -247,12 +254,9 @@ if (isValorInicial) return;
 
 html += `
   <tr>
-    <td colspan="5"><strong>Total Acrescentado</strong></td>
-    <td><strong>+${formatarValor(totalAcrescentado, grupo.moeda)}</strong></td>
-  </tr>
-  <tr>
     <td colspan="5"><strong>Saldo</strong></td>
-    <td><strong>${formatarValor(grupo.valorOriginal + totalAcrescentado - totalDescontos, grupo.moeda)}</strong></td>
+    <td>${grupo.pais}</td>
+    <td><strong>${formatarValor((grupo.valorOriginal + totalAcrescentado - totalDescontos ) / 100, grupo.moeda)}</strong></td>
   </tr>
 </table>
 `;});
