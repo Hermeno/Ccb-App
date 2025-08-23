@@ -18,6 +18,7 @@ export const cadastrarCambio = async ({  moeda_origem, moeda_destino, data_padra
         }   
     );
         // return response.message;
+        console.log('Resposta do backend:', response.data);
         return response;
     } catch (error) {
         // return r

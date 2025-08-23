@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text,  StyleSheet,TextInput, TouchableOpacity, Alert, Platform, Button, Modal, FlatList, Image, KeyboardAvoidingView, ScrollView  } from 'react-native';
 import { Link, useRouter, useLocalSearchParams   } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
 import { cadastrarDespesa, buscarCreditos } from '../services/despesas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -96,7 +95,17 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
             return;
         }
          setLoading(true);
-           const valorCotacao = Number(valor.replace(/\./g, '').replace(',', '.'));
+          function parseValor(valor: string) {
+            if (valor.includes(',')) {
+              return Number(valor.replace(/\./g, '').replace(',', '.'));
+            }
+            if (valor.includes('.')) {
+              return Number(valor.replace(/,/g, ''));
+            }
+            // Só número
+            return Number(valor);
+          }
+        const valorCotacao = parseValor(valor);
         try {
             const response = await cadastrarDespesa({
                 moeda,
