@@ -78,7 +78,7 @@ useEffect(() => {
     }
   };
 
-  carregarCreditos();
+  carregarCreditos(); 
 }, [missaoId]);
  
      const handleCambio = async () =>{
@@ -94,24 +94,20 @@ useEffect(() => {
              return;
          }
          setLoading(true);
-        //  const valorCotacao = Number(cotacao.replace(/\./g, '').replace(',', '.'));
-        //  const valorTotal_a_cambiar = Number(total_a_cambiar.replace(/\./g, '').replace(',', '.'));
-        //   const valorTotal_cambiado =  Number(total_cambiado.replace(/\./g, '').replace(',', '.'));
           function parseValor(valor: string) {
-            // Se tem vírgula, troca por ponto e remove pontos de milhares
             if (valor.includes(',')) {
               return Number(valor.replace(/\./g, '').replace(',', '.'));
             }
-            // Se não tem vírgula, assume ponto como decimal
             return Number(valor);
           }
           const valorCotacao = parseValor(cotacao);
           const valorTotal_a_cambiar = parseValor(total_a_cambiar);
           const valorTotal_cambiado = parseValor(total_cambiado);
-          console.log('Valor Cotação:', valorCotacao);
-          console.log('Valor Total a Cambiar:', valorTotal_a_cambiar);  
-          console.log('Valor Total Cambiado:', valorTotal_cambiado);
-
+          if (isNaN(valorCotacao) || isNaN(valorTotal_a_cambiar) || isNaN(valorTotal_cambiado)) {
+            Alert.alert('Valores numéricos inválidos. Use apenas números e vírgulas para decimais.');
+            setLoading(false);
+            return;
+          }
          try{
              const response = await cadastrarCambio ({
                  moeda_origem,

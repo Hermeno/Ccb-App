@@ -94,6 +94,19 @@ const [modalMoedaVisible, setModalMoedaVisible] = useState(false);
             Alert.alert('Pelo menos uma categoria ou outro campo precisa ser preenchido.');
             return;
         }
+
+        // valoor if is number get else alert
+        if (isNaN(Number(valor.replace(',', '.')))) {
+            Alert.alert('O valor precisa ser um número válido.');
+            return;
+        }
+
+
+
+
+
+
+
          setLoading(true);
           function parseValor(valor: string) {
             if (valor.includes(',')) {

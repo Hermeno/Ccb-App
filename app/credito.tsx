@@ -112,6 +112,11 @@ const cadastrar = async () => {
 const valorNumerico = Number(
   valor.replace(/\./g, '').replace(',', '.')
 );
+  if (isNaN(valorNumerico)) {
+    Alert.alert('Valor numérico inválido. Use apenas números e vírgulas para decimais.');
+    setLoading(false);
+    return;
+  }
 console.log('Valor numérico:', valorNumerico);
   try {
     await cadastrarCredito(
