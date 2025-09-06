@@ -97,7 +97,6 @@ export default function HomeScreen() {
   };
   
   const DESPESAVISUALIZATIONPDF = () => {
-    console.log('indo na page page', missaoId)
     if (missaoId) router.push(`/pdf?missaoId=${missaoId}&missaoName=${missaoName}`);
   };
   

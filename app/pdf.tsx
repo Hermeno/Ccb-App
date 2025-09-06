@@ -61,6 +61,10 @@ const PdfGenerator = () => {
   );
 };
 
+
+
+
+
 export default PdfGenerator;
 
 function gerarHtml(grupos) {
@@ -117,6 +121,46 @@ function gerarHtml(grupos) {
             font-size: 14px;
             margin-top:50px;
           }
+
+
+          @page {
+            size: A4;
+            margin: 20mm; /* define margens consistentes no PDF */
+          }
+
+          body {
+            margin: 0;
+            padding: 0;
+          }
+
+          /* Força quebra de página quando um conteúdo não couber */
+          table, h1, h2, .user-info, .cabecalho {
+            page-break-inside: avoid; /* evita cortar dentro da tabela ou cabeçalho */
+          }
+
+          h1, h2 {
+            page-break-before: avoid;
+            page-break-after: avoid;
+          }
+
+          /* Garante que grandes blocos de imagens quebrem certinho */
+          div {
+            page-break-inside: avoid;
+          }
+
+          tr {
+            page-break-inside: avoid; /* não quebra uma linha no meio */
+            page-break-after: auto;
+          }
+
+          img {
+            max-width: 100%;
+            height: auto;
+            page-break-inside: avoid;
+          }
+            .cabecalho {
+              page-break-before: always;
+            }
         </style>
       </head>
       <body>
@@ -294,15 +338,6 @@ grupos.forEach(grupo => {
   html += `</body></html>`; 
   return html;
 }
-
-
-// despesas.forEach((d) => {
-//   (d.imagens || []).forEach(img => {
-//     img.fotos.forEach(nomeArquivo => {
-//       html += `<img src="/uploads/${nomeArquivo}" alt="Imagem da despesa" style="max-width:150px; margin:5px;" />`;
-//     });
-//   });
-// });
 
 
 function formatarData(data) {

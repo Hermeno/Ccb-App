@@ -11,7 +11,6 @@ const RelatorioPage = () => {
   const [relatorio, setRelatorio] = useState([]);
   const [loading, setLoading] = useState(true);
   const { missaoId, missao_name } = useLocalSearchParams();
-  console.log('id da mission page tsx', missaoId)
 
   const fetchRelatorio = async () => {
     try { 

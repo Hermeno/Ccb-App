@@ -31,8 +31,6 @@ useEffect(() => {
       const token = await AsyncStorage.getItem('userToken');
       if (token && missao_id) {
         const dados = await buscarMissaoPorId(missao_id, token);
-        console.log('Missão da API:', dados);
-
         let missaoObj = Array.isArray(dados) ? dados[0] : dados;
         setMissao(missaoObj);
         if (missaoObj) {
@@ -71,8 +69,6 @@ useEffect(() => {
       }
 
       const data = await response.json();
-      console.log('Dados recebidos:', data);
-
       const paths = data.flatMap((item) =>
         // item.fotos.map((foto) => `http://192.168.43.226:3000/uploads/${foto}`)
         item.fotos.map((foto) => `https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${foto}`)
@@ -98,7 +94,6 @@ useEffect(() => {
           const downloadUri = `${FileSystem.documentDirectory}${filename}`;
 
       const { uri } = await FileSystem.downloadAsync(url, downloadUri);
-      console.log('Imagem baixada para:', uri);
 
       const asset = await MediaLibrary.createAssetAsync(uri);
       const album = await MediaLibrary.getAlbumAsync('Camera');

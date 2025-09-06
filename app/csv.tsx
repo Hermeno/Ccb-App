@@ -78,11 +78,7 @@ export default function CsvScreen() {
             await FileSystem.writeAsStringAsync(fileUri, csvContent, {
                 encoding: FileSystem.EncodingType.UTF8,
             });
-            console.log(`Arquivo CSV salvo em: ${fileUri}`);
-
-            // ➡️ Verificando se o dispositivo pode compartilhar arquivos
             const canShare = await Sharing.isAvailableAsync();
-            console.log('Compartilhamento disponível:', canShare);
 
             if (canShare) {
                 // Compartilhar o arquivo gerado

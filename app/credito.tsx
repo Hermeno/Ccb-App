@@ -117,7 +117,7 @@ const valorNumerico = Number(
     setLoading(false);
     return;
   }
-console.log('Valor numérico:', valorNumerico);
+
   try {
     await cadastrarCredito(
       {

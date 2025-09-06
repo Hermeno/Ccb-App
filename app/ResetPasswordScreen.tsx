@@ -13,7 +13,6 @@ export default function ResetPasswordScreen() {
             const route = url.replace(/.*?:\/\//g, ''); // Pega a URL depois do esquema
             if (route.startsWith('redefinir-senha')) {
                 // Aqui você pode extrair o token, se necessário, ou fazer qualquer outra ação
-                console.log('Link de redefinir senha', route);
             }
         };
 

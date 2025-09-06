@@ -91,7 +91,6 @@ export const buscarCabiosOneByOne = async (token, missao_id) => {
                 missao_id: missao_id,
             }
         });
-        console.log('Response from buscarCabiosOneByOne:', response.data);
         return response.data.cambios; // Certifique-se de que a chave é 'cambios' no retorno da API
     } catch (error) {
         throw error;

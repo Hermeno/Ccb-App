@@ -159,7 +159,7 @@ export const baixarRelatorioPdfs = async (missaoId) => {
   }
 
   try {
-    console.log('🔄 Iniciando download do PDF para missão:', missaoId);
+
     
     // Gerar nome único para o arquivo
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -178,8 +178,7 @@ export const baixarRelatorioPdfs = async (missaoId) => {
       }
     );
 
-    console.log('✅ Download concluído:', downloadResult.status);
-    console.log('📄 Arquivo salvo em:', downloadResult.uri);
+
 
     if (downloadResult.status !== 200) {
       throw new Error(`Erro no download: Status ${downloadResult.status}`);
@@ -191,9 +190,7 @@ export const baixarRelatorioPdfs = async (missaoId) => {
       throw new Error('Arquivo PDF não foi criado');
     }
 
-    console.log('📄 Tamanho do arquivo:', fileInfo.size, 'bytes');
 
-    console.log('📤 Compartilhando PDF...');
     
     await Sharing.shareAsync(caminho, {
       mimeType: 'application/pdf',
@@ -201,7 +198,7 @@ export const baixarRelatorioPdfs = async (missaoId) => {
       UTI: 'com.adobe.pdf',
     });
 
-    console.log('🎉 PDF compartilhado com sucesso!');
+
     return { sucesso: true, caminho };
 
   } catch (error) {
