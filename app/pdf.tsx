@@ -85,7 +85,7 @@ function gerarHtml(grupos) {
             margin-bottom: 10px;
           }
           .user-info {
-            margin-bottom: 20px;
+            margin-top: 80px;
             padding: 10px;
             border: 1px solid #000;
             background-color: #f2ebebff;
@@ -320,7 +320,7 @@ grupos.forEach(grupo => {
     todasImagens.forEach(nomeImagem => {
       html += `
         <div style="width:200px; text-align:center; margin-bottom:15px;">
-          <p style="margin-bottom:5px; font-size:10px; word-wrap:break-word;">${nomeImagem}</p>
+
           <img src="https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${nomeImagem}" 
                alt="Imagem da despesa" 
                style="max-width:100%; height:auto; display:block; margin:0 auto;" />

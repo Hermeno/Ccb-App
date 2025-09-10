@@ -56,7 +56,8 @@ export default function MissaoPage() {
   return (
     <View style={styles.container}>
       {/* Conteúdo do fundo da tela */}
-      <Text style={styles.tituloCabecalho}>Missão: {missao_name}</Text>
+      <Text style={styles.tituloCabecalho}>{missao_name}</Text>
+      {/* <Text style={styles.tituloCabecalho}>Missão: {missao_name}</Text> */}
 
       {/* Detalhes da missão que sobem do rodapé */}
       <Animated.View style={[styles.cardAnimado, { transform: [{ translateY: slideAnim }] }]}>
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   cardAnimado: {
     position: 'absolute',
     bottom: 0,
-    height: height * 0.75,
+    height: height * 0.80,
     width: '100%',
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,

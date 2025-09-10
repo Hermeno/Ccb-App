@@ -18,81 +18,106 @@ export default function UpdatePage() {
 
     const [missaoId, setMissaoId] = useState<string | null>(null);
     const [missaoName, setMissaoName] = useState('');  
-    useEffect(() => {
-       const fetchMissao = async () => {
-         const missao_id = await AsyncStorage.getItem('missao_id');
-         const missao_name = await AsyncStorage.getItem('missao_name');         
-         if (missao_id) {
-           setMissaoId(missao_id);
-         }
-         if (missao_name) {
-           setMissaoName(missao_name);
-         }
-       };   
-       fetchMissao();
-     }, []);  
+    const params = useLocalSearchParams();
+    const id_post = params.id_post as string; // ID do câmbio a ser atualizado
+     const {   missao_id, missao_name, idCambio } = useLocalSearchParams();
 
 
 
 
 
     useEffect(() => {
-        const carregarDados = async () => {
-            try {
+        const fetchCambios = async () => {
+            try {   
                 const token = await AsyncStorage.getItem('userToken');
+                const response = await buscarCambioPorId(idCambio, token, missaoId);
+                if (response) {
+                    setMoeda_origem(response.moeda_origem);
+                    setMoeda_destino(response.moeda_destino);
 
-                // Buscar créditos disponíveis
-                const data = await buscarCreditos(token);
-                setCreditos(data);
-
-                // Carregar os valores existentes do câmbio
-                const cambio = await buscarCambioPorId(missaoId, token);
-                setMoeda_origem(cambio.moeda_origem);
-                setMoeda_destino(cambio.moeda_destino);
-                setCotacao(String(cambio.cotacao));
-                setTotal_a_cambiar(String(cambio.total_a_cambiar));
-                setTotal_cambiado(String(cambio.total_cambiado));
-                setNumero_recibo(cambio.numero_recibo);
-
+                    // Multiplicar cotacao, total_a_cambiar, total_cambiado por 100 para converter para porcentagem
+                    // setValor((data.valor / 100).toFixed(2).replace('.', ','));
+                    setCotacao((response.cotacao / 100).toString());
+                    setTotal_a_cambiar((response.total_a_cambiar / 100).toString());
+                    setTotal_cambiado((response.total_cambiado / 100).toString());  
+                    setNumero_recibo(response.numero_recibo);
+                    setMissaoId(response.missao_id);
+                }else{
+                    console.log('Resposta vazia ao buscar câmbio por ID');
+                }
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
+                console.error('Erro ao buscar créditos:', error);
             }
         };
+        fetchCambios();
+    }, [missao_id]);
 
-        carregarDados();
-    }, [missaoId]);
+
+
+    //           function parseValor(valor: string) {
+            //     if (valor.includes(',')) {
+            //       return Number(valor.replace(/\./g, '').replace(',', '.'));
+            //     }
+            //     return Number(valor);
+            //   }
+            //   const valorNumerico = parseValor(valor);
+            //   if (isNaN(valorNumerico)) {
+            //     Alert.alert('Valor numérico inválido. Use apenas números e vírgulas para decimais.');
+            //     return;
+            //   }
+
 
     const handleUpdate = async () => {
-        if (!moeda_origem || !moeda_destino || !cotacao || !total_a_cambiar || !numero_recibo || !missaoId) {
-            Alert.alert( 'Todos os campos precisam ser preenchidos.');
+        const token = await AsyncStorage.getItem('userToken');
+
+        if (!cotacao || !moeda_origem || !moeda_destino || !total_a_cambiar || !total_cambiado || !numero_recibo) {
+            Alert.alert('Todos os campos precisam ser preenchidos.');
             return;
         }
-    
+        function parseValor(valor: string) {
+            if (valor.includes(',')) {
+              return Number(valor.replace(/\./g, '').replace(',', '.'));
+            }
+
+            return Number(valor);
+            }
+            const cotacaoNumerico = parseValor(cotacao);
+            const total_a_cambiarNumerico = parseValor(total_a_cambiar);
+            const total_cambiadoNumerico = parseValor(total_cambiado);
+            if (isNaN(cotacaoNumerico) || isNaN(total_a_cambiarNumerico) || isNaN(total_cambiadoNumerico)) {
+            Alert.alert('Valores numéricos inválidos. Use apenas números e vírgulas para decimais.');
+            return;
+            }
         try {
-            const token = await AsyncStorage.getItem('userToken');
-            const response = await atualizarCambio(
-                missaoId,
+            await atualizarCambio(
                 {
+                    idCambio,
+                    cotacao: cotacaoNumerico,
                     moeda_origem,
                     moeda_destino,
-                    cotacao,
-                    total_a_cambiar,
-                    total_cambiado,
+                    total_a_cambiar: total_a_cambiarNumerico,
+                    total_cambiado: total_cambiadoNumerico,
                     numero_recibo,
-                    missao_id:missaoId // ✅ Adicionando missaoId aqui
+                    missao_id: missaoId,
                 },
                 token
-            );
-    
-            if (response.status === 200) {
-                Alert.alert('Sucesso', 'Câmbio atualizado com sucesso!');
-                router.replace(`/home`);
-            }
+            );  
+            Alert.alert('Sucesso!', 'Câmbio atualizado com sucesso!');
+            router.replace(`/home`);
         } catch (error) {
             console.error('Erro ao atualizar câmbio:', error);
-            Alert.alert( 'Não foi possível atualizar o câmbio.');
+            Alert.alert('Não foi possível atualizar o câmbio.');
         }
     };
+
+
+
+
+
+
+
+
+
     
     return (
         <View style={{ flex: 1, padding: 20, backgroundColor: '#FFF' }}>
@@ -102,27 +127,25 @@ export default function UpdatePage() {
 
             {/* Moeda de origem */}
             <Text style={styles.label}>Moeda de Origem:</Text>
-            <Picker selectedValue={moeda_origem}onValueChange={(itemValue) => setMoeda_origem(itemValue)}  >
-                <Picker.Item label="Selecione uma moeda de origem..." value="" />
-                {creditos.map((credito) => (
-                    <Picker.Item key={credito.id} label={`${credito.moeda}`} value={credito.moeda} />
-                ))}
-            </Picker>
+            <TextInput
+                value={moeda_origem }
+                onChangeText={setMoeda_origem}
+                style={styles.input}
+                placeholder="Cotação"
+                keyboardType="default"
+                editable={false}
+            />
 
             {/* Moeda de destino */}
             <Text style={styles.label}>Moeda de Destino:</Text>
-            <Picker
-                selectedValue={moeda_destino}
-                onValueChange={(itemValue) => setMoeda_destino(itemValue)}
-            >
-                <Picker.Item label="Selecione uma moeda de destino..." value="" />
-                <Picker.Item label="Dólar" value="dolar" />
-                <Picker.Item label="Real" value="real" />
-                <Picker.Item label="Metical" value="metical" />
-                <Picker.Item label="Euro" value="euro" />
-                <Picker.Item label="Libra" value="libra" />
-                <Picker.Item label="Iene" value="iene" />
-            </Picker>
+            <TextInput
+                value={moeda_destino}
+                onChangeText={setMoeda_destino}
+                style={styles.input}
+                placeholder="Cotação"
+                keyboardType="default"
+                editable={false}
+            />
 
             {/* Cotação */}
             <Text style={styles.label}>Cotação:</Text>
@@ -131,7 +154,7 @@ export default function UpdatePage() {
                 onChangeText={setCotacao}
                 style={styles.input}
                 placeholder="Cotação"
-                keyboardType="numeric"
+                keyboardType="default"
             />
 
             {/* Total a Cambiar */}
@@ -141,7 +164,7 @@ export default function UpdatePage() {
                 onChangeText={setTotal_a_cambiar}
                 style={styles.input}
                 placeholder="Total a Cambiar"
-                keyboardType="numeric"
+                keyboardType="default"
             />
 
             {/* Total Cambiado */}
@@ -151,7 +174,7 @@ export default function UpdatePage() {
                 onChangeText={setTotal_cambiado}
                 style={styles.input}
                 placeholder="Total Cambiado"
-                keyboardType="numeric"
+                keyboardType="default"
             />
 
             {/* Número de Recibo */}

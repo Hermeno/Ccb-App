@@ -4,6 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { buscarDespesaOne, atualizarDespesa, buscarImagens } from '../services/despesas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { markNodeAsRemovable } from 'react-native-reanimated/lib/typescript/core';
 
 export default function Update() {
   const router = useRouter();
@@ -17,8 +18,11 @@ export default function Update() {
   const [descricao, setDescricao] = useState<string[]>([]);
   const [data_padrao, setData_padrao] = useState(new Date());
   const [showInicio, setShowInicio] = useState(false);
+  const [moeda, setMoeda] = useState('');
+
   const [modalVisible, setModalVisible] = useState(false);
   const [imagensData, setImagensData] = useState([]);
+
 
   const [missaoId, setMissaoId] = useState<string | null>(null);
   const [missaoName, setMissaoName] = useState('');  
@@ -38,7 +42,7 @@ export default function Update() {
   const opcoes = [
     { id: '1', label: 'Almoço' },
     { id: '3', label: 'Atendimento' },
-    { id: '2', label: 'Bilhete Aerea' },
+    { id: '2', label: 'Bilhete Aerea' }, 
     { id: '4', label: 'Cafe de Manhá' },
     { id: '5', label: 'Hospedagem' },
     { id: '6', label: 'Janta' },
@@ -52,11 +56,13 @@ export default function Update() {
       try {
         const token = await AsyncStorage.getItem('userToken');
         const data = await buscarDespesaOne(token, id_despesa);
-        setValor(data.valor);
         setCidade(data.cidade);
         setNumero_recibo(data.numero_recibo);
         setDescricao(data.descricao);
+        setMoeda(data.moeda);
         setData_padrao(new Date(data.data_padrao));
+        setValor((data.valor / 100).toFixed(2).replace('.', ','));
+        console.log('Despesa carregada:', data);
       } catch (error) {
         console.error('Erro ao carregar despesa:', error);
       }
@@ -92,15 +98,28 @@ export default function Update() {
       Alert.alert( 'Pelo menos uma categoria precisa ser selecionada.');
       return;
     }
+          function parseValor(valor: string) {
+            if (valor.includes(',')) {
+              return Number(valor.replace(/\./g, '').replace(',', '.'));
+            }
+            return Number(valor);
+          }
+          const valorNumerico = parseValor(valor);
+          if (isNaN(valorNumerico)) {
+            Alert.alert('Valor numérico inválido. Use apenas números e vírgulas para decimais.');
+            return;
+          }
 
     try {
       await atualizarDespesa(
         {
           id_despesa,
-          valor,
+          valor: valorNumerico,
           cidade,
           descricao: descricao,
+          moeda,
           numero_recibo,
+
           data_padrao: data_padrao.toISOString(),
         },
         token
@@ -135,7 +154,13 @@ export default function Update() {
 
         {/* Valor */}
         <Text style={styles.label}>Valor</Text>
-        <TextInput  value={valor}  onChangeText={setValor}  style={styles.input}  placeholder="Digite o valor"  keyboardType="numeric" />
+        <TextInput  value={valor}  onChangeText={setValor}  style={styles.input}  placeholder="Digite o valor" keyboardType='default'/>
+
+
+        {/* make input moeda but is imutable and giv some background color to identify like editable*/}
+        <Text style={styles.label}>Moeda</Text>
+        <TextInput  value={moeda}  editable={false}  style={[styles.input, { backgroundColor: '#cfccccff' }]}  placeholder="Moeda" />
+
 
         {/* Número de recibo */}
         <Text style={styles.label}>Nº do Recibo</Text>

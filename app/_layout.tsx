@@ -29,6 +29,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />
                 <Stack.Screen
@@ -38,6 +39,7 @@ export default function RootLayout() {
                         // headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />  
                 <Stack.Screen
@@ -66,6 +68,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />
                 <Stack.Screen
@@ -75,6 +78,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false, 
 
                     }}
                 />
@@ -84,6 +88,17 @@ export default function RootLayout() {
                         headerTitle: "CRÉDITO",
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false, 
+
+                    }}
+                />
+                <Stack.Screen
+                    name="updatecambio"
+                    options={{
+                        headerTitle: "Atualizar Câmbio",
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#fff',
+                        headerShadowVisible: false, 
 
                     }}
                 />
@@ -94,6 +109,7 @@ export default function RootLayout() {
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false, 
                     }}
                 />
                 <Stack.Screen
@@ -103,6 +119,7 @@ export default function RootLayout() {
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false, 
                     }}
                 />
 
@@ -113,6 +130,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false, 
 
                     }}
                 />
@@ -123,6 +141,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false,
 
                     }}
                 />
@@ -133,6 +152,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false,
 
                     }}
                 />
@@ -143,6 +163,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false,
 
                     }}
                 />
@@ -153,6 +174,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false,
 
                     }}
                 />
@@ -162,6 +184,7 @@ export default function RootLayout() {
                         headerTitle: "Update",
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
+                        headerShadowVisible: false, 
                         headerTintColor: '#fff',
                             header: () => (
                                 <View style={styles.navbar}>
@@ -182,6 +205,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#fff',
+                        headerShadowVisible: false, 
                             // header: () => (
                             //     <View style={styles.navbar}>
                             //         <TouchableOpacity onPress={back} style={{marginLeft:10}}>
@@ -201,6 +225,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />
                 <Stack.Screen
@@ -210,6 +235,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />
                 <Stack.Screen
@@ -219,6 +245,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />                
                 <Stack.Screen
@@ -228,6 +255,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />                
                 <Stack.Screen
@@ -237,6 +265,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />                
 
@@ -247,6 +276,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />
                 <Stack.Screen
@@ -256,6 +286,7 @@ export default function RootLayout() {
                         headerTitleStyle: { fontWeight: 'bold' },
                         headerStyle: { backgroundColor: '#487d76' },
                         headerTintColor: '#FFF',
+                        headerShadowVisible: false, 
                     }}
                 />
             </Stack>

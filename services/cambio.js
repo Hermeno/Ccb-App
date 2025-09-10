@@ -65,17 +65,18 @@ export const createfotos = async ({ fotos, id_post, missaofoto, datafoto, missao
 
 
 
-export const buscarCambioPorId = async (token, missao_id) => {
+export const buscarCambioPorId = async (idCambio, token, missao_id) => {
     try {
-        const response = await api.get('/buscar-cambioId', {
+        const response = await api.get('/buscar-cambioById', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
             params: {
                 missao_id: missao_id,
+                idCambio: idCambio
             }
         });
-        return response.data.creditos;
+        return response.data.cambio;
     } catch (error) {
         throw error;
     }
@@ -99,13 +100,12 @@ export const buscarCabiosOneByOne = async (token, missao_id) => {
 
 
 
-export const atualizarCambio = async (
-    id,
-    { moeda_origem, moeda_destino, cotacao, total_a_cambiar, total_cambiado, numero_recibo, missao_id },
+export const atualizarCambio = async ({idCambio, moeda_origem, moeda_destino, cotacao, total_a_cambiar, total_cambiado, numero_recibo, missao_id },
     token
 ) => {
     try {
-        const response = await api.put(`/atualizar-cambio/${id}`, {
+        const response = await api.put(`/atualizar-cambio`, {
+            idCambio,
             moeda_origem,
             moeda_destino,
             cotacao,

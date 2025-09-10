@@ -51,21 +51,6 @@ export const buscarDespesaOne = async (token, id_despesa) => {
 
 
 
-// export const buscarCreditos = async (token, missao_id) => {
-//     try {
-//         // console.log(missao_id)
-//         const response = await api.get('/buscar-moedas', {
-//             missao_id: missao_id
-//         },{ headers: {
-//                 Authorization: `Bearer ${token}`,
-//             }
-//         });
-//         return response.data.creditos; 
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
 
 export const buscarCreditos = async (token, missao_id) => {
     try {
@@ -79,25 +64,13 @@ export const buscarCreditos = async (token, missao_id) => {
 };
 
 
-// export const buscarCreditos = async (token, missao_id) => {
-//     try {
-//         const response = await api.get('/buscar-moedas', {
-//          headers: {
-//                 Authorization: `Bearer ${token}`,
-//             }
-//         });
-//         return response.data.creditos; // Retorna o array de créditos
-//     } catch (error) {
-//         throw error;
-//     }
-// };
 
 
-
-export const atualizarDespesa = async ({ id_despesa,  valor,  cidade, descricao,  numero_recibo,  data_padrao }, token) => {
+export const atualizarDespesa = async ({ id_despesa,  valor,  cidade, descricao, moeda,  numero_recibo,  data_padrao }, token) => {
+    console.log(valor)
     try {
         const response = await api.put(`/despesa/${id_despesa}`, {
-             valor,  cidade, descricao,  numero_recibo,  data_padrao
+             valor,  cidade, descricao, moeda, numero_recibo,  data_padrao
         }, {
             headers: {
                 Authorization: `Bearer ${token}`,

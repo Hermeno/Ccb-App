@@ -56,7 +56,11 @@ export default function Home() {
         }
     }, [missaoId]);
 
-
+//   const atualizarCambio = (idCambio: string) => {
+    const atualizarCambio = (idCambio: string) => {
+        // console.log(`Atualizando câmbio ID: ${idCambio}`);
+        router.push(`./updatecambio?idCambio=${idCambio}&missao_id=${missaoId}&missao_name=${missaoName}`);
+    }
 
 
 //   useEffect(() => {
@@ -133,10 +137,10 @@ export default function Home() {
                                                         title="Baixar Foto"
                                                         onPress={() => baixarFotos(cambio.id)}
                                                     />
-                                                    {/* <Button
+                                                    <Button
                                                         title="Atualizar"
                                                         onPress={() => atualizarCambio(cambio.id)}
-                                                    /> */}
+                                                    />
                                                 </View>
 
 
