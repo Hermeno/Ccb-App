@@ -36,6 +36,51 @@ export const loginUsuario = async ({ email, password }) => {
 };
 
 
+
+
+// select user by id with token
+export const getUserById = async (id, token) => {
+    try {
+        const response = await api.get(`/listar-usuario/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.status === 200) {
+            return response.data.user; // Retorna apenas os dados do usuário
+        }
+        throw new Error('Falha ao buscar o usuário');
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+// update user by id
+export const updateUserById = async (id, { name, email, cargo, comum, celular }, token) => {
+    try {
+        const response = await api.put(`/atualizar-usuario/${id}`, {    
+            name,
+            email,
+            cargo,  
+            comum,
+            celular
+        },
+            { 
+                headers: { 
+                    Authorization: `Bearer ${token}`, 
+                } 
+            }
+    );
+        if (response.status === 200) {
+            return response.data.user; // Retorna apenas os dados do usuário atualizado
+        }
+        throw new Error('Falha ao atualizar o usuário');
+    } catch (error) {
+        throw error;
+    }
+};
+
 export default function DummyComponent() {
     return null;  // Isso faz o arquivo ter um `export default`, mas é gambiarra
 }

@@ -56,7 +56,7 @@ const PdfGenerator = () => {
 
   return (
     <View style={{ margin: 20 }}>
-      <Button title="Gerar Relatório PDF" onPress={gerarPdf} disabled={loading || relatorio.length === 0} />
+      <Button title="Gerar Relatório PDFs" onPress={gerarPdf} disabled={loading || relatorio.length === 0} />
     </View>
   );
 };
@@ -72,12 +72,15 @@ function gerarHtml(grupos) {
   let html = `
     <html>
       <head>
-        <meta charset="UTF-8" />
+      <meta charset="UTF-8">
         <style>
-          body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            font-size: 12px;
+            body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            padding: 20mm;
+            font-size: 15px;
+            margin: 10mm;
+            color: #222;
+            line-height: 1.4;
           }
           h1 {
             text-align: center;
@@ -104,7 +107,7 @@ function gerarHtml(grupos) {
             border: 1px solid #ccc;
             padding: 6px 8px;
             text-align: left;
-            font-size: 11px;
+            font-size: 13px;
           }
           th {
             background-color: #f2f2f2;
@@ -120,17 +123,13 @@ function gerarHtml(grupos) {
             font-weight: bold;
             font-size: 14px;
             margin-top:50px;
+            padding-top:40px;
           }
 
 
           @page {
             size: A4;
             margin: 20mm; /* define margens consistentes no PDF */
-          }
-
-          body {
-            margin: 0;
-            padding: 0;
           }
 
           /* Força quebra de página quando um conteúdo não couber */
@@ -142,10 +141,19 @@ function gerarHtml(grupos) {
             page-break-before: avoid;
             page-break-after: avoid;
           }
+          .imagensPDF {
+            page-break-before: always;
+            margin:10mm;
+            padding:10px;
+          }
 
           /* Garante que grandes blocos de imagens quebrem certinho */
           div {
             page-break-inside: avoid;
+          }
+          body{
+            margin:0;
+            padding:0;
           }
 
           tr {
@@ -161,11 +169,34 @@ function gerarHtml(grupos) {
             .cabecalho {
               page-break-before: always;
             }
+              .topic{
+               margin-top:15mm;
+               padding-top:10px;
+              }
+               .imagem-bloco {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 15px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+              }
+                img.imagem-pdf {
+                max-width: 400px;
+                max-height: 400px;
+                height: auto;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                page-break-inside: avoid;
+                break-inside: avoid;
+              }
         </style>
       </head>
       <body>
+       <div class="topic">
         <h1>CONGREGAÇÃO  CRISTÃ  NO  BRASIL</h1>
          <h1>Relatório de Câmbios e Despesas de viagem missionária</h1>
+       </div>
   `;
 function formatarValor(valor) {
   if (!valor || isNaN(valor)) return '0,00';
@@ -199,140 +230,147 @@ function formatarValor(valor) {
       </div>
     `;
   }
+grupos.forEach((grupo) => {
+  html += `
+  <div>
+    <h2 class="cabecalho">Moeda: ${grupo.moeda}</h2>
+    <table>
+      <tr>
+        <th style="width:40px; text-align:center;">Nº</th>
+        <th>DATA</th>
+        <th>HISTÓRICO DAS DESPESAS</th>
+        <th>Nº RECIBO</th>
+        <th>CIDADE</th>
+        <th>VALOR</th>
+      </tr>
+      <tr>
+        <td style="text-align:center;">1</td>
+        <td>${formatarData(grupo.data_padrao)}</td>
+        <td><strong>Recurso para Despesas</strong></td>
+        <td>${grupo.numero_recibo || '-'}</td>
+        <td>-</td>
+        <td><strong>${formatarValor(grupo.valorOriginal / 100, grupo.moeda)}</strong></td>
+      </tr>
+  `;
 
-  grupos.forEach((grupo) => {
+  let totalDescontos = 0;
+  let totalAcrescentado = 0;
+  let contador = 2; // começa a numerar as próximas linhas a partir de 2
+
+  const despesas = (grupo.despesas || []);
+  despesas.sort((a, b) => {
+    const dataA = new Date(a.data_padrao);
+    const dataB = new Date(b.data_padrao);
+    return dataA - dataB;
+  });
+
+  if (despesas.length > 0) {
+    despesas.forEach((d) => {
+      const isCambio = d.tipo === 'cambio';
+      const dataDespesa = d.data_padrao;
+      const isAcrescimo = d.moeda_destino === grupo.moeda;
+
+      const isValorInicial =
+        isCambio &&
+        Math.abs(parseFloat(d.total_cambiado) - grupo.valorOriginal) < 0.01 &&
+        new Date(dataDespesa).toDateString() === new Date(grupo.data_cambio).toDateString();
+
+      if (isValorInicial) return; 
+
+      let vFinal = 0;
+      if (isCambio) {
+        if (isAcrescimo) {
+          vFinal = parseFloat(d.total_cambiado);
+        } else {
+          vFinal = parseFloat(d.total_a_cambiar);
+        }
+      } else {
+        vFinal = parseFloat(d.valor);
+      }
+      if (isNaN(vFinal)) vFinal = 0;
+
+      if (isAcrescimo) {
+        totalAcrescentado += vFinal;
+      } else {
+        totalDescontos += vFinal;
+      }
+
+      const sinal = isAcrescimo ? '+' : '-';
+      const nomesImagens = (d.imagens || [])
+        .flatMap(img => img.fotos)
+        .join(', ');
+
+      html += `
+        <tr>
+          <td style="text-align:center;">${contador++}</td>
+          <td>${formatarData(dataDespesa)}</td>
+          <td>${d.descricao || '-'}</td>
+          <td>${d.numero_recibo || '-'}</td>
+          <td>${d.cidade || '-'}</td>
+          <td>${sinal}${formatarValor((vFinal / 100), grupo.moeda)}</td>
+        </tr>
+      `;
+    });
+  } else {
     html += `
-      <h2 class="cabecalho">Moeda: ${grupo.moeda}</h2>
-      <table>
-        <tr>
-          <th>DATA</th>
-          <th>HISTÓRICO DAS DESPESAS</th>
-          <th>Nº RECIBO</th>
-          <th>IMAGENS</th>
-          <th>CIDADE</th>
-          <th>PAÍS</th>
-          <th>VALOR</th>
-        </tr>
-        <tr>
-          <td>${formatarData(grupo.data_padrao)}</td>
-          <td><strong>Recurso para Despesas</strong></td>
-          <td>${grupo.numero_recibo || '-'}</td>
-          <td>-</td>
-          <td>-</td>
-          <td>${grupo.pais}</td>
-          <td><strong>${formatarValor(grupo.valorOriginal / 100, grupo.moeda)}</strong></td>
-        </tr>
+      <tr>
+        <td colspan="6" class="sem-despesas">Sem despesas registradas.</td>
+      </tr>
     `;
-
-let totalDescontos = 0;
-let totalAcrescentado = 0;
-
-const despesas = (grupo.despesas || []);
-
-if (despesas.length > 0) {
-despesas.forEach((d) => {
-  // Verifica se é uma entrada de moeda (acréscimo)
-  const isCambio = d.tipo === 'cambio';
-  const dataDespesa = d.data_padrao;
-  const isAcrescimo = d.moeda_destino === grupo.moeda;
-
-
-
-
-const isValorInicial =
-  isCambio &&
-  Math.abs(parseFloat(d.total_cambiado) - grupo.valorOriginal) < 0.01 // tolerância para float
-  new Date(dataDespesa).toDateString() === new Date(grupo.data_cambio).toDateString();
-
-if (isValorInicial) return; 
-
-  let vFinal = 0;
-  if (isCambio) {
-    if (isAcrescimo) {
-      vFinal = parseFloat(d.total_cambiado);
-    } else {
-      vFinal = parseFloat(d.total_a_cambiar);
-    }
-  } else {
-    vFinal = parseFloat(d.valor);
   }
-  if (isNaN(vFinal)) vFinal = 0;
-
-  if (isAcrescimo) {
-    totalAcrescentado += vFinal;
-  } else {
-    totalDescontos += vFinal;
-  }
-
-
-
-
-
-
-
-  const sinal = isAcrescimo ? '+' : '-';
-  const nomesImagens = (d.imagens || [])
-  .flatMap(img => img.fotos)
-  .join(', ');
-
 
   html += `
     <tr>
-      <td>${formatarData(dataDespesa)}</td>
-      <td>${d.descricao || '-'}</td>
-      <td>${d.numero_recibo || '-'}</td>
-      <td>${nomesImagens || '-'}</td>
-      <td>${d.cidade || '-'}</td>
-      <td>${grupo.pais}</td>
-      <td>${sinal}${formatarValor((vFinal / 100), grupo.moeda)}</td>
+      <td colspan="5"><strong>Saldo</strong></td>
+      <td><strong>${formatarValor((grupo.valorOriginal + totalAcrescentado - totalDescontos) / 100, grupo.moeda)}</strong></td>
     </tr>
+  </table>
+  </div>
   `;
 });
-} else {
-  html += `
-    <tr>
-      <td colspan="6" class="sem-despesas">Sem despesas registradas.</td>
-    </tr>
-  `;
-}
-
-html += `
-  <tr>
-    <td colspan="5"><strong>Saldo</strong></td>
-    <td>${grupo.pais}</td>
-    <td><strong>${formatarValor((grupo.valorOriginal + totalAcrescentado - totalDescontos ) / 100, grupo.moeda)}</strong></td>
-  </tr>
-</table>
-`;});
 
 
 
-html += `<h2>Imagens das Despesas</h2>`;
+html += `<h2></h2>`;
 grupos.forEach(grupo => {
   const todasImagens = (grupo.despesas || [])
     .flatMap(d => (d.imagens || []).flatMap(img => img.fotos))
-    .filter(Boolean); // remove null/undefined
+    .filter(Boolean);
 
   if (todasImagens.length > 0) {
-    html += `<h3>Imagens do grupo ${grupo.moeda || '-'}</h3>`;
-    html += `<div style="display:flex; flex-wrap:wrap; gap:10px;">`; // container flexível
+    html += `<h2 class="imagensPDF">Imagens das Despesas</h2>`;
+    html += `<table style="width:100%; border-collapse:collapse; page-break-inside:avoid;">`;
 
-    todasImagens.forEach(nomeImagem => {
-      html += `
-        <div style="width:200px; text-align:center; margin-bottom:15px;">
+    // Montar 2 imagens por linha
+    for (let i = 0; i < todasImagens.length; i += 2) {
+      html += `<tr>`;
+      for (let j = 0; j < 2; j++) {
+        const nomeImagem = todasImagens[i + j];
+        if (nomeImagem) {
+          const numeroImagem = i + j + 1;
+          html += `
+            <td style="width:50%; text-align:center; padding:10px; vertical-align:top;">
+              <img class="imagem-pdf"
+                src="https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${nomeImagem}"
+                alt="Imagem da despesa"
+                style="max-width:100%; max-height:300px; display:block; margin:0 auto; page-break-inside:avoid; break-inside:avoid;" />
+              <p style="margin-top:8px; font-size:11px; color:#333;">Imagem ${numeroImagem}</p>
+            </td>
+          `;
+        } else {
+          html += `<td style="width:50%;"></td>`;
+        }
+      }
+      html += `</tr>`;
+    }
 
-          <img src="https://api-com-nodejs-express-mongodb-prisma.onrender.com/uploads/${nomeImagem}" 
-               alt="Imagem da despesa" 
-               style="max-width:100%; height:auto; display:block; margin:0 auto;" />
-        </div>
-      `;
-    });
-
-    html += `</div>`; // fecha o container flex
+    html += `</table>`;
   } else {
     html += `<p>Sem imagens para este grupo.</p>`;
   }
 });
+
+
 
 
   html += `</body></html>`; 
@@ -344,3 +382,59 @@ function formatarData(data) {
   if (!data) return '-';
   return new Date(data).toLocaleDateString();
 }
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { Button, View, Alert } from 'react-native';
+// import * as FileSystem from 'expo-file-system';
+// import * as Sharing from 'expo-sharing';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { useRouter, useLocalSearchParams } from 'expo-router';
+
+// const PdfGenerator = () => {
+//   const { missaoId } = useLocalSearchParams();
+//   const [loading, setLoading] = useState(false);
+
+//   const baixarPdf = async () => {
+//     setLoading(true);
+//     try {
+//       const token = await AsyncStorage.getItem('userToken');
+//       const url = `http://192.168.43.226:3000/relatorioPdf?missao_id=${missaoId}`;
+//       const fileUri = FileSystem.cacheDirectory + `relatorio_${missaoId}.pdf`;
+
+//       const response = await FileSystem.downloadAsync(
+//         url,
+//         fileUri,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//       await Sharing.shareAsync(response.uri, {
+//         mimeType: 'application/pdf',
+//         dialogTitle: 'Compartilhar Relatório PDF',
+//         UTI: 'com.adobe.pdf',
+//       });
+//     } catch (error) {
+//       Alert.alert('Erro ao baixar PDF', error?.message || String(error));
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <View style={{ margin: 20 }}>
+//       <Button
+//         title={loading ? "Baixando PDF..." : "Baixar Relatório PDF"}
+//         onPress={baixarPdf}
+//         disabled={loading}
+//       />
+//     </View>
+//   );
+// };
+
+// export default PdfGenerator;

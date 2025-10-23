@@ -99,6 +99,10 @@ export default function HomeScreen() {
   const DESPESAVISUALIZATIONPDF = () => {
     if (missaoId) router.push(`/pdf?missaoId=${missaoId}&missaoName=${missaoName}`);
   };
+  // to get a userprofile page 
+  const USERPROFILE = () => {
+    if (missaoId) router.push(`/user?missao_id=${missaoId}&missao_name=${missaoName}`);
+  };
   
   return (
     <View style={styles.container}>
@@ -160,15 +164,12 @@ export default function HomeScreen() {
           <MaterialIcons name="arrow-forward" size={30} color="black" />
         </TouchableOpacity> 
 
-
-
-        {/* <TouchableOpacity style={styles.cardInfoOut} onPress={Logout}>
-          <Text style={styles.Textshow}>Sair</Text>
-          <MaterialIcons name="logout" size={30} color="red" />
-        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.floatingButtonUserProfile} onPress={USERPROFILE}>
+          <MaterialIcons name="person" size={20} color="#fff" />
+        </TouchableOpacity>
 
           <TouchableOpacity style={styles.floatingButton} onPress={Logout}>
-            <Ionicons name="log-out-outline" size={24} color="#FFF" />
+            <Ionicons name="log-out-outline" size={20} color="#FFF" />
           </TouchableOpacity>
       </ScrollView>
     </View>
@@ -252,9 +253,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 30,
     right: 10,
-    backgroundColor: '#48694fff', // vermelho para logout
-    width: 60,
-    height: 60,
+    // backgroundColor: '', // vermelho para logout
+    backgroundColor: '#d11a2a', // vermelho para logout
+    width: 55,
+    height: 55,
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
@@ -264,4 +266,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
+      floatingButtonUserProfile: {
+    position: 'absolute',
+    bottom: 90,
+    right: 10,
+    backgroundColor: '#00835f', // verde para user profile
+    width: 55,
+    height: 55,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5, // sombra Android
+    shadowColor: '#000', // sombra iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+
 });

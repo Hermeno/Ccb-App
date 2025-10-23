@@ -92,6 +92,17 @@ export default function RootLayout() {
 
                     }}
                 />
+                {/* stack user */}
+                <Stack.Screen
+                    name="user"
+                    options={{
+                        headerTitle: "PERFIL",
+                        headerStyle: { backgroundColor: '#487d76' },
+                        headerTintColor: '#fff',
+                        headerShadowVisible: false,
+                    }}
+                />
+
                 <Stack.Screen
                     name="updatecambio"
                     options={{
