@@ -136,3 +136,27 @@ export const buscarImagens = async ({ id_post, token }) => {
         throw error;
     }
 };
+
+export const deleteDespesa = async (token, id_despesa, missao_id) => {
+    if (!token || !id_despesa || !missao_id) {
+        throw new Error('Parâmetros inválidos');
+    }
+    try {
+        const response = await api.delete(`/deletar-despesa`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: { 
+                despesa_id: id_despesa, // Corrigir nome do parâmetro para match com backend
+                missaoId: missao_id 
+            },
+        });
+        if (!response.data) {
+            throw new Error('Resposta inválida do servidor');
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao deletar:', error);
+        throw error;
+    }
+};

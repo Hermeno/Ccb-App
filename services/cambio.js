@@ -125,10 +125,23 @@ export const atualizarCambio = async ({idCambio, moeda_origem, moeda_destino, co
 };
 
 
-
-
-
-
+export const deleteCambio = async (missaoId, idCambio, token) => {
+  try {
+    const response = await api.delete(`/deletar-cambio`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        idCambio,
+        missaoId,
+      },
+    });
+    return response.data; // retorna body diretamente
+  } catch (error) {
+    // propaga erro com info útil
+    throw error?.response?.data || error;
+  }
+};
 
 
 

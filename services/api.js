@@ -8,13 +8,3 @@ const api = axios.create({
 });
 
 export default api;
-
-        // modified:   app/_layout.tsx
-        // modified:   app/cambios.tsx
-        // modified:   app/missao.tsx
-        // modified:   app/pdf.tsx
-        // modified:   app/updatecambio.tsx
-        // modified:   app/updatedespesa.tsx
-        // modified:   services/cambio.js
-        // modified:   services/despesas.js
-

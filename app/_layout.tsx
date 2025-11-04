@@ -124,7 +124,7 @@ export default function RootLayout() {
                     }}
                 />
                 <Stack.Screen
-                    name="cambios"
+                    name="visualizar_cambios"
                     options={{
                         headerTitle: "CAMBIO",
                         headerStyle: { backgroundColor: '#487d76' },
@@ -146,7 +146,7 @@ export default function RootLayout() {
                     }}
                 />
                 <Stack.Screen
-                    name="despesa"
+                    name="visualizar_despesa"
                     options={{
                         headerTitle: "DESPESAS",
                         headerTitleStyle: { fontWeight: 'bold' },

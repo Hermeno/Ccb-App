@@ -81,7 +81,7 @@ export default function HomeScreen() {
     if (missaoId) router.push(`/cambio?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
   const CAMBIOViSUALIZAR= () => {
-    if (missaoId) router.push(`/visualizar_?missao_id=${missaoId}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/visualizar_cambios?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
 
   const MISSAO = () => {

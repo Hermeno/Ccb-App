@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { buscarDespesas } from '@/services/despesas';
+import { buscarDespesas, deleteDespesa } from '@/services/despesas';
 import * as Sharing from 'expo-sharing';
 import { useJwt } from './jwt';
 
@@ -38,6 +38,53 @@ export default function App() {
       params: { id_despesa, missaoId, missaoName },
     });
   };
+
+  
+
+const DELETE = async (id_despesa: string) => {
+    try {  // Adicionar try/catch
+        Alert.alert(
+            'Confirmação',
+            'Tem certeza que deseja deletar esta despesa?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Deletar',
+                    onPress: async () => {
+                        try {
+                            const token = await AsyncStorage.getItem('userToken');
+                            if (!token) {
+                                throw new Error('Token não encontrado');
+                            }
+                            await deleteDespesa(token, id_despesa, missaoId);
+                            const data = await buscarDespesas(token, missaoId);
+                            setDespesas(data || []);
+                        } catch (error) {
+                            Alert.alert('Erro', 'Falha ao deletar despesa');
+                            console.error(error);
+                        }
+                    },
+                    style: 'destructive',
+                },
+            ],
+            { cancelable: true }
+        );
+    } catch (error) {
+        console.error('Erro:', error);
+        Alert.alert('Erro', 'Falha ao processar a operação');
+    }
+}
+
+
+
+
+
+
+
+
 
   function capitalizeFirstLetter(str: string) {
     if (!str) return '';
@@ -121,7 +168,6 @@ export default function App() {
         <Text style={styles.exportButtonText}>Exportar CSV</Text>
       </TouchableOpacity>
 
-      {/* Scroll agora funciona de verdade */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
@@ -129,7 +175,11 @@ export default function App() {
         {despesas.length > 0 ? (
           despesas.map((despesa) => (
             <TouchableOpacity key={despesa.id} style={styles.Top}>
-              <Text style={styles.TopTitle}>{despesa.descricao}</Text>
+             <Text style={styles.TopTitle}>
+                {despesa.descricao?.length > 12 
+                  ? `${despesa.descricao.slice(0, 12)}...` 
+                  : despesa.descricao}
+              </Text>
               <Text style={styles.cardAmount}>
                 {Number(despesa.valor / 100).toLocaleString('pt-BR', {
                   minimumFractionDigits: 2,
@@ -148,10 +198,13 @@ export default function App() {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.buttonUdate}
-                    onPress={() => DOWNLOD(despesa.id)}
-                  >
+                    style={styles.buttonUdate} onPress={() => DOWNLOD(despesa.id)} >
                     <Text style={styles.buttonText}>Imagens</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.deleteButton} onPress={() => DELETE(despesa.id)}>
+                    <Text style={styles.buttonText}>
+                      <MaterialIcons name="delete" size={20} color="black" />
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -174,7 +227,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingBottom: 40,
     backgroundColor: '#fff',
-    flexGrow: 1, // permite scroll com conteúdo dinâmico
+    flexGrow: 1, 
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -191,6 +244,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
+    marginTop: 3,
   },
   emptyText: {
     textAlign: 'center',
@@ -226,11 +280,29 @@ const styles = StyleSheet.create({
   },
   buttonUdate: {
     paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     borderRadius: 288,
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    marginLeft: 5,
+    marginLeft: 2,
+  },
+  deleteButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 288,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#ff4d4d',
+    marginLeft: 3,
+  },
+    TopTitle: {
+    flex: 1,
+    fontSize: 16,
+    marginRight: 10,
+    numberOfLines: 1,
+    ellipsizeMode: 'tail',
+    marginLeft:-10,
+    marginTop:3,
   },
 });

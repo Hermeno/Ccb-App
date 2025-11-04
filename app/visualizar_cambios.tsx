@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Button } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Button, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { buscarCabiosOneByOne } from '../services/cambio';
-import { buscarMissaoPorId } from '../services/missao';
+import { buscarCabiosOneByOne, deleteCambio } from '../services/cambio';
 import { useJwt } from './jwt';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -63,27 +62,6 @@ export default function Home() {
     }
 
 
-//   useEffect(() => {
-//         const carregarMissao = async () => {
-//         try {
-//             const token = await AsyncStorage.getItem('userToken');
-//             if (token && missaoId) {
-//             const dados = await buscarMissaoPorId(missaoId, token);
-//             console.log('Missão da API:', dados);
-//             setMissao(Array.isArray(dados) ? dados[0] : dados);
-//             }
-//         } catch (error) {
-//             console.error('Erro ao carregar missão:', error);
-//         } finally {
-//             setLoading(false);
-//         }
-//         };
-//     carregarMissao();
-
-
-//   }, []);
-
-
 
 
     const baixarFotos = (idCambio: string) => {
@@ -91,6 +69,21 @@ export default function Home() {
         router.push(`./imagecambio?id_post=${idCambio}&missao_id=${missaoId}&missao_name=${missaoName}`);
     };
 
+const deletarcambio = async (idCambio: string) => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) throw new Error('Token não encontrado');
+
+    // chama delete com a ordem correta: (missaoId, idCambio, token)
+    await deleteCambio(missaoId, idCambio, token);
+
+    // recarrega a lista usando a função de busca correta
+    const data = await buscarCabiosOneByOne(token, missaoId);
+    setCambios(data || []);
+  } catch (error) {
+    console.error('Erro ao deletar câmbio:', error);
+  }
+};
 
     return (
         <View style={styles.container}>
@@ -133,14 +126,15 @@ export default function Home() {
 
 
                                                 <View style={styles.buttonContainer}>
-                                                    <Button
-                                                        title="Baixar Foto"
-                                                        onPress={() => baixarFotos(cambio.id)}
-                                                    />
-                                                    <Button
-                                                        title="Atualizar"
-                                                        onPress={() => atualizarCambio(cambio.id)}
-                                                    />
+                                                    <TouchableOpacity style={styles.ButtonStyle} onPress={() => atualizarCambio(cambio.id)}>
+                                                        <Text style={styles.ButtonText}>Atualizar</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity style={styles.ButtonStyle} onPress={() => baixarFotos(cambio.id)}>
+                                                        <Text style={styles.ButtonText}>Fotos</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity style={styles.deleteButton} onPress={() => deletarcambio(cambio.id)}>
+                                                        <Text style={styles.ButtonText}>Deletar</Text>
+                                                    </TouchableOpacity>
                                                 </View>
 
 
@@ -225,6 +219,12 @@ const styles = StyleSheet.create({
     ButtonText: {
         color: "#fff",
         fontWeight: "600",
-    }
+    },
+    deleteButton: {
+        backgroundColor: "#ff4d4f",
+        paddingVertical: 10,    
+        paddingHorizontal: 15,
+        borderRadius: 8,
+    },
 });
 
