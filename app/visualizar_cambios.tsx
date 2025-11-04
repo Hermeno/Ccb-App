@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert,  ScrollView, Button, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { buscarCabiosOneByOne, deleteCambio } from '../services/cambio';
 import { useJwt } from './jwt';
@@ -71,19 +71,39 @@ export default function Home() {
 
 const deletarcambio = async (idCambio: string) => {
   try {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) throw new Error('Token não encontrado');
-
-    // chama delete com a ordem correta: (missaoId, idCambio, token)
-    await deleteCambio(missaoId, idCambio, token);
-
-    // recarrega a lista usando a função de busca correta
-    const data = await buscarCabiosOneByOne(token, missaoId);
-    setCambios(data || []);
+    Alert.alert(
+      'Confirmação',
+      'Tem certeza que deseja deletar este câmbio?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Deletar',
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('userToken');
+              if (!token) throw new Error('Token não encontrado');
+              await deleteCambio(missaoId, idCambio, token);
+              const data = await buscarCabiosOneByOne(token, missaoId);
+              setCambios(data || []);
+            } catch (error) {
+              console.error('Erro ao deletar câmbio:', error);
+              Alert.alert('Erro', 'Não foi possível deletar o câmbio');
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   } catch (error) {
-    console.error('Erro ao deletar câmbio:', error);
+    console.error('Erro ao mostrar alerta:', error);
   }
 };
+
+
+
 
     return (
         <View style={styles.container}>
