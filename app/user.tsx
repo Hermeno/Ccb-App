@@ -44,7 +44,6 @@ useEffect(() => {
       console.log('token:', token, 'userId:', userId); // debug
 
       const userData = await getUserById(userId, token); // converter
-      console.log('userData:', userData); // debug
 
       setUser(userData);
       setName(userData.name || '');

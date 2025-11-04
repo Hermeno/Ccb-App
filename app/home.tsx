@@ -81,7 +81,7 @@ export default function HomeScreen() {
     if (missaoId) router.push(`/cambio?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
   const CAMBIOViSUALIZAR= () => {
-    if (missaoId) router.push(`/cambios?missao_id=${missaoId}&missao_name=${missaoName}`);
+    if (missaoId) router.push(`/visualizar_?missao_id=${missaoId}&missao_name=${missaoName}`);
   };
 
   const MISSAO = () => {
@@ -93,7 +93,7 @@ export default function HomeScreen() {
   };
 
   const DESPESAVISUALIZATION = () => {
-    if (missaoId) router.push(`/despesa?missaoId=${missaoId}&missaoName=${missaoName}`);
+    if (missaoId) router.push(`/visualizar_despesa?missaoId=${missaoId}&missaoName=${missaoName}`);
   };
   
   const DESPESAVISUALIZATIONPDF = () => {
@@ -164,9 +164,16 @@ export default function HomeScreen() {
           <MaterialIcons name="arrow-forward" size={30} color="black" />
         </TouchableOpacity> 
 
-        <TouchableOpacity style={styles.floatingButtonUserProfile} onPress={USERPROFILE}>
+        <TouchableOpacity style={styles.cardInfoUser} onPress={USERPROFILE}>
+          <Text style={styles.Textshow}>Perfil</Text>
+          <MaterialIcons name="arrow-forward" size={30} color="black" />
+        </TouchableOpacity> 
+
+
+
+        {/* <TouchableOpacity style={styles.floatingButtonUserProfile} onPress={USERPROFILE}>
           <MaterialIcons name="person" size={20} color="#fff" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.floatingButton} onPress={Logout}>
             <Ionicons name="log-out-outline" size={20} color="#FFF" />
@@ -189,19 +196,32 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    height: '85%',
+    height: '86%',
   },
   cardInfo: {
     margin: 5,
     backgroundColor: 'transparent',
-    padding: 20,
+    padding: 18,
     color: '#fff',
-    borderWidth: 2,
-    borderColor: '#ccc',
+    borderWidth: 1.7,
+    borderColor: '#487d76',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderRadius: 20,
+    borderRadius: 25,
+  },
+    cardInfoUser: {
+    margin: 5,
+    backgroundColor: 'transparent',
+    padding: 18,
+    color: '#fff',
+    borderWidth: 1.7,
+    borderColor: '#487d76',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderRadius: 25,
+    marginBottom: 30,
   },
   cardInfoOut: {
     margin: 5,
@@ -251,7 +271,7 @@ const styles = StyleSheet.create({
 },
       floatingButton: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 49,
     right: 10,
     // backgroundColor: '', // vermelho para logout
     backgroundColor: '#d11a2a', // vermelho para logout

@@ -241,21 +241,21 @@ grupos.forEach((grupo) => {
         <th>HISTÓRICO DAS DESPESAS</th>
         <th>Nº RECIBO</th>
         <th>CIDADE</th>
-        <th>VALOR</th>
+        <th  style="text-align:right">VALOR</th>
       </tr>
       <tr>
-        <td style="text-align:center;">1</td>
+        <td style="text-align:center;">0</td>
         <td>${formatarData(grupo.data_padrao)}</td>
         <td><strong>Recurso para Despesas</strong></td>
         <td>${grupo.numero_recibo || '-'}</td>
         <td>-</td>
-        <td><strong>${formatarValor(grupo.valorOriginal / 100, grupo.moeda)}</strong></td>
+        <td  style="text-align:right"><strong>${formatarValor(grupo.valorOriginal / 100, grupo.moeda)}</strong></td>
       </tr>
   `;
 
   let totalDescontos = 0;
   let totalAcrescentado = 0;
-  let contador = 2; // começa a numerar as próximas linhas a partir de 2
+  let contador = 1; // começa a numerar as próximas linhas a partir de 2
 
   const despesas = (grupo.despesas || []);
   despesas.sort((a, b) => {
@@ -307,7 +307,7 @@ grupos.forEach((grupo) => {
           <td>${d.descricao || '-'}</td>
           <td>${d.numero_recibo || '-'}</td>
           <td>${d.cidade || '-'}</td>
-          <td>${sinal}${formatarValor((vFinal / 100), grupo.moeda)}</td>
+          <td style="text-align:right" >${sinal}${formatarValor((vFinal / 100), grupo.moeda)}</td>
         </tr>
       `;
     });
@@ -322,7 +322,7 @@ grupos.forEach((grupo) => {
   html += `
     <tr>
       <td colspan="5"><strong>Saldo</strong></td>
-      <td><strong>${formatarValor((grupo.valorOriginal + totalAcrescentado - totalDescontos) / 100, grupo.moeda)}</strong></td>
+      <td  style="text-align:right"><strong>${formatarValor((grupo.valorOriginal + totalAcrescentado - totalDescontos) / 100, grupo.moeda)}</strong></td>
     </tr>
   </table>
   </div>
